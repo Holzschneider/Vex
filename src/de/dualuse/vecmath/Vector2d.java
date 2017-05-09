@@ -2,8 +2,18 @@ package de.dualuse.vecmath;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.pow;
+import de.dualuse.vecmath.Value.Function;
 
-public class Vector2d implements VectorAlgebra<Vector2d>, Interpolatable<Vector2d>, java.io.Serializable {
+import java.io.Serializable;
+
+public class Vector2d 
+implements	VectorAlgebra<Vector2d>, 
+			Interpolatable<Vector2d>, 
+//			Function<Vector2d, Vector2d>, 
+//			Value<Vector2d>, 
+			Serializable 
+
+{
 	private static final long serialVersionUID = 1L;
 	public double x, y;
 	
@@ -22,10 +32,15 @@ public class Vector2d implements VectorAlgebra<Vector2d>, Interpolatable<Vector2
 	
 	public Vector2d clone() { return new Vector2d(this); }
 
+//	@Override
+//	public <Q> Q get(Function<Q, Vector2d> v) { return v.set(this); }
+//	
+//	@Override
+//	public Vector2d set(Vector2d t) { return this.set(t.x,t.y); }
 
 	//////////////////////////////////////////////////////////////////////////////
 	
-	public Vector2d get(Vector2d q) { q.point(this); return this; }
+//	public Vector2d get(Vector2d q) { q.point(this); return this; }
 
 	public Vector2d set(double x, double y) { this.x=x; this.y=y; return this; }
 
@@ -78,7 +93,7 @@ public class Vector2d implements VectorAlgebra<Vector2d>, Interpolatable<Vector2
 		final double r0x = q0x*r+q1x*omr, r0y = q0y*r+q1y*omr;
 		final double r1x = q1x*r+q2x*omr, r1y = q1y*r+q2y*omr;
 		
-		this.set( r0x*r+r1x*omr, r0y*r+r1y*omr );
+		this.set(r0x*r+r1x*omr, r0y*r+r1y*omr);
 		
 		return this;
 	}

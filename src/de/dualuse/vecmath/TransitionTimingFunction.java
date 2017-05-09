@@ -5,7 +5,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 public interface TransitionTimingFunction {
-	double f(double t);
+	public double f(double t);
 
 	static final TransitionTimingFunction Linear = new TransitionTimingFunction() {
 		public double f(double t) { return t; } //min(max(t,0.0),1.0); };

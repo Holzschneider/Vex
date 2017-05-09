@@ -28,11 +28,11 @@ public class Vector3d implements VectorAlgebra<Vector3d>, Interpolatable<Vector3
 	public Vector3d clone() {
 		return new Vector3d(x,y,z);
 	}
-
+	
 	//////////////////////////////////////////////////////////////////////////////
-	
-	
-//	@Override public Vec3 get(Variable<Vec3> q) { q.set(this); return this; }
+
+	public static interface Value<Q> { Q define(Vector3d v); }
+	public<Q> Q get( Value<Q> v )  { return v.define(this); }
 	
 //	public Vec3 set(Vec3 v) { this.x=v.x; this.y=v.y; this.z=v.z; return this; }
 	public Vector3d set(double x, double y, double z) { this.x=x; this.y=y; this.z=z; return this; }

@@ -3,8 +3,6 @@ package de.dualuse.vecmath;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 
-import java.util.Locale;
-
 public class Matrix3d implements MatrixAlgebra<Matrix3d>, java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 
@@ -203,6 +201,19 @@ public class Matrix3d implements MatrixAlgebra<Matrix3d>, java.io.Serializable {
 	//////////
 	
 
+	/// UNTESTED
+	public Matrix3d setToProjection(Matrix4d m) {
+		return this.elements(
+				m.m00, m.m01,  m.m03, 
+				m.m10, m.m11,  m.m13,
+				m.m30, m.m31,  m.m33 
+			);
+	}
+
+	
+	//////////
+
+
 	public Vector3d transform(Vector3d v) {
 		return v.set(
 			v.x*m00+v.y*m01+v.z*m02, 
@@ -217,6 +228,21 @@ public class Matrix3d implements MatrixAlgebra<Matrix3d>, java.io.Serializable {
 		final double w = v.x*m20+v.y*m21+m22;
 		
 		return v.set( x/w, y/w );
+	}
+	
+	//as in cast a shadow on an object
+	public Vector2d cast(Vector2d v) {
+		final double A = (m11*m22-m12*m21), D =-(m01*m22-m02*m21), G = (m01*m12-m02*m11);
+		final double B =-(m10*m22-m12*m20), E = (m00*m22-m02*m20), H =-(m00*m12-m02*m10);
+		final double C = (m10*m21-m11*m20), F =-(m00*m21-m01*m20), I = (m00*m11-m01*m10);
+	
+		final double detA = (m00*A-m01*B+m02*C);
+		
+		double x= (v.x*A+v.y*D+G)/detA;
+		double y= (v.x*B+v.y*E+H)/detA;
+		double w= (v.x*C+v.y*F+I)/detA;
+		
+		return v.set(x/w, y/w);
 	}
 	
 }
