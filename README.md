@@ -5,7 +5,7 @@ Release
 -------
 
 The current state of the project is to be considered "incomplete and in development", so no releases to any
-maven repository are done yet. To add *Vex* as a dependency in your maven project checkout, build and install the 
+maven repository are done yet. To add *Vex* as a dependency within your maven project, just checkout, build and install the 
 latest version to your system
 
 	$ git clone https://github.com/Holzschneider/Vex.git && cd Vex && mvn install
