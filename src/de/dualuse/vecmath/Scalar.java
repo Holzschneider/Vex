@@ -6,8 +6,8 @@ public class Scalar extends Number implements Value, Interpolatable<Number> {
 	public double v;
 	
 	public Scalar(double v) { this.v = v; }
-	public Scalar set(Number s) { this.v=s.doubleValue(); return this; }	
-	public Scalar get(Variable<Number> q) { q.set(this); return this; }
+	public Scalar set(double s) { this.v=s; return this; }	
+	public Scalar get(Scalar q) { q.point(this); return this; }
 
 	public Scalar clone() { return new Scalar(v); }
 

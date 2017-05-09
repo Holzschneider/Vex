@@ -2,9 +2,8 @@ package de.dualuse.vecmath;
 
 import java.io.Serializable;
 
-public class Quaternion implements Linear<Quaternion>, Serializable {
+public class Quaternion implements Interpolatable<Quaternion>, Serializable {
 	static final double FLT_EPSILON = 0.0000000001;
-
 	
 	private static final long serialVersionUID = 1L;	
 	
@@ -31,8 +30,31 @@ public class Quaternion implements Linear<Quaternion>, Serializable {
 		return this.set(-this.x*inv, -this.y*inv, -this.z*inv, this.w*inv); 
 	}
 
+	
 	@Override
-	public Linear<Quaternion> line(Quaternion to, Quaternion from, double t) {
+	public Quaternion point(Quaternion a) {
+		return set(a.x,a.y,a.z,a.w);
+	}
+	
+	///XXX Untested
+	@Override
+	public Quaternion spline(Quaternion a, Quaternion da, Quaternion dd, Quaternion d, double r) {
+		double ax = a.x, ay = a.y, az = a.z, aw = a.w;
+		double dx = d.x, dy = d.y, dz = a.z, dw = d.w;
+		
+		a.line(a, da, r); //XXX sux, since it overwrites a & d for a brief moment -> so it's not thread-safe
+		d.line(dd, d,r);
+		
+		this.line(a,d,r);
+		
+		a.set(ax, ay, az, aw);
+		d.set(dx, dy, dz, dw);
+		
+		return this;
+	}
+	
+	@Override
+	public Quaternion line(Quaternion from, Quaternion to, double t) {
 		double toSign = 1.;
 		double dot = from.x * to.x + from.y * to.y + from.z * to.z + from.w * to.w;
 		if (dot < 0.) {
@@ -108,8 +130,6 @@ public class Quaternion implements Linear<Quaternion>, Serializable {
 		}
 	}
 	
-
-	
 	// transform / rotates this vector by the quaternion
 	public Vec3 transform(Vec3 v) {
 		final double t2 =   w*x, t3 =   w*y, t4 =   w*z;
@@ -161,12 +181,8 @@ public class Quaternion implements Linear<Quaternion>, Serializable {
 	
 	public Quaternion normalize() { return scale(1./length()); }
 
-	public Quaternion set(Quaternion q) {
-		return this.set(q.x,q.y,q.z,q.w);
-	}
-
-	public Quaternion get(Variable<Quaternion> q) {
-		q.set(this);
+	public Quaternion get(Quaternion q) {
+		q.set(x,y,z,w);
 		return this;
 	}
 
@@ -175,24 +191,5 @@ public class Quaternion implements Linear<Quaternion>, Serializable {
 		return new Quaternion(x,y,z,w);
 	}
 
-
-
-//	public Quaternion rotate(Vec3 v, double scale) {
-//		final double x = getX(), y = getY(), z = getZ(), w = getW();
-//		return this.set(v.x*scale, v.y*scale, v.z*scale, 0).transformBy(x,y,z,w).scale(0.5);
-//		
-//		/*
-//		Quaternion q = new Quaternion.Double(v.x * scale, v.y * scale, v.z * scale, 0);
-//		q.transformBy(this);
-//		x += q.x * 0.5; y += q.y * 0.5; z += q.z * 0.5; w += q.w * 0.5;
-//		
-//		return this.set(x,y,z,w);
-//		*/
-//	}
-
-
-	
-
-	
 	
 }

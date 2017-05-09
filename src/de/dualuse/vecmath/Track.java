@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.TreeMap;
 
-
-public class Track<A> extends TreeMap<Double, Track.Sample<A>> implements Animation<Cubic<? super A>>, Serializable {
+public class Track<A> extends TreeMap<Double, Track.Sample<A>> implements Animation<Interpolatable<? super A>>, Serializable {
+	
 	private static final long serialVersionUID = 1L;
 	
 	static public class Sample<Q> implements Serializable {
@@ -36,9 +36,9 @@ public class Track<A> extends TreeMap<Double, Track.Sample<A>> implements Animat
 	}
 	
 	
-	public<R extends Cubic<? super A>> R get(double t, R v) {
+	public<R extends Interpolatable<? super A>> R get(double t, R v) {
 		if (size()==1) {
-			v.set(this.firstEntry().getValue().v);
+			v.point(this.firstEntry().getValue().v);
 			return v;
 		}
 		
@@ -78,26 +78,34 @@ public class Track<A> extends TreeMap<Double, Track.Sample<A>> implements Animat
 	public double start() { return this.firstKey(); }
 	public double end() { return this.lastKey(); }
 	public double length() { return end()-start(); }
+
 	
-	public static final int BOUNDARY_CONTINUE = 0;
-	public static final int BOUNDARY_CLAMP = 1;
-	public static final int BOUNDARY_LOOP = 2;
-	public static final int BOUNDARY_PINGPONG = 3;
+	static public enum Boundary {
+		CONTINUE,
+		CLAMP,
+		LOOP,
+		PINGPONG
+	}
 	
-	private int startBehavior = BOUNDARY_CONTINUE;
-	private int endBehavior = BOUNDARY_CONTINUE;
+	private Boundary startBehavior = Boundary.CONTINUE;
+	private Boundary endBehavior = Boundary.CONTINUE;
 	
-	public void setLowerBound( int behavior ) { startBehavior = behavior; }
-	public int getLowerBound( int behavior ) { return startBehavior; }
+	public void setLowerBound( Boundary behavior ) { startBehavior = behavior; }
+	public Boundary getLowerBound( Boundary behavior ) { return startBehavior; }
 	
-	public void setUpperBound( int behavior ) { endBehavior = behavior; }
-	public int getUpperBound() { return endBehavior; }
+	public void setUpperBound( Boundary behavior ) { endBehavior = behavior; }
+	public Boundary getUpperBound() { return endBehavior; }
 	
+	
+	private TransitionTimingFunction function = TransitionTimingFunction.Linear;
+	public void setTransition( TransitionTimingFunction timingFunction ) {
+		function = timingFunction;
+	}
 	
 	private double timeTransform(double t) {
 		double start = 0, end = 0, length = 0, u = 0;
 		
-		if (startBehavior != BOUNDARY_CONTINUE || endBehavior != BOUNDARY_CONTINUE) {
+		if (startBehavior != Boundary.CONTINUE || endBehavior != Boundary.CONTINUE) {
 			start = start();
 			end = end();
 			length = end-start;
@@ -108,22 +116,22 @@ public class Track<A> extends TreeMap<Double, Track.Sample<A>> implements Animat
 		if (t<start)
 			switch (startBehavior) {
 			default:
-			case BOUNDARY_CONTINUE: u = t; break;
-			case BOUNDARY_CLAMP: u = start; break; 
-			case BOUNDARY_LOOP: u = (((t-start)%length)+length)+start; break;
-			case BOUNDARY_PINGPONG: u = (((t-start)%length)+length); u = (((int)(-(t-start)/length))%2==1?u:(end-start)-u)+start; break;
+			case CONTINUE: u = t; break;
+			case CLAMP: u = start; break; 
+			case LOOP: u = (((t-start)%length)+length)+start; break;
+			case PINGPONG: u = (((t-start)%length)+length); u = (((int)(-(t-start)/length))%2==1?u:(end-start)-u)+start; break;
 			}
 		
 		if (t>end) 
 			switch (endBehavior) {
 			default:
-			case BOUNDARY_CONTINUE: u = t; break;
-			case BOUNDARY_CLAMP: u = end; break; 
-			case BOUNDARY_LOOP: u = (((t-start)%length))+start; break;
-			case BOUNDARY_PINGPONG: u = (((t-start)%length)); u = (((int)((t-start)/length))%2==0?u:(end-start)-u)+start; break;
+			case CONTINUE: u = t; break;
+			case CLAMP: u = end; break; 
+			case LOOP: u = (((t-start)%length))+start; break;
+			case PINGPONG: u = (((t-start)%length)); u = (((int)((t-start)/length))%2==0?u:(end-start)-u)+start; break;
 			}
 		
-		return u;
+		return function.f(u);
 	}
 	
 	

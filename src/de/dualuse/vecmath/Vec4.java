@@ -27,7 +27,7 @@ public class Vec4 implements Interpolatable<Vec4>, java.io.Serializable {
 	
 	//////////////////////////////////////////////////////////////////////////////
 
-	public Vec4 get(Variable<Vec4> q) { q.set(this); return this; }
+	public Vec4 get(Vec4 q) { q.point(this); return this; }
 	public Vec4 set(double x, double y, double z, double w) { this.x=x; this.y=y; this.z=z; this.w=w; return this; }
 	
 	public Vec4 add(Vec4 v) { set(x+v.x,y+v.y,z+v.z,w+v.w); return this; }

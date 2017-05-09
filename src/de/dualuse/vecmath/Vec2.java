@@ -25,7 +25,7 @@ public class Vec2 implements VectorAlgebra<Vec2>, Interpolatable<Vec2>, java.io.
 
 	//////////////////////////////////////////////////////////////////////////////
 	
-	public Vec2 get(Variable<Vec2> q) { q.set(this); return this; }
+	public Vec2 get(Vec2 q) { q.point(this); return this; }
 
 	public Vec2 set(double x, double y) { this.x=x; this.y=y; return this; }
 	public Vec2 set(Vec2 v) { this.x = v.x; this.y = v.y; return this; }
