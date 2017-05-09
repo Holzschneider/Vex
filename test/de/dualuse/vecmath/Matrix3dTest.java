@@ -19,16 +19,42 @@ public class Matrix3dTest {
 				-3.5, -2, 2.5,
 				2.5, 1, -1.5
 				);
+
+		
+		
+//		new Vector2d(1,2).projection( i ).to ( (v) -> ... );
+		
+		
+		
+		
+		
+//		i.project( new Vector2d(1,2) ).to( (v) -> new Point2D.Double(v,x,v.y)  );
+		
+//		Point2D p = w.to( new Reference<Point2D, Vector2d>() {
+//			@Override
+//			public Point2D from(Vector2d v) {
+//				return new Point2D.Double(v.x,v.y);
+//			}
+//		});
+		
+		
+//		w.to( (v) -> new Point2D.Double(v,x,v.y) );
+		
+		
+		
+		
+		
+		
 		
 //		Assert.assertEquals(i.toString(), n.toString());
 		Assert.assertEquals(i,m.invert());
 
-//		new Vector2d(1,2).transformBy(i).to( (v) -> new Point2.Double(v.x,v.y) );
-		i.project(new Vector2d(1,2)).to( new Reference<Point2D, Vector2d>() {
-			public Point2D from(Vector2d v) {
-				return new Point2D.Double(v.x,v.y);
-			}
-		});
+////		new Vector2d(1,2).transformBy(i).to( (v) -> new Point2.Double(v.x,v.y) );
+//		i.project(new Vector2d(1,2)).to( new Reference<Point2D, Vector2d>() {
+//			public Point2D from(Vector2d v) {
+//				return new Point2D.Double(v.x,v.y);
+//			}
+//		});
 		
 	}
 	
