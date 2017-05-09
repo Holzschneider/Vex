@@ -32,12 +32,46 @@ public class Matrix3d implements MatrixAlgebra<Matrix3d>, java.io.Serializable {
 				new Double(c[6]), new Double(c[7]), new Double(c[8]));
 	}
 	
+	@Override
 	public String toString() {
-		return	m00+" "+m01+" "+m02+
-				m10+" "+m11+" "+m12+
+		return	m00+" "+m01+" "+m02+" "+
+				m10+" "+m11+" "+m12+" "+
 				m20+" "+m21+" "+m22;
 	}
-
+	
+	@Override
+	public int hashCode() {
+		return new Double(
+				m00*m00+m01*m01+m02*m02+
+				m10*m10+m11*m11+m12*m12+
+				m20*m20+m21*m21+m22*m22
+			).hashCode();
+//		return 
+//				new Double(m00).hashCode()^new Double(m01).hashCode()^new Double(m02).hashCode()^
+//				new Double(m10).hashCode()^new Double(m11).hashCode()^new Double(m12).hashCode()^
+//				new Double(m20).hashCode()^new Double(m21).hashCode()^new Double(m22).hashCode();
+	}
+	
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == this)
+			return true;
+		else
+		if (o instanceof Matrix3d)
+			return equals((Matrix3d)o);
+		else
+			return false;
+	}
+	
+	public boolean equals(Matrix3d m) {
+		return
+				m.m00 == m00 && m.m01 == m01 && m.m02 == m02 &&
+				m.m10 == m10 && m.m11 == m11 && m.m12 == m12 &&
+				m.m20 == m20 && m.m21 == m21 && m.m22 == m22;
+		
+	}
+	
 	
 	@Override
 	public Matrix3d clone() throws CloneNotSupportedException {
@@ -109,9 +143,13 @@ public class Matrix3d implements MatrixAlgebra<Matrix3d>, java.io.Serializable {
 		);
 	}
 
-
 	@Override
-	public Matrix3d transpose(Matrix3d m) {
+	public Matrix3d transpose() {
+		return this.transposition(this);
+	}
+	
+	@Override
+	public Matrix3d transposition(Matrix3d m) {
 		return this.elements(
 				m.m00, m.m01, m.m02,
 				m.m10, m.m11, m.m12,
@@ -120,7 +158,12 @@ public class Matrix3d implements MatrixAlgebra<Matrix3d>, java.io.Serializable {
 	}
 
 	@Override
-	public Matrix3d invert(Matrix3d m) {
+	public Matrix3d invert() {
+		return this.inversion(this);
+	}
+	
+	@Override
+	public Matrix3d inversion(Matrix3d m) {
 		final double a = m.m00, b = m.m01, c = m.m02;
 		final double d = m.m10, e = m.m11, f = m.m12;
 		final double g = m.m20, h = m.m21, i = m.m22;

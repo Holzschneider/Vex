@@ -150,9 +150,13 @@ public class Matrix4d implements MatrixAlgebra<Matrix4d>, java.io.Serializable {
 	}
 	
 
-
 	@Override
-	public Matrix4d transpose(Matrix4d m) {
+	public Matrix4d transpose() {
+		return this.transposition(this);
+	}
+	
+	@Override
+	public Matrix4d transposition(Matrix4d m) {
 		return this.elements(
 				m.m00, m.m10, m.m20, m.m30,
 				m.m01, m.m11, m.m21, m.m31,
@@ -160,9 +164,14 @@ public class Matrix4d implements MatrixAlgebra<Matrix4d>, java.io.Serializable {
 				m.m03, m.m13, m.m23, m.m33
 			);
 	}
+
+	@Override
+	public Matrix4d invert() {
+		return this.inversion(this);
+	}
 	
-	@Override	
-	public Matrix4d invert(Matrix4d m) {
+	@Override
+	public Matrix4d inversion(Matrix4d m) {
 		final double fA0 = m.m00 * m.m11 - m.m01 * m.m10;
 		final double fA1 = m.m00 * m.m12 - m.m02 * m.m10;
 		final double fA2 = m.m00 * m.m13 - m.m03 * m.m10;
