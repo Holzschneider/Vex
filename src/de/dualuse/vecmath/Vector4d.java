@@ -1,16 +1,16 @@
 package de.dualuse.vecmath;
 
 
-public class Vec4 implements Interpolatable<Vec4>, java.io.Serializable {
+public class Vector4d implements Interpolatable<Vector4d>, java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	public double x, y, z, w;
 
 
-	public Vec4() {};
-	public Vec4(double x, double y, double z, double w) { this.x=x; this.y=y; this.z=z; this.w=w; };
-	public Vec4(Vec4 c) { this.x=c.x;this.y=c.y; this.z=c.z; this.w=c.w; };
+	public Vector4d() {};
+	public Vector4d(double x, double y, double z, double w) { this.x=x; this.y=y; this.z=z; this.w=w; };
+	public Vector4d(Vector4d c) { this.x=c.x;this.y=c.y; this.z=c.z; this.w=c.w; };
 
-	public Vec4 fromString(String r) {
+	public Vector4d fromString(String r) {
 		int s1 = r.indexOf(' ');
 		int s2 = r.indexOf(' ', s1 + 1);
 		int s3 = r.indexOf(' ', s2 + 1);
@@ -23,38 +23,38 @@ public class Vec4 implements Interpolatable<Vec4>, java.io.Serializable {
 
 	public String toString() { return x+" "+y+" "+z+" "+w; };
 
-	public Vec4 clone() { return new Vec4(this); };
+	public Vector4d clone() { return new Vector4d(this); };
 	
 	//////////////////////////////////////////////////////////////////////////////
 
-	public Vec4 get(Vec4 q) { q.point(this); return this; }
-	public Vec4 set(double x, double y, double z, double w) { this.x=x; this.y=y; this.z=z; this.w=w; return this; }
+	public Vector4d get(Vector4d q) { q.point(this); return this; }
+	public Vector4d set(double x, double y, double z, double w) { this.x=x; this.y=y; this.z=z; this.w=w; return this; }
 	
-	public Vec4 add(Vec4 v) { set(x+v.x,y+v.y,z+v.z,w+v.w); return this; }
-	public Vec4 adds(Vec4 v, double scale) { set(x+v.x*scale,y+v.y*scale,z+v.z*scale, w+v.w*scale); return this; }
+	public Vector4d add(Vector4d v) { set(x+v.x,y+v.y,z+v.z,w+v.w); return this; }
+	public Vector4d adds(Vector4d v, double scale) { set(x+v.x*scale,y+v.y*scale,z+v.z*scale, w+v.w*scale); return this; }
 	
-	public Vec4 sub(Vec4 v) { set(x-v.x,y-v.y,z-v.z, w-v.w); return this; }
+	public Vector4d sub(Vector4d v) { set(x-v.x,y-v.y,z-v.z, w-v.w); return this; }
 	
-	public Vec4 scale(double s) { set(x*s,y*s,z*s,w*s); return this; }
+	public Vector4d scale(double s) { set(x*s,y*s,z*s,w*s); return this; }
 	
-	public Vec4 normalize() { return scale(1./length()); }
-	public double dot(Vec4 v) { return x*v.x+y*v.y+z*v.z+w*v.w; }
+	public Vector4d normalize() { return scale(1./length()); }
+	public double dot(Vector4d v) { return x*v.x+y*v.y+z*v.z+w*v.w; }
 	public double lengthSquared() { return x*x+y*y+z*z+w*w; }
 	public double length() { return Math.sqrt(lengthSquared()); }
 	
-	public double quadrance(Vec4 v) {  
+	public double quadrance(Vector4d v) {  
 		final double dx = v.x-this.x, dy = v.y-this.y, dz = v.z-this.z; 
 		return dx*dx+dy*dy+dz*dz; 
 	}
 	
 	////////// 
 	@Override
-	public Vec4 point(Vec4 v) {
+	public Vector4d point(Vector4d v) {
 		return set(v.x,v.y,v.z,v.w);
 	}
 	
 	@Override 
-	public Vec4 line(Vec4 a, Vec4 b, double r) {
+	public Vector4d line(Vector4d a, Vector4d b, double r) {
 		final double omr = 1.-r; 
 		return this.set(
 				a.x*omr+b.x*r, 
@@ -64,7 +64,7 @@ public class Vec4 implements Interpolatable<Vec4>, java.io.Serializable {
 	}
 	
 	
-	public Vec4 spline(Vec4 a, Vec4 da, Vec4 dd, Vec4 d, double r) {
+	public Vector4d spline(Vector4d a, Vector4d da, Vector4d dd, Vector4d d, double r) {
 		final double omr = 1-r; 
 				
 		final double p0x = a.x, p0y = a.y, p0z = a.z, p0w = a.w;

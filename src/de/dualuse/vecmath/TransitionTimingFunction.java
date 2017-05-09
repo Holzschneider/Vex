@@ -82,7 +82,7 @@ public interface TransitionTimingFunction {
 	
 	////////////
 	
-	static final TransitionTimingFunction EaseOutBounce = new TransitionTimingFunction() {
+	static final TransitionTimingFunction BounceOut = new TransitionTimingFunction() {
 		public double f(double t) {
 			final double d = 1.,c=1.,b=0.; 
 			
@@ -98,7 +98,7 @@ public interface TransitionTimingFunction {
 		};
 	};
 	
-	static final TransitionTimingFunction EaseOutElastic = new TransitionTimingFunction() {
+	static final TransitionTimingFunction ElasticOut = new TransitionTimingFunction() {
 		
 		public double f(double t) {
 			final double d = 1.,c=1.,b=0.;

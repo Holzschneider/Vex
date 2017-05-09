@@ -1,7 +1,8 @@
 package de.dualuse.vecmath;
 
+import java.io.Serializable;
 
-public class Scalar extends Number implements Value, Interpolatable<Number> {
+public class Scalar extends Number implements Interpolatable<Number>, Serializable {
 	private static final long serialVersionUID = 1L;
 	public double v;
 	
@@ -10,8 +11,7 @@ public class Scalar extends Number implements Value, Interpolatable<Number> {
 	public Scalar get(Scalar q) { q.point(this); return this; }
 
 	public Scalar clone() { return new Scalar(v); }
-
-
+	
 	@Override
 	public Scalar point(Number a) {
 		return this.set(a.doubleValue());

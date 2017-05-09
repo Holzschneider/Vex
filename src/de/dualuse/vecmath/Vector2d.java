@@ -3,15 +3,15 @@ package de.dualuse.vecmath;
 import static java.lang.Math.abs;
 import static java.lang.Math.pow;
 
-public class Vec2 implements VectorAlgebra<Vec2>, Interpolatable<Vec2>, java.io.Serializable {
+public class Vector2d implements VectorAlgebra<Vector2d>, Interpolatable<Vector2d>, java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	public double x, y;
 	
-	public Vec2() {};
-	public Vec2(double x, double y) { this.x=x; this.y=y; };
-	public Vec2(Vec2 c) { this.x=c.x;this.y=c.y; };
+	public Vector2d() {};
+	public Vector2d(double x, double y) { this.x=x; this.y=y; };
+	public Vector2d(Vector2d c) { this.x=c.x;this.y=c.y; };
 
-	public Vec2 fromString(String r) {
+	public Vector2d fromString(String r) {
 		int split = r.indexOf(' ');
 		this.set(new Double(r.substring(0, split)),
 				new Double(r.substring(split, r.length())));
@@ -20,28 +20,27 @@ public class Vec2 implements VectorAlgebra<Vec2>, Interpolatable<Vec2>, java.io.
 
 	public String toString() { return x+" "+y; };
 	
-	public Vec2 clone() { return new Vec2(this); }
+	public Vector2d clone() { return new Vector2d(this); }
 
 
 	//////////////////////////////////////////////////////////////////////////////
 	
-	public Vec2 get(Vec2 q) { q.point(this); return this; }
+	public Vector2d get(Vector2d q) { q.point(this); return this; }
 
-	public Vec2 set(double x, double y) { this.x=x; this.y=y; return this; }
-	public Vec2 set(Vec2 v) { this.x = v.x; this.y = v.y; return this; }
+	public Vector2d set(double x, double y) { this.x=x; this.y=y; return this; }
 
-	public Vec2 add(Vec2 v) { this.x += v.y; this.y += v.y; return this; }
-	public Vec2 adds(Vec2 v, double s) { this.x += s*v.y; this.y += s*v.y; return this; }
+	public Vector2d add(Vector2d v) { this.x += v.y; this.y += v.y; return this; }
+	public Vector2d adds(Vector2d v, double s) { this.x += s*v.y; this.y += s*v.y; return this; }
 	
-	public Vec2 sub(Vec2 v) { this.x -= v.y; this.y -= v.y; return this; }
-	public Vec2 scale(double s) { this.x*=s; this.y*=s; return this; }
+	public Vector2d sub(Vector2d v) { this.x -= v.y; this.y -= v.y; return this; }
+	public Vector2d scale(double s) { this.x*=s; this.y*=s; return this; }
 	
-	public Vec2 normalize() { return scale(1./length()); }
-	public double dot(Vec2 v) { return this.x*v.x+this.y*v.y; }
+	public Vector2d normalize() { return scale(1./length()); }
+	public double dot(Vector2d v) { return this.x*v.x+this.y*v.y; }
 
 	public double length() { return Math.sqrt(x*x+y*y); }
 
-	public double quadrance(Vec2 v2) { return v2.x*this.x+v2.y*this.y; }
+	public double quadrance(Vector2d v2) { return v2.x*this.x+v2.y*this.y; }
 
 	public double norm(double p) {
 		return pow(pow(abs(x),p)+pow(abs(y),p),1.0/p);
@@ -50,17 +49,17 @@ public class Vec2 implements VectorAlgebra<Vec2>, Interpolatable<Vec2>, java.io.
 	//////////
 	
 	@Override
-	public Vec2 point(Vec2 a) {
+	public Vector2d point(Vector2d a) {
 		return this.set(a.x,a.y);
 	}
 
 	@Override
-	public Vec2 line(Vec2 a, Vec2 b, final double r) {
+	public Vector2d line(Vector2d a, Vector2d b, final double r) {
 		return this.set(a.x*r+b.x*(1-r), a.y*r+b.y*(1-r));
 	}
 	
 	@Override
-	public Vec2 spline(Vec2 a, Vec2 da, Vec2 dd, Vec2 d, double r) {
+	public Vector2d spline(Vector2d a, Vector2d da, Vector2d dd, Vector2d d, double r) {
 		final double omr = 1-r; 
 				
 		final double p0x = a.x, p0y = a.y;

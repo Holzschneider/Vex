@@ -72,8 +72,10 @@ public class Track<A> extends TreeMap<Double, Track.Sample<A>> implements Animat
 //	
 //	public Track<A> put(double key, A value) { super.put(key, new Track.Sample<A>(value,null)); return this; }
 //	public Track<A> put(double key, A value, A handleVector) { super.put(key, new Track.Sample<A>(value,handleVector)); return this; }
+	
+	//TODO also support Corner-Samples by not specifying controlpoints, or allowing control points to be null 
 	public Track<A> put(double key, A leftControl, A vertex, A rightControl) { super.put(key, new Track.Sample<A>(vertex,leftControl, rightControl)); return this; }
-
+	
 	
 	public double start() { return this.firstKey(); }
 	public double end() { return this.lastKey(); }

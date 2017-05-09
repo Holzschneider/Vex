@@ -95,7 +95,7 @@ public class Quaternion implements Interpolatable<Quaternion>, Serializable {
 	}	
 
 	//TODO Verify this
-	public Quaternion setToTransform(Matrix3 t) {
+	public Quaternion setToTransform(Matrix3d t) {
 		double  T = t.m00 + t.m11 + t.m22 + 1.;
 
 		// If the trace of the t.matrix is greater than zero, then the result is:
@@ -131,7 +131,7 @@ public class Quaternion implements Interpolatable<Quaternion>, Serializable {
 	}
 	
 	// transform / rotates this vector by the quaternion
-	public Vec3 transform(Vec3 v) {
+	public Vector3d transform(Vector3d v) {
 		final double t2 =   w*x, t3 =   w*y, t4 =   w*z;
 		final double t5 =  -x*x, t6 =   x*y, t7 =   x*z;
 		final double t8 =  -y*y, t9 =   y*z, t10 = -z*z;
@@ -163,9 +163,7 @@ public class Quaternion implements Interpolatable<Quaternion>, Serializable {
 	}
 	
 	
-	public double lengthSquared() {
-		return x*x+y*y+z*z+w*w;
-	}
+
 	
 	public double length() {
 		return Math.sqrt(x*x+y*y+z*z+w*w);

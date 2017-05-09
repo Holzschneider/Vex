@@ -3,18 +3,19 @@ package de.dualuse.vecmath;
 import static java.lang.Math.abs;
 import static java.lang.Math.pow;
 
-public class Vec3 implements VectorAlgebra<Vec3>, Interpolatable<Vec3>, java.io.Serializable {
+public class Vector3d implements VectorAlgebra<Vector3d>, Interpolatable<Vector3d>, java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	public double x, y, z;
 
-	public Vec3() {};
-	public Vec3(double x, double y, double z) { this.x=x; this.y=y; this.z=z; };
-	public Vec3(Vec3 c) { this.x=c.x;this.y=c.y; this.z=c.z; };
+	public Vector3d() {};
+	public Vector3d(double x, double y, double z) { this.x=x; this.y=y; this.z=z; };
+	public Vector3d(Vector3d c) { this.x=c.x;this.y=c.y; this.z=c.z; };
 
-	public Vec3 fromString(String r) {
+	public Vector3d fromString(String r) {
 		int s1 = r.indexOf(' ');
 		int s2 = r.indexOf(' ', s1 + 1);
+		
 		return this.set(
 				new Double(r.substring(0, s1)),
 				new Double(r.substring(s1, s2)),
@@ -24,8 +25,8 @@ public class Vec3 implements VectorAlgebra<Vec3>, Interpolatable<Vec3>, java.io.
 
 	public String toString() { return x+" "+y+" "+z; };
 	
-	public Vec3 clone() {
-		return new Vec3(x,y,z);
+	public Vector3d clone() {
+		return new Vector3d(x,y,z);
 	}
 
 	//////////////////////////////////////////////////////////////////////////////
@@ -34,20 +35,20 @@ public class Vec3 implements VectorAlgebra<Vec3>, Interpolatable<Vec3>, java.io.
 //	@Override public Vec3 get(Variable<Vec3> q) { q.set(this); return this; }
 	
 //	public Vec3 set(Vec3 v) { this.x=v.x; this.y=v.y; this.z=v.z; return this; }
-	public Vec3 set(double x, double y, double z) { this.x=x; this.y=y; this.z=z; return this; }
+	public Vector3d set(double x, double y, double z) { this.x=x; this.y=y; this.z=z; return this; }
 	
-	public Vec3 add(Vec3 v) { this.x+=v.x; this.y+=v.y; this.z+=v.z; return this; }
-	public Vec3 adds(Vec3 v, double s) { this.x+=s*v.x; this.y+=s*v.y; this.z+=s*v.z; return this; }
+	public Vector3d add(Vector3d v) { this.x+=v.x; this.y+=v.y; this.z+=v.z; return this; }
+	public Vector3d adds(Vector3d v, double s) { this.x+=s*v.x; this.y+=s*v.y; this.z+=s*v.z; return this; }
 	
-	public Vec3 sub(Vec3 v) { this.x-=v.x; this.y-=v.y; this.z-=v.z; return this; }
+	public Vector3d sub(Vector3d v) { this.x-=v.x; this.y-=v.y; this.z-=v.z; return this; }
 
-	public Vec3 scale(double s) { this.x*=s; this.y*=s; this.z*=s; return this; }
-	public Vec3 normalize() { return scale(1./length()); }
+	public Vector3d scale(double s) { this.x*=s; this.y*=s; this.z*=s; return this; }
+	public Vector3d normalize() { return scale(1./length()); }
 
-	public double dot(Vec3 v) { return x*v.x+y*v.y+z*v.z; }
+	public double dot(Vector3d v) { return x*v.x+y*v.y+z*v.z; }
 
 	public double length() { return Math.sqrt(x*x+y*y+z*z); }
-	public double quadrance(Vec3 v) {  
+	public double quadrance(Vector3d v) {  
 		final double dx = v.x-this.x, dy = v.y-this.y, dz = v.z-this.z; 
 		return dx*dx+dy*dy+dz*dz; 
 	}
@@ -55,13 +56,6 @@ public class Vec3 implements VectorAlgebra<Vec3>, Interpolatable<Vec3>, java.io.
 	@Override
 	public double norm(double p) { 
 		return pow(pow(abs(x),p)+pow(abs(y),p)+pow(abs(z),p),1.0/p);
-	}
-	
-	public Vec3 cross(Vec3 a, Vec3 b) {
-		this.x = a.y*b.z - a.z*b.y; 
-		this.y = a.z*b.x - a.x*b.z;
-		this.z = a.x*b.y - a.y*b.x;
-		return this;
 	}
 	
 	
@@ -127,11 +121,11 @@ public class Vec3 implements VectorAlgebra<Vec3>, Interpolatable<Vec3>, java.io.
 //	}
 
 	@Override
-	public Vec3 point(Vec3 a) {
+	public Vector3d point(Vector3d a) {
 		return this.set(a.x,a.y,a.z);
 	}
 
-	public Vec3 line(Vec3 a, Vec3 b, double r) {
+	public Vector3d line(Vector3d a, Vector3d b, double r) {
 		final double omr = 1.-r; 
 		final double x = a.x*omr+b.x*r;
 		final double y = a.y*omr+b.y*r;
@@ -143,7 +137,7 @@ public class Vec3 implements VectorAlgebra<Vec3>, Interpolatable<Vec3>, java.io.
 		return this;
 	}
 	
-	public Vec3 spline(Vec3 a, Vec3 da, Vec3 dd, Vec3 d, double r) {
+	public Vector3d spline(Vector3d a, Vector3d da, Vector3d dd, Vector3d d, double r) {
 		final double omr = 1-r; 
 				
 		final double p0x = a.x, p0y = a.y, p0z = a.z;
@@ -168,6 +162,17 @@ public class Vec3 implements VectorAlgebra<Vec3>, Interpolatable<Vec3>, java.io.
 		
 		return this;
 	}
+	
+	
+	////////////////////////////////////// Vector3d Specific
+
+	public Vector3d cross(Vector3d a, Vector3d b) {
+		this.x = a.y*b.z - a.z*b.y; 
+		this.y = a.z*b.x - a.x*b.z;
+		this.z = a.x*b.y - a.y*b.x;
+		return this;
+	}
+	
 	
 }
 
