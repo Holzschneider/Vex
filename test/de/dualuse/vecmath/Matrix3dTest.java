@@ -1,5 +1,7 @@
 package de.dualuse.vecmath;
 
+import java.awt.geom.Point2D;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -20,6 +22,13 @@ public class Matrix3dTest {
 		
 //		Assert.assertEquals(i.toString(), n.toString());
 		Assert.assertEquals(i,m.invert());
+
+//		new Vector2d(1,2).transformBy(i).to( (v) -> new Point2.Double(v.x,v.y) );
+		i.project(new Vector2d(1,2)).to( new Reference<Point2D, Vector2d>() {
+			public Point2D from(Vector2d v) {
+				return new Point2D.Double(v.x,v.y);
+			}
+		});
 		
 	}
 	

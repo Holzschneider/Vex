@@ -2,15 +2,13 @@ package de.dualuse.vecmath;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.pow;
-import de.dualuse.vecmath.Value.Function;
 
 import java.io.Serializable;
 
 public class Vector2d 
 implements	VectorAlgebra<Vector2d>, 
 			Interpolatable<Vector2d>, 
-//			Function<Vector2d, Vector2d>, 
-//			Value<Vector2d>, 
+			Value<Vector2d>, 
 			Serializable 
 
 {
@@ -32,11 +30,11 @@ implements	VectorAlgebra<Vector2d>,
 	
 	public Vector2d clone() { return new Vector2d(this); }
 
-//	@Override
-//	public <Q> Q get(Function<Q, Vector2d> v) { return v.set(this); }
-//	
-//	@Override
-//	public Vector2d set(Vector2d t) { return this.set(t.x,t.y); }
+	@Override
+	public <Q> Q to(Reference<Q, Vector2d> v) { return v.from(this); }
+	
+	@Override
+	public Vector2d from(Vector2d t) { return this.set(t.x,t.y); }
 
 	//////////////////////////////////////////////////////////////////////////////
 	
@@ -125,6 +123,5 @@ implements	VectorAlgebra<Vector2d>,
 			return tan + (2.0 * Math.PI);
 		return tan;
 	}
-
 	
 }
