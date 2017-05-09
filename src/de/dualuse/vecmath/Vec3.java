@@ -1,12 +1,12 @@
 package de.dualuse.vecmath;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.pow;
 
-public class Vec3 implements java.io.Serializable, Cubic<Vec3>, Linear<Vec3> {
+public class Vec3 implements VectorAlgebra<Vec3>, Interpolatable<Vec3>, java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	public double x, y, z;
-
-	public Vec3 set(double x, double y, double z) { this.x=x; this.y=y; this.z=z; return this; }
 
 	public Vec3() {};
 	public Vec3(double x, double y, double z) { this.x=x; this.y=y; this.z=z; };
@@ -31,9 +31,10 @@ public class Vec3 implements java.io.Serializable, Cubic<Vec3>, Linear<Vec3> {
 	//////////////////////////////////////////////////////////////////////////////
 	
 	
-	@Override public Vec3 get(Variable<Vec3> q) { q.set(this); return this; }
+//	@Override public Vec3 get(Variable<Vec3> q) { q.set(this); return this; }
 	
-	public Vec3 set(Vec3 v) { this.x=v.x; this.y=v.y; this.z=v.z; return this; }
+//	public Vec3 set(Vec3 v) { this.x=v.x; this.y=v.y; this.z=v.z; return this; }
+	public Vec3 set(double x, double y, double z) { this.x=x; this.y=y; this.z=z; return this; }
 	
 	public Vec3 add(Vec3 v) { this.x+=v.x; this.y+=v.y; this.z+=v.z; return this; }
 	public Vec3 adds(Vec3 v, double s) { this.x+=s*v.x; this.y+=s*v.y; this.z+=s*v.z; return this; }
@@ -45,21 +46,16 @@ public class Vec3 implements java.io.Serializable, Cubic<Vec3>, Linear<Vec3> {
 
 	public double dot(Vec3 v) { return x*v.x+y*v.y+z*v.z; }
 
-	public double lengthSquared() { return x*x+y*y+z*z; }
 	public double length() { return Math.sqrt(x*x+y*y+z*z); }
-	
 	public double quadrance(Vec3 v) {  
 		final double dx = v.x-this.x, dy = v.y-this.y, dz = v.z-this.z; 
 		return dx*dx+dy*dy+dz*dz; 
 	}
-
-
-	//	public double project(Vec3 v) {
-//		double len2 = Math.sqrt(lengthSq() * v.lengthSq());
-//		if (len2 == 0)
-//			return 0;
-//		return (x*v.x + y*v.y + z*v.z) / len2;
-//	}
+	
+	@Override
+	public double norm(double p) { 
+		return pow(pow(abs(x),p)+pow(abs(y),p)+pow(abs(z),p),1.0/p);
+	}
 	
 	public Vec3 cross(Vec3 a, Vec3 b) {
 		this.x = a.y*b.z - a.z*b.y; 
@@ -67,8 +63,6 @@ public class Vec3 implements java.io.Serializable, Cubic<Vec3>, Linear<Vec3> {
 		this.z = a.x*b.y - a.y*b.x;
 		return this;
 	}
-	
-	
 	
 	
 	
@@ -131,17 +125,10 @@ public class Vec3 implements java.io.Serializable, Cubic<Vec3>, Linear<Vec3> {
 //		return !(java.lang.Double.isNaN(x) || java.lang.Double.isNaN(y) || java.lang.Double.isNaN(z) ||
 //				java.lang.Double.isInfinite(x) || java.lang.Double.isInfinite(y) || java.lang.Double.isInfinite(z));
 //	}
-	
-	
-	public Vec3 transformBy(Matrix4 v) {
-		final double x = this.x * v.m00 + this.y * v.m01 + this.z * v.m02 + v.m03;
-		final double y = this.x * v.m10 + this.y * v.m11 + this.z * v.m12 + v.m13;
-		final double z = this.x * v.m20 + this.y * v.m21 + this.z * v.m22 + v.m23;
-		
-		this.x=x; 
-		this.y=y;
-		this.z=z;
-		return this;
+
+	@Override
+	public Vec3 point(Vec3 a) {
+		return this.set(a.x,a.y,a.z);
 	}
 
 	public Vec3 line(Vec3 a, Vec3 b, double r) {
@@ -181,7 +168,6 @@ public class Vec3 implements java.io.Serializable, Cubic<Vec3>, Linear<Vec3> {
 		
 		return this;
 	}
-	
 	
 }
 

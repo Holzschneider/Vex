@@ -2,7 +2,7 @@ package de.dualuse.vecmath;
 
 import java.io.Serializable;
 
-public class Quaternion implements Serializable, Linear<Quaternion> {
+public class Quaternion implements Linear<Quaternion>, Serializable {
 	static final double FLT_EPSILON = 0.0000000001;
 
 	
@@ -161,12 +161,10 @@ public class Quaternion implements Serializable, Linear<Quaternion> {
 	
 	public Quaternion normalize() { return scale(1./length()); }
 
-	@Override
 	public Quaternion set(Quaternion q) {
 		return this.set(q.x,q.y,q.z,q.w);
 	}
 
-	@Override
 	public Quaternion get(Variable<Quaternion> q) {
 		q.set(this);
 		return this;

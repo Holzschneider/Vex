@@ -1,15 +1,23 @@
 package de.dualuse.vecmath;
 
 
-public abstract class Scalar extends Number implements Value, Cubic<Number>, Linear<Number> {
+public class Scalar extends Number implements Value, Interpolatable<Number> {
 	private static final long serialVersionUID = 1L;
 	public double v;
 	
+	public Scalar(double v) { this.v = v; }
+	public Scalar set(Number s) { this.v=s.doubleValue(); return this; }	
 	public Scalar get(Variable<Number> q) { q.set(this); return this; }
 
-	public Scalar clone() { try { return (Scalar)super.clone(); } catch (Exception e) { throw new RuntimeException(e); } }
+	public Scalar clone() { return new Scalar(v); }
 
-	
+
+	@Override
+	public Scalar point(Number a) {
+		return this.set(a.doubleValue());
+	}
+
+
 //	@Override
 	public Scalar line(Number a, Number b, double r) {
 		this.set(a.doubleValue()*(1.-r)+b.doubleValue()*r);
@@ -43,23 +51,14 @@ public abstract class Scalar extends Number implements Value, Cubic<Number>, Lin
 		return this;
 	}
 	
-	public double distance(Scalar s) { return Math.abs(s.doubleValue()-this.doubleValue()); }
-	public double distance(double s) { return Math.abs(s-this.doubleValue()); }
 	
-	public String toString() { return ""+doubleValue(); }
-	
+	public String toString() { return ""+doubleValue(); }	
 	
 	public double doubleValue() { return v; }
 	public float floatValue() { return (float)v; }
 	public int intValue() { return (int)v; }
 	public long longValue() { return (long)v; }
 	
-	public Scalar set(Scalar sv) { this.v=sv.doubleValue(); return this; }
-	public Scalar set(Number s) { this.v=s.doubleValue(); return this; }
-	public Scalar set(double s) { this.v=s; return this; }
-	public Scalar set(float s) { this.v=s; return this; }
-	public Scalar set(int s) { this.v=s; return this; }
 
-	
 	
 }

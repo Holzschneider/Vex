@@ -2,7 +2,7 @@ package de.dualuse.vecmath;
 
 import java.util.Locale;
 
-public class Matrix3 implements java.io.Serializable {
+public class Matrix3 implements MatrixAlgebra<Matrix3>, java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public double m00,m01,m02;
@@ -16,11 +16,69 @@ public class Matrix3 implements java.io.Serializable {
 
 		return this;
 	}
+	
+	public Matrix3 setElements(
+			double m00, double m01, double m02, 
+			double m10, double m11, double m12, 
+			double m20, double m21, double m22
+			) 
+	{
+		this.m00 = m00; this.m01 = m01; this.m02 = m02;
+		this.m10 = m10; this.m11 = m11; this.m12 = m12;
+		this.m20 = m20; this.m21 = m21; this.m22 = m22;
 
-	public Matrix3 invert() {
-		final double a = m00, b = m01, c = m02;
-		final double d = m10, e = m11, f = m12;
-		final double g = m20, h = m21, i = m22;
+		return this;
+	}
+	
+
+	@Override
+	public Matrix3 zero() {
+		return this.setElements(
+				0,0,0,
+				0,0,0,
+				0,0,0);
+	}
+
+	@Override
+	public Matrix3 identity() {
+		return this.setElements(
+				1,0,0,
+				0,1,0,
+				0,0,1);
+	}
+
+	@Override
+	public Matrix3 concatenate(Matrix3 that) {
+		return concatenation(this, that);
+	}
+
+	@Override
+	public Matrix3 concatenation(Matrix3 A, Matrix3 B) {
+		final double m00 = A.m00*B.m00+A.m01*B.m10+A.m02*B.m20;
+		final double m01 = A.m00*B.m01+A.m01*B.m11+A.m02*B.m21;
+		final double m02 = A.m00*B.m02+A.m01*B.m12+A.m02*B.m22;
+		
+		final double m10 = A.m10*B.m00+A.m11*B.m10+A.m12*B.m20;
+		final double m11 = A.m10*B.m01+A.m11*B.m11+A.m12*B.m21;
+		final double m12 = A.m10*B.m02+A.m11*B.m12+A.m12*B.m22;
+		
+		final double m20 = A.m20*B.m00+A.m21*B.m10+A.m22*B.m20;
+		final double m21 = A.m20*B.m01+A.m21*B.m11+A.m22*B.m21;
+		final double m22 = A.m20*B.m02+A.m21*B.m12+A.m22*B.m22;
+		
+		return this.setElements(
+				m00, m01, m02,
+				m10, m11, m12,
+				m20, m21, m22
+				);
+	}
+
+
+	@Override
+	public Matrix3 invert(Matrix3 m) {
+		final double a = m.m00, b = m.m01, c = m.m02;
+		final double d = m.m10, e = m.m11, f = m.m12;
+		final double g = m.m20, h = m.m21, i = m.m22;
 		
 		final double A = (e*i-f*h), D =-(b*i-c*h), G = (b*f-c*e);
 		final double B =-(d*i-f*g), E = (a*i-c*g), H =-(a*f-c*d);
@@ -28,13 +86,23 @@ public class Matrix3 implements java.io.Serializable {
 	
 		final double ooDetA = 1. / (a*A-b*(i*d-f*g)+c*(d*h-e*g));
 
-		this.m00 = A*ooDetA; this.m01 = D*ooDetA; this.m02 = G*ooDetA;
-		this.m10 = B*ooDetA; this.m11 = E*ooDetA; this.m12 = H*ooDetA;
-		this.m20 = C*ooDetA; this.m21 = F*ooDetA; this.m22 = I*ooDetA;
-		
-		return this;
+		return this.setElements(
+				A*ooDetA, D*ooDetA, G*ooDetA,
+				B*ooDetA, E*ooDetA, H*ooDetA,
+				C*ooDetA, F*ooDetA, I*ooDetA
+				);
 	}
+	
 
+	@Override
+	public Matrix3 transpose(Matrix3 m) {
+		return this.setElements(
+				m.m00, m.m01, m.m02,
+				m.m10, m.m11, m.m12,
+				m.m20, m.m21, m.m22
+			);
+	}
+	
 	public Vec3 transform(Vec3 v) {
 		return v.set(
 			v.x*m00+v.y*m01+v.z*m02, 

@@ -1,6 +1,6 @@
 package de.dualuse.vecmath;
 
-public interface Linear<Q> extends Variable<Q> {
+public interface Linear<Q> {
 	
 	Linear<Q> line(Q a, Q b, double r);
 	
