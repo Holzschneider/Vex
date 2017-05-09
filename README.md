@@ -1,5 +1,5 @@
 # Vex
-Vector Algebra for Java (& soon Javascript) optimized for brevity, transparency and ease-of-use instead of raw speed.
+Vecs & Vector Algebra for Java (& soon Javascript) optimized for brevity, transparency and ease-of-use instead of raw speed.
 
 Release
 -------
