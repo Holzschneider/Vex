@@ -46,12 +46,7 @@ public class Matrix3d implements MatrixAlgebra<Matrix3d>, java.io.Serializable {
 				m10*m10+m11*m11+m12*m12+
 				m20*m20+m21*m21+m22*m22
 			).hashCode();
-//		return 
-//				new Double(m00).hashCode()^new Double(m01).hashCode()^new Double(m02).hashCode()^
-//				new Double(m10).hashCode()^new Double(m11).hashCode()^new Double(m12).hashCode()^
-//				new Double(m20).hashCode()^new Double(m21).hashCode()^new Double(m22).hashCode();
 	}
-	
 	
 	@Override
 	public boolean equals(Object o) {
@@ -71,7 +66,6 @@ public class Matrix3d implements MatrixAlgebra<Matrix3d>, java.io.Serializable {
 				m.m20 == m20 && m.m21 == m21 && m.m22 == m22;
 		
 	}
-	
 	
 	@Override
 	public Matrix3d clone() throws CloneNotSupportedException {
@@ -245,14 +239,38 @@ public class Matrix3d implements MatrixAlgebra<Matrix3d>, java.io.Serializable {
 	
 
 	/// UNTESTED
-	public Matrix3d setToProjection(Matrix4d m) {
+	public Matrix3d setProjection(Matrix4d m, double zPlane) {
+//		final double n00 = 1, n01 = 0, n02 = 0, n03 = 0;
+//		final double n10 = 0, n11 = 1, n12 = 0, n13 = 0;
+//		final double n20 = 0, n21 = 0, n22 = 1, n23 = zPlane;
+//		final double n30 = 0, n31 = 0, n32 = 0, n33 = 1;
+//		
+//		double m00 = n00*m.m00+n10*m.m01+n20*m.m02+n30*m.m03;
+//		double m01 = n01*m.m00+n11*m.m01+n21*m.m02+n31*m.m03;
+////		double m02 = n02*m.m00+n12*m.m01+n22*m.m02+n32*m.m03;
+//		double m03 = n03*m.m00+n13*m.m01+n23*m.m02+n33*m.m03;
+//
+//		double m10 = n00*m.m10+n10*m.m11+n20*m.m12+n30*m.m13;
+//		double m11 = n02*m.m10+n12*m.m11+n22*m.m12+n32*m.m13;
+////		double m12 = n01*m.m10+n11*m.m11+n21*m.m12+n31*m.m13;
+//		double m13 = n03*m.m10+n13*m.m11+n23*m.m12+n33*m.m13;
+//		
+////		double m20 = n00*m.m20+n10*m.m21+n20*m.m22+n30*m.m23;
+////		double m21 = n01*m.m20+n11*m.m21+n21*m.m22+n31*m.m23;
+////		double m22 = n02*m.m20+n12*m.m21+n22*m.m22+n32*m.m23;
+////		double m23 = n03*m.m20+n13*m.m21+n23*m.m22+n33*m.m23;
+//		
+//		double m30 = n00*m.m30+n10*m.m31+n20*m.m32+n30*m.m33;
+//		double m31 = n01*m.m30+n11*m.m31+n21*m.m32+n31*m.m33;
+////		double m32 = n02*m.m30+n12*m.m31+n22*m.m32+n32*m.m33;
+//		double m33 = n03*m.m30+n13*m.m31+n23*m.m32+n33*m.m33;
+
 		return this.elements(
-				m.m00, m.m01,  m.m03, 
-				m.m10, m.m11,  m.m13,
-				m.m30, m.m31,  m.m33 
+				m.m00, m.m01, zPlane*m.m02+m.m03, 
+				m.m10, m.m11, zPlane*m.m12+m.m13,
+				m.m30, m.m31, zPlane*m.m32+m.m33 
 			);
 	}
-
 	
 	//////////
 
@@ -274,7 +292,7 @@ public class Matrix3d implements MatrixAlgebra<Matrix3d>, java.io.Serializable {
 	}
 	
 	//as in cast a shadow on an object
-	public Vector2d cast(Vector2d v) {
+	public Vector2d intersect(Vector2d v) {
 		final double A = (m11*m22-m12*m21), D =-(m01*m22-m02*m21), G = (m01*m12-m02*m11);
 		final double B =-(m10*m22-m12*m20), E = (m00*m22-m02*m20), H =-(m00*m12-m02*m10);
 		final double C = (m10*m21-m11*m20), F =-(m00*m21-m01*m20), I = (m00*m11-m01*m10);

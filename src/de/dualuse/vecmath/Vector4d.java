@@ -25,6 +25,26 @@ public class Vector4d implements Interpolatable<Vector4d>, java.io.Serializable 
 
 	public Vector4d clone() { return new Vector4d(this); };
 	
+	@Override
+	public int hashCode() {
+		return new Double(x*x+y*y+z*z+w*w).hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == this)
+			return true;
+		else
+		if (o instanceof Vector4d)
+			return equals((Vector4d)o);
+		else
+			return false;
+	}
+	
+	public boolean equals(Vector4d a) {
+		return x==a.x && y==a.y && z==a.z && w==a.w;
+	}
+
 	//////////////////////////////////////////////////////////////////////////////
 
 	public Vector4d get(Vector4d q) { q.point(this); return this; }
@@ -46,8 +66,14 @@ public class Vector4d implements Interpolatable<Vector4d>, java.io.Serializable 
 		final double dx = v.x-this.x, dy = v.y-this.y, dz = v.z-this.z; 
 		return dx*dx+dy*dy+dz*dz; 
 	}
+
+	////////// Convenience Methods
 	
-	////////// 
+	public Vector4d augment(Vector3d v) { return this.set(v.x, v.y, v.z, 1); }
+	public Vector4d transformation(Matrix4d m) { return m.transform(this); }
+	
+	////////// Interpolatable
+	
 	@Override
 	public Vector4d point(Vector4d v) {
 		return set(v.x,v.y,v.z,v.w);

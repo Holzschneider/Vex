@@ -62,7 +62,37 @@ public class Matrix4d implements MatrixAlgebra<Matrix4d>, java.io.Serializable {
 				this.m30, this.m31, this.m32, this.m33);
 	}
 	
-
+	
+	@Override
+	public int hashCode() {
+		return new Double(
+				m00*m00+m01*m01+m02*m02+m03*m03+
+				m10*m10+m11*m11+m12*m12+m13*m13+
+				m20*m20+m21*m21+m22*m22+m23*m23+
+				m30*m30+m31*m31+m32*m32+m33*m33
+			).hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == this)
+			return true;
+		else
+		if (o instanceof Matrix4d)
+			return equals((Matrix4d)o);
+		else
+			return false;
+	}
+	
+	public boolean equals(Matrix4d m) {
+		return
+				m.m00 == m00 && m.m01 == m01 && m.m02 == m02 && m.m03 == m03 && 
+				m.m10 == m10 && m.m11 == m11 && m.m12 == m12 && m.m13 == m13 && 
+				m.m20 == m20 && m.m21 == m21 && m.m22 == m22 && m.m23 == m23 && 
+				m.m30 == m30 && m.m31 == m31 && m.m32 == m32 && m.m33 == m33;
+	}
+	
+	
 	//////////////////////////////////////////////////////////////////////////////
 	
 	private Matrix4d elements(
@@ -246,30 +276,30 @@ public class Matrix4d implements MatrixAlgebra<Matrix4d>, java.io.Serializable {
 			) {
 
 		return elements(
-				m00*n00+m10*n01+m20*n02+m30*n03,
-				m00*n10+m10*n11+m20*n12+m30*n13,
-				m00*n20+m10*n21+m20*n22+m30*n23,
-				m00*n30+m10*n31+m20*n32+m30*n33,
+				n00*m00+n10*m01+n20*m02+n30*m03,
+				n01*m00+n11*m01+n21*m02+n31*m03,
+				n02*m00+n12*m01+n22*m02+n32*m03,
+				n03*m00+n13*m01+n23*m02+n33*m03,
+
+				n00*m10+n10*m11+n20*m12+n30*m13,
+				n02*m10+n12*m11+n22*m12+n32*m13,
+				n01*m10+n11*m11+n21*m12+n31*m13,
+				n03*m10+n13*m11+n23*m12+n33*m13,
 				
-				m01*n00+m11*n01+m21*n02+m31*n03,
-				m01*n10+m11*n11+m21*n12+m31*n13,
-				m01*n20+m11*n21+m21*n22+m31*n23,
-				m01*n30+m11*n31+m21*n32+m31*n33,
-
-				m02*n00+m12*n01+m22*n02+m32*n03,
-				m02*n10+m12*n11+m22*n12+m32*n13,
-				m02*n20+m12*n21+m22*n22+m32*n23,
-				m02*n30+m12*n31+m22*n32+m32*n33,
-
-				m03*n00+m13*n01+m23*n02+m33*n03,
-				m03*n10+m13*n11+m23*n12+m33*n13,
-				m03*n20+m13*n21+m23*n22+m33*n23,
-				m03*n30+m13*n31+m23*n32+m33*n33
+				n00*m20+n10*m21+n20*m22+n30*m23,
+				n01*m20+n11*m21+n21*m22+n31*m23,
+				n02*m20+n12*m21+n22*m22+n32*m23,
+				n03*m20+n13*m21+n23*m22+n33*m23,
+				
+				n00*m30+n10*m31+n20*m32+n30*m33,
+				n01*m30+n11*m31+n21*m32+n31*m33,
+				n02*m30+n12*m31+n22*m32+n32*m33,
+				n03*m30+n13*m31+n23*m32+n33*m33
 			);
 	}
-
-
-	public Matrix4d rotate(double theta, double ax, double ay, double az) {
+	
+	
+	public Matrix4d rotate(double ax, double ay, double az, double theta) {
 		// compare '$ man glRotate' or 'javax.vecmath.Matrix4d.set(AxisAngle4d a1)'
 		final double s = sin(theta), c = cos(theta), t = 1-c, l = sqrt(ax*ax+ay*ay+az*az);
 		final double x = ax/l, y = ay/l, z= az/l, xz = x*z, xy = x*y, yz = y*z, xx=x*x, yy=y*y, zz=z*z;
@@ -297,11 +327,10 @@ public class Matrix4d implements MatrixAlgebra<Matrix4d>, java.io.Serializable {
 				 0, 0, 0, 1);
 	}
 	
-
 	
 	/////////
 	
-	public Matrix4d setToTransformation(Matrix3d m) {
+	public Matrix4d setTransformation(Matrix3d m) {
 		return this.elements(
 				m.m00, m.m01, m.m02,   0, 
 				m.m10, m.m11, m.m12,   0,
@@ -310,7 +339,7 @@ public class Matrix4d implements MatrixAlgebra<Matrix4d>, java.io.Serializable {
 			);
 	}
 
-	public Matrix4d setToProjection(Matrix3d m) {
+	public Matrix4d setProjection(Matrix3d m) {
 		return this.elements(
 				m.m00, m.m01,   0, m.m02, 
 				m.m10, m.m11,   0, m.m12,
@@ -319,7 +348,7 @@ public class Matrix4d implements MatrixAlgebra<Matrix4d>, java.io.Serializable {
 			);
 	}
 
-	public Matrix4d setToRotation(Quaternion quat) {
+	public Matrix4d setRotation(Quaternion quat) {
 		final double qx = quat.x, qy = quat.y, qz = quat.z, qw = quat.w;
 		
 		m00 = qw*qw + qx*qx - qy*qy - qz*qz; 
@@ -348,7 +377,7 @@ public class Matrix4d implements MatrixAlgebra<Matrix4d>, java.io.Serializable {
 		return this;
 	}
 
-	public Matrix4d setToTranslation(Vector3d translation) {
+	public Matrix4d setTranslation(Vector3d translation) {
 		final double tx = translation.x, ty = translation.y, tz = translation.z;
 		return elements(	
 				1.0,0.0,0.0, tx,
@@ -358,8 +387,7 @@ public class Matrix4d implements MatrixAlgebra<Matrix4d>, java.io.Serializable {
 			);		
 	}
 	
-
-	public Matrix4d setToScale(Vector3d scaling) {
+	public Matrix4d setScale(Vector3d scaling) {
 		final double scx = scaling.x, scy = scaling.y, scz = scaling.y; 
 		return elements(	
 				scx,0.0,0.0,0.0,
@@ -432,7 +460,41 @@ public class Matrix4d implements MatrixAlgebra<Matrix4d>, java.io.Serializable {
 //		
 //		return this;			
 //	}
-	
+//	//TODO Verify this
+//	public Quaternion setToTransform(Matrix3d t) {
+//		double  T = t.m00 + t.m11 + t.m22 + 1.;
+//
+//		// If the trace of the t.matrix is greater than zero, then the result is:
+//		if (T>0.) {
+//		      double S = 0.5 / Math.sqrt(T);
+//		      
+//		      return this.set(( t.m21 - t.m12 ) * S,( t.m02 - t.m20 ) * S,( t.m10 - t.m01 ) * S,0.25 / S);
+//		} else { 
+//			//If the trace of the t.matrix is less than or equal to zero then identify which t.major diagonal elet.ment has the greatest value.
+//			if ((t.m00 > t.m11)&&(t.m00 > t.m22)) { 
+//			   final double S = Math.sqrt( 1.0 + t.m00 - t.m11 - t.m22 ) * 2; // S=4*qx 
+//			   final double qw = (t.m21 - t.m12) / S;
+//			   final double qx = 0.25 * S;
+//			   final double qy = (t.m01 + t.m10) / S; 
+//			   final double qz = (t.m02 + t.m20) / S;
+//			   return this.set(qx,qy,qz,qw);
+//			} else if (t.m11 > t.m22) { 
+//			   final double S = Math.sqrt( 1.0 + t.m11 - t.m00 - t.m22 ) * 2; // S=4*qy
+//			   final double qw = (t.m02 - t.m20) / S;
+//			   final double qx = (t.m01 + t.m10) / S; 
+//			   final double qy = 0.25 * S;
+//			   final double qz = (t.m12 + t.m21) / S;
+//			   return this.set(qx,qy,qz,qw);
+//			} else { 
+//			   final double S = Math.sqrt( 1.0 + t.m22 - t.m00 - t.m11 ) * 2; // S=4*qz
+//			   final double qw = (t.m10 - t.m01) / S;
+//			   final double qx = (t.m02 + t.m20) / S; 
+//			   final double qy = (t.m12 + t.m21) / S; 
+//			   final double qz = 0.25 * S;
+//			   return this.set(qx,qy,qz,qw);
+//			}
+//		}
+//	}	
 	
 	
 }

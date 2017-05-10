@@ -29,6 +29,27 @@ public class Vector3d implements VectorAlgebra<Vector3d>, Interpolatable<Vector3
 		return new Vector3d(x,y,z);
 	}
 	
+	@Override
+	public int hashCode() {
+		return new Double(x*x+y*y+z*z).hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == this)
+			return true;
+		else
+		if (o instanceof Vector3d)
+			return equals((Vector3d)o);
+		else
+			return false;
+	}
+	
+	public boolean equals(Vector3d a) {
+		return x==a.x && y==a.y && z==a.z;
+	}
+
+	
 	//////////////////////////////////////////////////////////////////////////////
 
 	public static interface Value<Q> { Q define(Vector3d v); }
@@ -113,13 +134,17 @@ public class Vector3d implements VectorAlgebra<Vector3d>, Interpolatable<Vector3
 //				2*( (t7 -  t3)*this.x + (t2 +  t9)*this.y + (t5 + t8)*this.z ) + this.z
 //		);
 //	}
-//	
-////		public Vec3.Double add(Vec3 v) { set(x+v.x,y+v.y,z+v.z); return this; }
-//	public boolean isValid() {
-//		return !(java.lang.Double.isNaN(x) || java.lang.Double.isNaN(y) || java.lang.Double.isNaN(z) ||
-//				java.lang.Double.isInfinite(x) || java.lang.Double.isInfinite(y) || java.lang.Double.isInfinite(z));
-//	}
+	
 
+	////////// Convenience Methods
+	
+	public Vector3d augment(Vector2d v) { return this.set(v.x, v.y, 1); }
+	public Vector3d transformation(Matrix3d m) { return m.transform(this); }
+	public Vector3d projection(Matrix4d m) { return m.project(this); }
+	
+	
+	////////// Interpolatable
+	
 	@Override
 	public Vector3d point(Vector3d a) {
 		return this.set(a.x,a.y,a.z);

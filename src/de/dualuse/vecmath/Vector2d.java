@@ -30,6 +30,30 @@ implements	VectorAlgebra<Vector2d>,
 	
 	public Vector2d clone() { return new Vector2d(this); }
 
+
+	@Override
+	public int hashCode() {
+		return new Double(x*x+y*y).hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o == this)
+			return true;
+		else
+		if (o instanceof Vector2d)
+			return equals((Vector2d)o);
+		else
+			return false;
+	}
+	
+	public boolean equals(Vector2d a) {
+		return x==a.x && y==a.y;
+		
+	}
+
+	
+	
 	@Override
 	public <Q> Q to(Reference<Q, Vector2d> v) { return v.from(this); }
 	
@@ -58,6 +82,12 @@ implements	VectorAlgebra<Vector2d>,
 	public double norm(double p) {
 		return pow(pow(abs(x),p)+pow(abs(y),p),1.0/p);
 	}
+	
+	
+	////////// Convenience Methods
+	
+	public Vector2d projection(Matrix3d m) { return m.project(this); }
+	public Vector2d intersection(Matrix3d m) { return m.intersect(this); } 
 
 	//////////
 	
