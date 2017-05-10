@@ -38,7 +38,7 @@ public class Track<A> extends TreeMap<Double, Track.Sample<A>> implements Animat
 	
 	public<R extends Interpolatable<? super A>> R get(double t, R v) {
 		if (size()==1) {
-			v.point(this.firstEntry().getValue().v);
+			v.set(this.firstEntry().getValue().v);
 			return v;
 		}
 		

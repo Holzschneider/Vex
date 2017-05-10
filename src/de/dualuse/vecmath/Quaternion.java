@@ -6,32 +6,19 @@ import static java.lang.Math.sqrt;
 
 import java.io.Serializable;
 
-public class Quaternion implements Interpolatable<Quaternion>, Serializable {
+public class Quaternion extends Tuple<Quaternion> implements Interpolatable<Quaternion>, Serializable {
 	static final double FLT_EPSILON = 0.0000000001;
 	
 	private static final long serialVersionUID = 1L;	
 	
 	public double x,y,z,w;
 	
-	public Quaternion() { }
-	
-	public Quaternion(double x, double y, double z, double w) { set(x,y,z,w); }
-//	public Quaternion(Quaternion q) { set(q.x,q.y,q.z,q.w); }
-
-	public Quaternion set(double x, double y, double z, double w) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.w = w;
-		
-		return this;
-	}
+	public Quaternion() { identity(); }
 
 	public Quaternion fromString(String r) {
 		String c[] = r.split("\\s+");
-		return this.set( new Double(c[0]),new Double(c[1]),new Double(c[2]),new Double(c[3]) );
+		return this.xyzw( new Double(c[0]),new Double(c[1]),new Double(c[2]),new Double(c[3]) );
 	}
-	
 	
 	@Override 
 	public String toString() {
@@ -41,7 +28,7 @@ public class Quaternion implements Interpolatable<Quaternion>, Serializable {
 	
 	@Override
 	public Quaternion clone() {
-		return new Quaternion().set(x,y,z,w);
+		return new Quaternion().xyzw(x,y,z,w);
 	}
 	
 
@@ -51,26 +38,25 @@ public class Quaternion implements Interpolatable<Quaternion>, Serializable {
 	}
 	
 	@Override
-	public boolean equals(Object o) {
-		if (o == this)
-			return true;
-		else
-		if (o instanceof Quaternion)
-			return equals((Quaternion)o);
-		else
-			return false;
-	}
-	
-	public boolean equals(Quaternion a) {
+	public boolean elementsEqual(Quaternion a) {
 		return x==a.x && y==a.y && z==a.z && w==a.w;
-		
 	}
 
+
+	public Quaternion setElements(double x, double y, double z, double w) { return this.xyzw(x, y, z, w); }
+	public Quaternion xyzw(double x, double y, double z, double w) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.w = w;
+		
+		return this;
+	}
 	
 	///////////////////////////////////////////////////////
 	
 	public Quaternion identity() {
-		return this.set(0, 0, 0, 1);
+		return this.xyzw(0, 0, 0, 1);
 	}
 	
 	
@@ -78,7 +64,7 @@ public class Quaternion implements Interpolatable<Quaternion>, Serializable {
 	 * Transforms this quaternion by the given quaternion
 	 */
 	public Quaternion concatenate(Quaternion q) {
-		return set(
+		return xyzw(
 				x*q.x - y*q.y - z*q.z - w*q.w,
 				x*q.y + y*q.x + z*q.w - w*q.z,
 				x*q.z + z*q.x + w*q.y - y*q.w,
@@ -86,7 +72,7 @@ public class Quaternion implements Interpolatable<Quaternion>, Serializable {
 	}
 	
 	public Quaternion concatenation(Quaternion a, Quaternion q) {
-		return set(
+		return xyzw(
 				a.x*q.x - a.y*q.y - a.z*q.z - a.w*q.w,
 				a.x*q.y + a.y*q.x + a.z*q.w - a.w*q.z,
 				a.x*q.z + a.z*q.x + a.w*q.y - a.y*q.w,
@@ -96,12 +82,12 @@ public class Quaternion implements Interpolatable<Quaternion>, Serializable {
 
 	public Quaternion invert() { 
 		final double inv = 1.0 / Math.sqrt(x*x+y*y+z*z+w*w); 
-		return this.set(-this.x*inv, -this.y*inv, -this.z*inv, this.w*inv); 
+		return this.xyzw(-this.x*inv, -this.y*inv, -this.z*inv, this.w*inv); 
 	}
 	
 	public Quaternion inversion(Quaternion q) { 
 		final double inv = 1.0 / Math.sqrt(q.x*q.x+q.y*q.y+q.z*q.z+q.w*q.w); 
-		return q.set(-q.x*inv, -q.y*inv, -q.z*inv, q.w*inv); 
+		return q.xyzw(-q.x*inv, -q.y*inv, -q.z*inv, q.w*inv); 
 	}
 
 	
@@ -112,18 +98,20 @@ public class Quaternion implements Interpolatable<Quaternion>, Serializable {
 		final double qx = x*s/l, qy = y*s/l, qz = z*s/l, qw = c;
 		
 		//concatenate the quaternion (qx,qy,qz,qw) to this quaternion
-		return this.set( 
+		return this.xyzw( 
 				x*qx - y*qy - z*qz - w*qw,
 				x*qy + y*qx + z*qw - w*qz,
 				x*qz + z*qx + w*qy - y*qw,
 				x*qw + w*qx + y*qz - z*qy);
 	}
 	
+	
+	public static Quaternion fromRotation(AxisAngle aa) { return new Quaternion().setRotation(aa); } 
 	public Quaternion setRotation(AxisAngle aa) {
 		final double s = sin(aa.theta / 2.), c= cos(aa.theta / 2.);
 		final double x = aa.x, y = aa.y, z = aa.z, l = sqrt(x*x+y*y+z*z);
 		
-		return this.set(x*s/l, y*s/l, z*s/l, c);
+		return this.xyzw(x*s/l, y*s/l, z*s/l, c);
 	}	
 
 //	// transform / rotates this vector by the quaternion
@@ -142,8 +130,8 @@ public class Quaternion implements Interpolatable<Quaternion>, Serializable {
 	////////////////////////////////////// Interpolatable Specific
 
 	@Override
-	public Quaternion point(Quaternion a) {
-		return set(a.x,a.y,a.z,a.w);
+	public Quaternion set(Quaternion a) {
+		return xyzw(a.x,a.y,a.z,a.w);
 	}
 	
 	///XXX Untested
@@ -157,8 +145,8 @@ public class Quaternion implements Interpolatable<Quaternion>, Serializable {
 		
 		this.line(a,d,r);
 		
-		a.set(ax, ay, az, aw);
-		d.set(dx, dy, dz, dw);
+		a.xyzw(ax, ay, az, aw);
+		d.xyzw(dx, dy, dz, dw);
 		
 		return this;
 	}
@@ -195,11 +183,6 @@ public class Quaternion implements Interpolatable<Quaternion>, Serializable {
 		return this;
 	}
 	
-
-	public Quaternion get(Quaternion q) {
-		q.set(x,y,z,w);
-		return this;
-	}
 
 	
 }

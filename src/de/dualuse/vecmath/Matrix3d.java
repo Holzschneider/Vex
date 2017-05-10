@@ -3,30 +3,40 @@ package de.dualuse.vecmath;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 
-public class Matrix3d implements MatrixAlgebra<Matrix3d>, java.io.Serializable {
+import java.io.Serializable;
+
+public class Matrix3d extends Matrix<Matrix3d> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public double m00,m01,m02;
 	public double m10,m11,m12;
 	public double m20,m21,m22;
 	
-	public Matrix3d() {}
-	public Matrix3d(
-			double m00, double m01, double m02,
-			double m10, double m11, double m12,
-			double m20, double m21, double m22) {
-		this.elements(m00, m01, m02, m10, m11, m12, m20, m21, m22);
+	public Matrix3d() {
+		identity();
 	}
 	
-	public Matrix3d(Matrix3d c) {
-		this.elements(c.m00, c.m01, c.m02, c.m10, c.m11, c.m12, c.m20, c.m21, c.m22);
+	public static Matrix3d from(
+				double m00,double m01,double m02,
+				double m10,double m11,double m12,
+				double m20,double m21,double m22
+			) {
+		return new Matrix3d().setElements(m00, m01, m02, m10, m11, m12, m20, m21, m22);
 	}
 	
+//	public Matrix3d(
+//			double m00,double m01,double m02,
+//			double m10,double m11,double m12,
+//			double m20,double m21,double m22
+//			)
+//	{
+//		this.setElements(m00, m01, m02, m10, m11, m12, m20, m21, m22);
+//	}
 
 	public Matrix3d fromString(String r) {
 		String c[] = r.split("\\s+");
 
-		return this.elements(
+		return this.setElements(
 				new Double(c[0]), new Double(c[1]), new Double(c[2]),
 				new Double(c[3]), new Double(c[4]), new Double(c[5]),
 				new Double(c[6]), new Double(c[7]), new Double(c[8]));
@@ -48,28 +58,16 @@ public class Matrix3d implements MatrixAlgebra<Matrix3d>, java.io.Serializable {
 			).hashCode();
 	}
 	
-	@Override
-	public boolean equals(Object o) {
-		if (o == this)
-			return true;
-		else
-		if (o instanceof Matrix3d)
-			return equals((Matrix3d)o);
-		else
-			return false;
-	}
-	
-	public boolean equals(Matrix3d m) {
+	public boolean elementsEqual(Matrix3d m) {
 		return
 				m.m00 == m00 && m.m01 == m01 && m.m02 == m02 &&
 				m.m10 == m10 && m.m11 == m11 && m.m12 == m12 &&
 				m.m20 == m20 && m.m21 == m21 && m.m22 == m22;
-		
 	}
 	
 	@Override
-	public Matrix3d clone() throws CloneNotSupportedException {
-		return new Matrix3d().elements(
+	public Matrix3d clone() {
+		return new Matrix3d().setElements(
 				this.m00, this.m01, this.m02, 
 				this.m10, this.m11, this.m12, 
 				this.m20, this.m21, this.m22);
@@ -77,7 +75,7 @@ public class Matrix3d implements MatrixAlgebra<Matrix3d>, java.io.Serializable {
 	
 	//////////////////////////////////////////////////////////////////////////////
 
-	private Matrix3d elements(
+	public Matrix3d setElements(
 			double m00, double m01, double m02, 
 			double m10, double m11, double m12, 
 			double m20, double m21, double m22
@@ -101,7 +99,7 @@ public class Matrix3d implements MatrixAlgebra<Matrix3d>, java.io.Serializable {
 
 	@Override
 	public Matrix3d zero() {
-		return this.elements(
+		return this.setElements(
 				0,0,0,
 				0,0,0,
 				0,0,0);
@@ -109,7 +107,7 @@ public class Matrix3d implements MatrixAlgebra<Matrix3d>, java.io.Serializable {
 
 	@Override
 	public Matrix3d identity() {
-		return this.elements(
+		return this.setElements(
 				1,0,0,
 				0,1,0,
 				0,0,1);
@@ -122,7 +120,7 @@ public class Matrix3d implements MatrixAlgebra<Matrix3d>, java.io.Serializable {
 	
 	@Override
 	public Matrix3d concatenation(Matrix3d A, Matrix3d B) {
-		return this.elements(
+		return this.setElements(
 				A.m00*B.m00+A.m01*B.m10+A.m02*B.m20,
 				A.m00*B.m01+A.m01*B.m11+A.m02*B.m21,
 				A.m00*B.m02+A.m01*B.m12+A.m02*B.m22,
@@ -136,7 +134,7 @@ public class Matrix3d implements MatrixAlgebra<Matrix3d>, java.io.Serializable {
 				A.m20*B.m02+A.m21*B.m12+A.m22*B.m22
 		);
 	}
-
+	
 	@Override
 	public Matrix3d transpose() {
 		return this.transposition(this);
@@ -144,7 +142,7 @@ public class Matrix3d implements MatrixAlgebra<Matrix3d>, java.io.Serializable {
 	
 	@Override
 	public Matrix3d transposition(Matrix3d m) {
-		return this.elements(
+		return this.setElements(
 				m.m00, m.m01, m.m02,
 				m.m10, m.m11, m.m12,
 				m.m20, m.m21, m.m22
@@ -168,7 +166,7 @@ public class Matrix3d implements MatrixAlgebra<Matrix3d>, java.io.Serializable {
 	
 		final double ooDetA = 1. / (a*A-b*(i*d-f*g)+c*(d*h-e*g));
 
-		return this.elements(
+		return this.setElements(
 				A*ooDetA, D*ooDetA, G*ooDetA,
 				B*ooDetA, E*ooDetA, H*ooDetA,
 				C*ooDetA, F*ooDetA, I*ooDetA
@@ -190,7 +188,7 @@ public class Matrix3d implements MatrixAlgebra<Matrix3d>, java.io.Serializable {
 			double n20, double n21, double n22
 			) {
 
-		return elements(
+		return setElements(
 				m00*n00+m01*n10+m02*n20, m00*n01+m01*n11+m02*n21, m00*n02+m01*n12+m02*n22,
 				m10*n00+m11*n10+m12*n20, m10*n01+m11*n11+m12*n21, m10*n02+m11*n12+m12*n22,
 				m20*n00+m21*n10+m22*n20, m20*n01+m21*n11+m22*n21, m20*n02+m21*n12+m22*n22
@@ -265,7 +263,7 @@ public class Matrix3d implements MatrixAlgebra<Matrix3d>, java.io.Serializable {
 ////		double m32 = n02*m.m30+n12*m.m31+n22*m.m32+n32*m.m33;
 //		double m33 = n03*m.m30+n13*m.m31+n23*m.m32+n33*m.m33;
 
-		return this.elements(
+		return this.setElements(
 				m.m00, m.m01, zPlane*m.m02+m.m03, 
 				m.m10, m.m11, zPlane*m.m12+m.m13,
 				m.m30, m.m31, zPlane*m.m32+m.m33 
@@ -276,7 +274,7 @@ public class Matrix3d implements MatrixAlgebra<Matrix3d>, java.io.Serializable {
 
 
 	public Vector3d transform(Vector3d v) {
-		return v.set(
+		return v.xyz(
 			v.x*m00+v.y*m01+v.z*m02, 
 			v.x*m10+v.y*m11+v.z*m12, 
 			v.x*m20+v.y*m21+v.z*m22 
@@ -288,7 +286,7 @@ public class Matrix3d implements MatrixAlgebra<Matrix3d>, java.io.Serializable {
 		final double y = v.x*m10+v.y*m11+m12;
 		final double w = v.x*m20+v.y*m21+m22;
 		
-		return v.set( x/w, y/w );
+		return v.xy( x/w, y/w );
 	}
 	
 	//as in cast a shadow on an object
@@ -303,7 +301,7 @@ public class Matrix3d implements MatrixAlgebra<Matrix3d>, java.io.Serializable {
 		double y= (v.x*B+v.y*E+H)/detA;
 		double w= (v.x*C+v.y*F+I)/detA;
 		
-		return v.set(x/w, y/w);
+		return v.xy(x/w, y/w);
 	}
 	
 }

@@ -1,6 +1,6 @@
 package de.dualuse.vecmath;
 
-public interface MatrixAlgebra<Q> extends TransformAlgebra<Q> {
+public interface MatrixAlgebra<Q> {
 	public Q zero();
 	public Q identity();
 

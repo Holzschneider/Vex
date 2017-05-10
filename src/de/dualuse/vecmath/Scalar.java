@@ -2,31 +2,33 @@ package de.dualuse.vecmath;
 
 import java.io.Serializable;
 
-public class Scalar extends Number implements Interpolatable<Number>, Serializable {
+public class Scalar extends Number implements Interpolatable<Scalar>, Serializable {
 	private static final long serialVersionUID = 1L;
 	public double v;
 	
 	public Scalar(double v) { this.v = v; }
-	public Scalar set(double s) { this.v=s; return this; }	
-	public Scalar get(Scalar q) { q.point(this); return this; }
+	public Scalar get(Scalar q) { q.set(this); return this; }
 
 	public Scalar clone() { return new Scalar(v); }
 	
 	@Override
-	public Scalar point(Number a) {
-		return this.set(a.doubleValue());
+	public Scalar set(Scalar a) {
+		return this.setElement(a.doubleValue());
 	}
-
-
-//	@Override
-	public Scalar line(Number a, Number b, double r) {
-		this.set(a.doubleValue()*(1.-r)+b.doubleValue()*r);
-		
+	
+	public Scalar setElement(double v) {
+		this.v = v;
 		return this;
 	}
 	
 //	@Override
-	public Scalar spline(Number a, Number da, Number dd, Number d, double r) {
+	public Scalar line(Scalar a, Scalar b, double r) {
+		this.setElement(a.doubleValue()*(1.-r)+b.doubleValue()*r);
+		return this;
+	}
+	
+//	@Override
+	public Scalar spline(Scalar a, Scalar da, Scalar dd, Scalar d, double r) {
 
 		final double omr = 1-r; 
 				
@@ -46,7 +48,7 @@ public class Scalar extends Number implements Interpolatable<Number>, Serializab
 		double r0x = q0x*r+q1x*omr;
 		double r1x = q1x*r+q2x*omr;
 		
-		this.set( r0x*r+r1x*omr );
+		this.setElement( r0x*r+r1x*omr );
 		
 		return this;
 	}
@@ -58,7 +60,5 @@ public class Scalar extends Number implements Interpolatable<Number>, Serializab
 	public float floatValue() { return (float)v; }
 	public int intValue() { return (int)v; }
 	public long longValue() { return (long)v; }
-	
-
 	
 }

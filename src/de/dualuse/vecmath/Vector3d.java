@@ -3,20 +3,23 @@ package de.dualuse.vecmath;
 import static java.lang.Math.abs;
 import static java.lang.Math.pow;
 
-public class Vector3d implements VectorAlgebra<Vector3d>, Interpolatable<Vector3d>, java.io.Serializable {
+public class Vector3d	extends Vector<Vector3d>
+						implements  VectorAlgebra<Vector3d>, 
+									Interpolatable<Vector3d>, 
+									java.io.Serializable 
+{
 	private static final long serialVersionUID = 1L;
 	
 	public double x, y, z;
 
-	public Vector3d() {};
 	public Vector3d(double x, double y, double z) { this.x=x; this.y=y; this.z=z; };
-	public Vector3d(Vector3d c) { this.x=c.x;this.y=c.y; this.z=c.z; };
-
+	public static Vector3d from(double x, double y, double z) { return new Vector3d(x,y,z); }
+	
 	public Vector3d fromString(String r) {
 		int s1 = r.indexOf(' ');
 		int s2 = r.indexOf(' ', s1 + 1);
 		
-		return this.set(
+		return this.xyz(
 				new Double(r.substring(0, s1)),
 				new Double(r.substring(s1, s2)),
 				new Double(r.substring(s2, r.length()))
@@ -34,29 +37,24 @@ public class Vector3d implements VectorAlgebra<Vector3d>, Interpolatable<Vector3
 		return new Double(x*x+y*y+z*z).hashCode();
 	}
 	
-	@Override
-	public boolean equals(Object o) {
-		if (o == this)
-			return true;
-		else
-		if (o instanceof Vector3d)
-			return equals((Vector3d)o);
-		else
-			return false;
-	}
-	
-	public boolean equals(Vector3d a) {
+	public boolean elementsEqual(Vector3d a) {
 		return x==a.x && y==a.y && z==a.z;
 	}
-
 	
+	@Override
+	public Vector3d set(Vector3d a) {
+		return this.xyz(a.x,a.y,a.z);
+	}
+
+	public Vector3d setElements(double x, double y, double z) { return this.xyz(x, y, z); } 
+	public Vector3d xyz(double x, double y, double z) { this.x=x; this.y=y; this.z=z; return this; }
+	public Vector3d x(double x) { this.x=x; return this; }
+	public Vector3d y(double y) { this.y=y; return this; }
+	public Vector3d z(double z) { this.z=z; return this; }
+
 	//////////////////////////////////////////////////////////////////////////////
 
-	public static interface Value<Q> { Q define(Vector3d v); }
-	public<Q> Q get( Value<Q> v )  { return v.define(this); }
-	
-//	public Vec3 set(Vec3 v) { this.x=v.x; this.y=v.y; this.z=v.z; return this; }
-	public Vector3d set(double x, double y, double z) { this.x=x; this.y=y; this.z=z; return this; }
+
 	
 	public Vector3d add(Vector3d v) { this.x+=v.x; this.y+=v.y; this.z+=v.z; return this; }
 	public Vector3d adds(Vector3d v, double s) { this.x+=s*v.x; this.y+=s*v.y; this.z+=s*v.z; return this; }
@@ -138,17 +136,13 @@ public class Vector3d implements VectorAlgebra<Vector3d>, Interpolatable<Vector3
 
 	////////// Convenience Methods
 	
-	public Vector3d augment(Vector2d v) { return this.set(v.x, v.y, 1); }
+	public Vector3d augment(Vector2d v) { return this.xyz(v.x, v.y, 1); }
 	public Vector3d transformation(Matrix3d m) { return m.transform(this); }
 	public Vector3d projection(Matrix4d m) { return m.project(this); }
 	
 	
 	////////// Interpolatable
 	
-	@Override
-	public Vector3d point(Vector3d a) {
-		return this.set(a.x,a.y,a.z);
-	}
 
 	public Vector3d line(Vector3d a, Vector3d b, double r) {
 		final double omr = 1.-r; 

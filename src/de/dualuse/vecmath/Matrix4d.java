@@ -4,7 +4,9 @@ import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 
-public class Matrix4d implements MatrixAlgebra<Matrix4d>, java.io.Serializable {
+import java.io.Serializable;
+
+public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 	private static final double EPSILON = 1.0E-10;
 	private static final long serialVersionUID = 1L;
 
@@ -13,33 +15,23 @@ public class Matrix4d implements MatrixAlgebra<Matrix4d>, java.io.Serializable {
 	public double m20,m21,m22,m23;
 	public double m30,m31,m32,m33;
 	
-	public Matrix4d() {}
-//	public Matrix4d(
-//			double m00, double m01, double m02, double m03,
-//			double m10, double m11, double m12, double m13,
-//			double m20, double m21, double m22, double m23,
-//			double m30, double m31, double m32, double m33 ) 
-//	{
-//		
-//		this.elements(
-//				m00, m01, m02, m03,
-//				m10, m11, m12, m13, 
-//				m20, m21, m22, m23, 
-//				m30, m31, m32, m33);
-//	}
-//	
-//	public Matrix4d(Matrix4d c) {
-//		this.elements(
-//				c.m00, c.m01, c.m02, c.m03, 
-//				c.m10, c.m11, c.m12, c.m13, 
-//				c.m20, c.m21, c.m22, c.m23, 
-//				c.m30, c.m31, c.m32, c.m33	); 
-//	}
-
+	public Matrix4d() { 
+		identity(); 
+	}	
+	
+	public static Matrix4d from(
+			double m00, double m01, double m02, double m03,
+			double m10, double m11, double m12, double m13,
+			double m20, double m21, double m22, double m23,
+			double m30, double m31, double m32, double m33
+			) {
+		return new Matrix4d().setElements(m00,m01,m02,m03,m10,m11,m12,m13,m20,m21,m22,m23,m30,m31,m32,m33);
+	}
+	
 	public Matrix4d fromString(String r) {
 		String c[] = r.split("\\s+");
 
-		return this.elements(
+		return this.setElements(
 				new Double(c[ 0]), new Double(c[ 1]), new Double(c[ 2]), new Double(c[ 3]),
 				new Double(c[ 4]), new Double(c[ 5]), new Double(c[ 6]), new Double(c[ 7]),
 				new Double(c[ 8]), new Double(c[ 9]), new Double(c[10]), new Double(c[11]),
@@ -52,10 +44,10 @@ public class Matrix4d implements MatrixAlgebra<Matrix4d>, java.io.Serializable {
 				m20+" "+m21+" "+m22+" "+m23+
 				m30+" "+m31+" "+m32+" "+m33;
 	}
-
+	
 	@Override
 	public Matrix4d clone() {
-		return new Matrix4d().elements(
+		return new Matrix4d().setElements(
 				this.m00, this.m01, this.m02, this.m03, 
 				this.m10, this.m11, this.m12, this.m13, 
 				this.m20, this.m21, this.m22, this.m23, 
@@ -73,18 +65,7 @@ public class Matrix4d implements MatrixAlgebra<Matrix4d>, java.io.Serializable {
 			).hashCode();
 	}
 	
-	@Override
-	public boolean equals(Object o) {
-		if (o == this)
-			return true;
-		else
-		if (o instanceof Matrix4d)
-			return equals((Matrix4d)o);
-		else
-			return false;
-	}
-	
-	public boolean equals(Matrix4d m) {
+	public boolean elementsEqual(Matrix4d m) {
 		return
 				m.m00 == m00 && m.m01 == m01 && m.m02 == m02 && m.m03 == m03 && 
 				m.m10 == m10 && m.m11 == m11 && m.m12 == m12 && m.m13 == m13 && 
@@ -93,9 +74,17 @@ public class Matrix4d implements MatrixAlgebra<Matrix4d>, java.io.Serializable {
 	}
 	
 	
-	//////////////////////////////////////////////////////////////////////////////
-	
-	private Matrix4d elements(
+	@Override
+	public Matrix4d set(Matrix4d a) {
+		return setElements(
+				a.m00,a.m01,a.m02,a.m03,
+				a.m10,a.m11,a.m12,a.m13,
+				a.m20,a.m21,a.m22,a.m23,
+				a.m30,a.m31,a.m32,a.m33
+			);
+	}
+
+	public Matrix4d setElements(
 			double m00, double m01, double m02, double m03, 
 			double m10, double m11, double m12, double m13, 
 			double m20, double m21, double m22, double m23, 
@@ -108,9 +97,12 @@ public class Matrix4d implements MatrixAlgebra<Matrix4d>, java.io.Serializable {
 		
 		return this;
 	}
+
+	//////////////////////////////////////////////////////////////////////////////
+	
 	
 	public Matrix4d setColumns(Vector4d x, Vector4d y, Vector4d z, Vector4d w) {
-		return elements(	//X Axis
+		return setElements(	//X Axis
 				x.x, y.x, z.x, w.x,
 				x.y, y.y, z.y, w.y,
 				x.z, y.z, z.z, w.z,
@@ -120,7 +112,7 @@ public class Matrix4d implements MatrixAlgebra<Matrix4d>, java.io.Serializable {
 	}
 
 	public Matrix4d setRows(Vector4d x, Vector4d y, Vector4d z, Vector4d w) {
-		return elements(	//X Axis
+		return setElements(	//X Axis
 				x.x, x.y, x.z, x.w, 
 				y.x, y.y, y.z, y.w,
 				z.x, z.y, z.z, z.w,
@@ -131,7 +123,7 @@ public class Matrix4d implements MatrixAlgebra<Matrix4d>, java.io.Serializable {
 	
 	@Override
 	public Matrix4d zero() { 
-		return elements(
+		return setElements(
 				0.0,0.0,0.0,0.0,
 				0.0,0.0,0.0,0.0,
 				0.0,0.0,0.0,0.0,
@@ -141,7 +133,7 @@ public class Matrix4d implements MatrixAlgebra<Matrix4d>, java.io.Serializable {
 	
 	@Override
 	public Matrix4d identity() { 
-		return elements(
+		return setElements(
 				1.0,0.0,0.0,0.0,
 				0.0,1.0,0.0,0.0,
 				0.0,0.0,1.0,0.0,
@@ -157,7 +149,7 @@ public class Matrix4d implements MatrixAlgebra<Matrix4d>, java.io.Serializable {
 	
 	@Override	
 	public Matrix4d concatenation(Matrix4d A, Matrix4d B) {
-		return this.elements(
+		return this.setElements(
 				A.m00 * B.m00 + A.m10 * B.m01 + A.m20 * B.m02 + A.m30 * B.m03,
 				A.m00 * B.m10 + A.m10 * B.m11 + A.m20 * B.m12 + A.m30 * B.m13,
 				A.m00 * B.m20 + A.m10 * B.m21 + A.m20 * B.m22 + A.m30 * B.m23,
@@ -187,7 +179,7 @@ public class Matrix4d implements MatrixAlgebra<Matrix4d>, java.io.Serializable {
 	
 	@Override
 	public Matrix4d transposition(Matrix4d m) {
-		return this.elements(
+		return this.setElements(
 				m.m00, m.m10, m.m20, m.m30,
 				m.m01, m.m11, m.m21, m.m31,
 				m.m02, m.m12, m.m22, m.m32,
@@ -239,7 +231,7 @@ public class Matrix4d implements MatrixAlgebra<Matrix4d>, java.io.Serializable {
 
 		final double iDet = 1. / det;
 
-		return this.elements( 
+		return this.setElements( 
 				im0 * iDet, im1 * iDet, im2 * iDet, im3 * iDet, 
 				im4 * iDet, im5 * iDet, im6 * iDet, im7 * iDet,
 				im8 * iDet, im9 * iDet, im10 * iDet, im11 * iDet,
@@ -275,7 +267,7 @@ public class Matrix4d implements MatrixAlgebra<Matrix4d>, java.io.Serializable {
 			double n30, double n31, double n32, double n33
 			) {
 
-		return elements(
+		return setElements(
 				n00*m00+n10*m01+n20*m02+n30*m03,
 				n01*m00+n11*m01+n21*m02+n31*m03,
 				n02*m00+n12*m01+n22*m02+n32*m03,
@@ -329,9 +321,9 @@ public class Matrix4d implements MatrixAlgebra<Matrix4d>, java.io.Serializable {
 	
 	
 	/////////
-	
+	public static Matrix4d fromTransformation( Matrix3d m ) { return new Matrix4d().setTransformation( m ); }
 	public Matrix4d setTransformation(Matrix3d m) {
-		return this.elements(
+		return this.setElements(
 				m.m00, m.m01, m.m02,   0, 
 				m.m10, m.m11, m.m12,   0,
 				m.m20, m.m21, m.m22,   0,
@@ -339,8 +331,9 @@ public class Matrix4d implements MatrixAlgebra<Matrix4d>, java.io.Serializable {
 			);
 	}
 
+	public static Matrix4d fromProjection( Matrix3d m ) { return new Matrix4d().setProjection( m ); }
 	public Matrix4d setProjection(Matrix3d m) {
-		return this.elements(
+		return this.setElements(
 				m.m00, m.m01,   0, m.m02, 
 				m.m10, m.m11,   0, m.m12,
 				    0,     0,   0,     0,
@@ -348,38 +341,27 @@ public class Matrix4d implements MatrixAlgebra<Matrix4d>, java.io.Serializable {
 			);
 	}
 
+	public static Matrix4d fromRotation( Quaternion q ) { return new Matrix4d().setRotation(q); }
 	public Matrix4d setRotation(Quaternion quat) {
-		final double qx = quat.x, qy = quat.y, qz = quat.z, qw = quat.w;
-		
-		m00 = qw*qw + qx*qx - qy*qy - qz*qz; 
-		m10 = 2*qx*qy + 2*qw*qz;
-		m20 = 2*qx*qz - 2*qw*qy; 
-		m30 = 0.0;
-		
-		//Y Axis
-		m01 = 2*qx*qy-2*qw*qz;
-		m11 = qw*qw - qx*qx + qy*qy - qz*qz;
-		m21 = 2*qy*qz + 2*qw*qx;
-		m31 = 0.0;
-		
-		//Z Axis
-		m02 = 2*qx*qz + 2*qw*qy;
-		m12 = 2*qy*qz - 2*qw*qx;
-		m22 = qw*qw - qx*qx - qy*qy + qz*qz;
-		m32 = 0.0;
-		
-		//?????????
-		m03 = 0.;
-		m13 = 0.;
-		m23 = 0.;
-		m33 = qw*qw + qx*qx + qy*qy + qz*qz;
+		final double x = quat.x, y = quat.y, z = quat.z, w = quat.w;
 
-		return this;
+		final double ww = w*w, xx = x*x, yy= y*y, zz = z*z;
+		final double xy = x*x, xz = x*z, xw = x*w;
+		final double yz = y*z, yw = y*w, zw = z*w; 
+		
+		return this.setElements(
+				ww+xx-yy-zz, 2*xy-2*zw, 2*xz+2*yw, 0.,
+				2*xy+2*zw, ww-xx+yy-zz, 2*yz-2*xw, 0.,						
+				2*xz-2*yw, 2*yz+2*xw, ww-xx-yy+zz, 0.,
+				0.0, 0.0, 0.0, 	ww+xx+yy+zz
+				);
+				
 	}
 
+	public static Matrix4d fromTranslation( Vector3d v ) { return new Matrix4d().setTranslation( v ); }
 	public Matrix4d setTranslation(Vector3d translation) {
 		final double tx = translation.x, ty = translation.y, tz = translation.z;
-		return elements(	
+		return setElements(	
 				1.0,0.0,0.0, tx,
 				0.0,1.0,0.0, ty,
 				0.0,0.0,1.0, tz,
@@ -387,9 +369,10 @@ public class Matrix4d implements MatrixAlgebra<Matrix4d>, java.io.Serializable {
 			);		
 	}
 	
+	public static Matrix4d fromScale( Vector3d v ) { return new Matrix4d().setScale( v ); }
 	public Matrix4d setScale(Vector3d scaling) {
 		final double scx = scaling.x, scy = scaling.y, scz = scaling.y; 
-		return elements(	
+		return setElements(	
 				scx,0.0,0.0,0.0,
 				0.0,scy,0.0,0.0,
 				0.0,0.0,scz,0.0,
@@ -412,7 +395,7 @@ public class Matrix4d implements MatrixAlgebra<Matrix4d>, java.io.Serializable {
 		final double C = -(far + near)/(far - near);
 		final double D = -(2 * far * near) /( far -near);
 		
-		return this.elements(
+		return this.setElements(
 				(2*near)/(right-left),                     0, A, 0,
 				0                    , (2*near)/(top-bottom), B, 0,
 				0                    ,                     0, C, D,
@@ -428,17 +411,19 @@ public class Matrix4d implements MatrixAlgebra<Matrix4d>, java.io.Serializable {
 		final double z = v.x * m20 + v.y * m21 + v.z * m22 + m23;
 		final double w = v.x * m30 + v.y * m31 + v.z * m32 + m33;
 		
-		return v.set( x/w, y/w, z/w );
+		return v.xyz( x/w, y/w, z/w );
 	}
 	
 	public Vector4d transform(Vector4d v) {
-		return v.set(	
+		return v.xyzw(	
 				v.x * m00 + v.y * m01 + v.z * m02 + v.w * m03, 
 				v.x * m10 + v.y * m11 + v.z * m12 + v.w * m13, 
 				v.x * m20 + v.y * m21 + v.z * m22 + v.w * m23,
 				v.x * m30 + v.y * m31 + v.z * m32 + v.w * m33
 			);
 	}
+
+
 	
 //	public Matrix4 decompose(Vec3 translation, Quaternion rotation, Vec3 scaling) {
 //		//TODO throw runtimeException if Matrix4 describes a non decomposable transform 

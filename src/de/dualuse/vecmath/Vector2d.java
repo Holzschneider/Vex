@@ -5,66 +5,44 @@ import static java.lang.Math.pow;
 
 import java.io.Serializable;
 
-public class Vector2d 
-implements	VectorAlgebra<Vector2d>, 
-			Interpolatable<Vector2d>, 
-			Value<Vector2d>, 
-			Serializable 
-
-{
+public class Vector2d extends Vector<Vector2d> implements Serializable {
 	private static final long serialVersionUID = 1L;
 	public double x, y;
 	
-	public Vector2d() {};
 	public Vector2d(double x, double y) { this.x=x; this.y=y; };
-	public Vector2d(Vector2d c) { this.x=c.x;this.y=c.y; };
-
+	public static Vector2d from(double x, double y) { return new Vector2d(x,y); }
+	
 	public Vector2d fromString(String r) {
 		int split = r.indexOf(' ');
-		this.set(new Double(r.substring(0, split)),
+		this.xy(new Double(r.substring(0, split)),
 				new Double(r.substring(split, r.length())));
 		return this;
 	}
 
 	public String toString() { return x+" "+y; };
 	
-	public Vector2d clone() { return new Vector2d(this); }
-
+	@Override
+	public Vector2d clone() { return new Vector2d(x,y); }
 
 	@Override
 	public int hashCode() {
 		return new Double(x*x+y*y).hashCode();
 	}
 	
-	@Override
-	public boolean equals(Object o) {
-		if (o == this)
-			return true;
-		else
-		if (o instanceof Vector2d)
-			return equals((Vector2d)o);
-		else
-			return false;
-	}
-	
-	public boolean equals(Vector2d a) {
+	public boolean elementsEqual(Vector2d a) {
 		return x==a.x && y==a.y;
-		
 	}
-
-	
 	
 	@Override
-	public <Q> Q to(Reference<Q, Vector2d> v) { return v.from(this); }
-	
-	@Override
-	public Vector2d from(Vector2d t) { return this.set(t.x,t.y); }
+	public Vector2d set(Vector2d t) { return this.xy(t.x,t.y); }
 
+	public Vector2d setElements(double x, double y) { return this.xy(x, y); } 
+	public Vector2d xy(double x, double y) { this.x=x; this.y=y; return this; }
+	public Vector2d x(double x) { this.x=x; return this; }
+	public Vector2d y(double y) { this.y=y; return this; }
+	
 	//////////////////////////////////////////////////////////////////////////////
 	
-//	public Vector2d get(Vector2d q) { q.point(this); return this; }
-
-	public Vector2d set(double x, double y) { this.x=x; this.y=y; return this; }
 
 	public Vector2d add(Vector2d v) { this.x += v.y; this.y += v.y; return this; }
 	public Vector2d adds(Vector2d v, double s) { this.x += s*v.y; this.y += s*v.y; return this; }
@@ -90,15 +68,10 @@ implements	VectorAlgebra<Vector2d>,
 	public Vector2d intersection(Matrix3d m) { return m.intersect(this); } 
 
 	//////////
-	
-	@Override
-	public Vector2d point(Vector2d a) {
-		return this.set(a.x,a.y);
-	}
 
 	@Override
 	public Vector2d line(Vector2d a, Vector2d b, final double r) {
-		return this.set(a.x*r+b.x*(1-r), a.y*r+b.y*(1-r));
+		return this.xy(a.x*r+b.x*(1-r), a.y*r+b.y*(1-r));
 	}
 	
 	@Override
@@ -121,7 +94,7 @@ implements	VectorAlgebra<Vector2d>,
 		final double r0x = q0x*r+q1x*omr, r0y = q0y*r+q1y*omr;
 		final double r1x = q1x*r+q2x*omr, r1y = q1y*r+q2y*omr;
 		
-		this.set(r0x*r+r1x*omr, r0y*r+r1y*omr);
+		this.xy(r0x*r+r1x*omr, r0y*r+r1y*omr);
 		
 		return this;
 	}
@@ -153,5 +126,6 @@ implements	VectorAlgebra<Vector2d>,
 			return tan + (2.0 * Math.PI);
 		return tan;
 	}
+
 	
 }

@@ -1,7 +1,5 @@
 package de.dualuse.vecmath;
 
-import java.awt.geom.Point2D;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -9,12 +7,12 @@ public class Matrix3dTest {
 	
 	@Test public void matrixInversionTest() {
 		
-		Matrix3d m = new Matrix3d(
+		Matrix3d m = Matrix3d.from(
 					1, 2, 3, 
 					2, 1, 1, 
 					3, 4, 5);
 		
-		Matrix3d i = new Matrix3d( 
+		Matrix3d i = Matrix3d.from( 
 				0.5, 1, -0.5,
 				-3.5, -2, 2.5,
 				2.5, 1, -1.5

@@ -9,7 +9,6 @@ interface VectorAlgebra<Q> {
 	
 	public VectorAlgebra<Q> normalize();
 	public double dot(Q v);
-
 	
 	public double norm(double p);
 	

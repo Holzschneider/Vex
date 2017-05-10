@@ -1,17 +1,14 @@
 package de.dualuse.vecmath;
 
+import static java.lang.Math.PI;
+
 import java.io.Serializable;
 
-public class AxisAngle implements Serializable {
+public class AxisAngle extends Tuple<AxisAngle> implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
 	public double x,y,z,theta;
-	
-	public AxisAngle() {
-		x=y=theta=0;
-		z = 1;
-	}
 	
 	public AxisAngle(double x, double y, double z, double theta) {
 		this.x = x;
@@ -20,18 +17,9 @@ public class AxisAngle implements Serializable {
 		this.theta = theta;
 	}
 	
-	public AxisAngle set(double x, double y, double z, double theta) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.theta = theta;
-		return this;
-	}
-	
-	
 	public AxisAngle fromString(String r) {
 		String c[] = r.split("\\s+");
-		return this.set(new Double(c[0]), new Double(c[1]), new Double(c[2]), new Double(c[3]));
+		return this.setElements(new Double(c[0]), new Double(c[1]), new Double(c[2]), new Double(c[3]));
 	}
 	
 	public String toString() {
@@ -39,7 +27,7 @@ public class AxisAngle implements Serializable {
 	}
 	
 	public AxisAngle clone() {
-		return new AxisAngle().set(x, y, z, theta);
+		return new AxisAngle(x, y, z, theta);
 	}
 	
 	@Override
@@ -48,30 +36,39 @@ public class AxisAngle implements Serializable {
 	}
 	
 	@Override
-	public boolean equals(Object o) {
-		if (o == this)
-			return true;
-		else
-		if (o instanceof AxisAngle)
-			return equals((AxisAngle)o);
-		else
-			return false;
+	public AxisAngle set(AxisAngle a) {
+		return this.setElements(a.x, a.y, a.z, a.theta);
 	}
 	
-	public boolean equals(AxisAngle a) {
+	public boolean elementsEqual(AxisAngle a) {
 		return x==a.x && y==a.y && z==a.z && theta==a.theta;
-		
 	}
 
+
+	public AxisAngle xyzt(double x,double y, double z, double t) { this.x=x; this.y=y; this.z=z;theta=t; return this; }
+	public AxisAngle xyz(double x,double y, double z) { this.x=x; this.y=y; this.z=z; return this; }
+	public AxisAngle theta(double theta) { this.theta = theta; return this; }
+	public AxisAngle angle(double degrees) { this.theta = degrees*PI/180.0; return this; }
+	
+	public double theta() { return theta; }
+	public double angle() { return theta*180.0/PI; }
+	
+	public AxisAngle setElements(double x, double y, double z, double theta) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.theta = theta;
+		return this;
+	}
+	
+	
 	//////////////////////////////////////////////////////////////////////////////
 	
-	public double getDegrees() { return theta*180./Math.PI; }
-	
-	public AxisAngle identity() { return this.set(0, 0, 0, 0); }
+	public AxisAngle identity() { return this.setElements(0, 0, 0, 0); }
 	
 	public AxisAngle setRotation(Quaternion q) {
 		double theta = 2 * Math.acos(q.w), norm = Math.sqrt(1-q.w*q.w);
-		return this.set(-q.x / norm, -q.y / norm, -q.z / norm, theta);
+		return this.setElements(-q.x / norm, -q.y / norm, -q.z / norm, theta);
 		
 //		final double w = q.w;
 //		double radians = 0.;
@@ -89,5 +86,6 @@ public class AxisAngle implements Serializable {
 ////		this.set(0., 0., 1., radians);
 //		return this;
 	}
+
 	
 }
