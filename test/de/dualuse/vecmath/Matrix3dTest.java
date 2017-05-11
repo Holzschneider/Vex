@@ -20,7 +20,7 @@ public class Matrix3dTest {
 
 		
 		
-//		new Vector2d(1,2).projection( i ).to ( (v) -> ... );
+//		new Vector2d(1,2).projection( i ).to ( (v) -> new Point2D.Double(v.x,v.y) );
 		
 		
 		

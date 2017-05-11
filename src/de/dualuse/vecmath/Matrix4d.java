@@ -290,7 +290,7 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 			);
 	}
 	
-	
+//	public Matrix4d rotate(Quaternion q); /// <- problem: can't transform a quaternion to axis angle by hand
 	public Matrix4d rotate(double ax, double ay, double az, double theta) {
 		// compare '$ man glRotate' or 'javax.vecmath.Matrix4d.set(AxisAngle4d a1)'
 		final double s = sin(theta), c = cos(theta), t = 1-c, l = sqrt(ax*ax+ay*ay+az*az);
@@ -302,7 +302,8 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 				t*xz-s*y, t*yz+s*x, t*zz+c  , 0,
 				       0,        0,      0,   1);
 	}
-	
+
+//	public Matrix4d translate(Vector3d v);
 	public Matrix4d translate(double tx, double ty, double tz) {
 		return this.concat(
 				1,0,0,tx,
@@ -310,7 +311,8 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 				0,0,1,tz,
 				0,0,0, 1 );
 	}
-	
+
+//	public Matrix4d scale(Vector3d v);
 	public Matrix4d scale(double sx, double sy, double sz) {
 		return this.concat(
 				sx, 0, 0, 0,
@@ -404,7 +406,10 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 	}
 	
 	//////////
-	
+
+//	public Vector2d project(Vector2d v, double z);
+//	public Vector2d intersect(Vector2d v, double z);
+
 	public Vector3d project(Vector3d v) {
 		final double x = v.x * m00 + v.y * m01 + v.z * m02 + m03; 
 		final double y = v.x * m10 + v.y * m11 + v.z * m12 + m13; 

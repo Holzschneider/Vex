@@ -53,11 +53,13 @@ public class Vector4d	extends Vector<Vector4d>
 	
 	public Vector4d setElements(double x, double y, double z, double w) { return this.xyzw(x, y, z, w); }
 	public Vector4d xyzw(double x, double y, double z, double w) { this.x=x; this.y=y; this.z=z; this.w=w;return this;}
-	public Vector4d xyz(double x, double y, double z) { this.x=x; this.y=y; this.z=z; return this;}
-	public Vector4d x(double x) { this.x=x; return this; }
-	public Vector4d y(double y) { this.y=y; return this; }
-	public Vector4d z(double z) { this.z=z; return this; }
-	public Vector4d w(double w) { this.w=w; return this; }
+//	public Vector4d xyz(double x, double y, double z) { this.x=x; this.y=y; this.z=z; return this;}
+	
+	//method and field names collide in javascript
+//	public Vector4d x(double x) { this.x=x; return this; }
+//	public Vector4d y(double y) { this.y=y; return this; }
+//	public Vector4d z(double z) { this.z=z; return this; }
+//	public Vector4d w(double w) { this.w=w; return this; }
 
 	//////////////////////////////////////////////////////////////////////////////
 

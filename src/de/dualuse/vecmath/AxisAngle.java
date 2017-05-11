@@ -8,13 +8,13 @@ public class AxisAngle extends Tuple<AxisAngle> implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	public double x,y,z,theta;
+	public double x,y,z,t;
 	
 	public AxisAngle(double x, double y, double z, double theta) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		this.theta = theta;
+		this.t = theta;
 	}
 	
 	public AxisAngle fromString(String r) {
@@ -23,41 +23,41 @@ public class AxisAngle extends Tuple<AxisAngle> implements Serializable {
 	}
 	
 	public String toString() {
-		return x+" "+y+" "+z+" "+theta;
+		return x+" "+y+" "+z+" "+t;
 	}
 	
 	public AxisAngle clone() {
-		return new AxisAngle(x, y, z, theta);
+		return new AxisAngle(x, y, z, t);
 	}
 	
 	@Override
 	public int hashCode() {
-		return new Double(x*x+y*y+z*z+theta*theta).hashCode();
+		return new Double(x*x+y*y+z*z+t*t).hashCode();
 	}
 	
 	@Override
 	public AxisAngle set(AxisAngle a) {
-		return this.setElements(a.x, a.y, a.z, a.theta);
+		return this.setElements(a.x, a.y, a.z, a.t);
 	}
 	
 	public boolean elementsEqual(AxisAngle a) {
-		return x==a.x && y==a.y && z==a.z && theta==a.theta;
+		return x==a.x && y==a.y && z==a.z && t==a.t;
 	}
 
 
-	public AxisAngle xyzt(double x,double y, double z, double t) { this.x=x; this.y=y; this.z=z;theta=t; return this; }
-	public AxisAngle xyz(double x,double y, double z) { this.x=x; this.y=y; this.z=z; return this; }
-	public AxisAngle theta(double theta) { this.theta = theta; return this; }
-	public AxisAngle angle(double degrees) { this.theta = degrees*PI/180.0; return this; }
+	public AxisAngle xyzt(double x,double y,double z,double t) { this.x=x; this.y=y; this.z=z; this.t=t; return this; }
+	public AxisAngle xyz(double x,double y,double z) { this.x=x; this.y=y; this.z=z; return this; }
+	public AxisAngle angle(double degrees) { this.t = degrees*PI/180.0; return this; }
+	public AxisAngle theta(double theta) { this.t = theta; return this; }
 	
-	public double theta() { return theta; }
-	public double angle() { return theta*180.0/PI; }
+	public double theta() { return t; }
+	public double angle() { return t*180.0/PI; }
 	
 	public AxisAngle setElements(double x, double y, double z, double theta) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		this.theta = theta;
+		this.t = theta;
 		return this;
 	}
 	

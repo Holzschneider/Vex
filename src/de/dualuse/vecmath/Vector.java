@@ -1,8 +1,8 @@
 package de.dualuse.vecmath;
 
-abstract class Vector<T extends Vector<T>> 
-extends Tuple<T>
-implements VectorAlgebra<T>, Interpolatable<T>
+abstract class Vector<VectorType extends Vector<VectorType>> 
+extends Tuple<VectorType>
+implements VectorAlgebra<VectorType>, Interpolatable<VectorType>
 {
 	
 }
