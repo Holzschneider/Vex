@@ -108,7 +108,7 @@ public class Quaternion extends Tuple<Quaternion> implements Interpolatable<Quat
 	
 	public static Quaternion fromRotation(AxisAngle aa) { return new Quaternion().setRotation(aa); } 
 	public Quaternion setRotation(AxisAngle aa) {
-		final double s = sin(aa.theta / 2.), c= cos(aa.theta / 2.);
+		final double s = sin(aa.t / 2.), c= cos(aa.t / 2.);
 		final double x = aa.x, y = aa.y, z = aa.z, l = sqrt(x*x+y*y+z*z);
 		
 		return this.xyzw(x*s/l, y*s/l, z*s/l, c);

@@ -38,8 +38,10 @@ public class Vector2d extends Vector<Vector2d> implements Serializable {
 
 	public Vector2d setElements(double x, double y) { return this.xy(x, y); } 
 	public Vector2d xy(double x, double y) { this.x=x; this.y=y; return this; }
-	public Vector2d x(double x) { this.x=x; return this; }
-	public Vector2d y(double y) { this.y=y; return this; }
+	
+	//method and field names collide in javascript
+//	public Vector2d x(double x) { this.x=x; return this; }
+//	public Vector2d y(double y) { this.y=y; return this; }
 	
 	//////////////////////////////////////////////////////////////////////////////
 	

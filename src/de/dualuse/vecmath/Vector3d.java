@@ -49,9 +49,9 @@ public class Vector3d	extends Vector<Vector3d>
 
 	public Vector3d setElements(double x, double y, double z) { return this.xyz(x, y, z); } 
 	public Vector3d xyz(double x, double y, double z) { this.x=x; this.y=y; this.z=z; return this; }
-	public Vector3d x(double x) { this.x=x; return this; }
-	public Vector3d y(double y) { this.y=y; return this; }
-	public Vector3d z(double z) { this.z=z; return this; }
+//	public Vector3d x(double x) { this.x=x; return this; }
+//	public Vector3d y(double y) { this.y=y; return this; }
+//	public Vector3d z(double z) { this.z=z; return this; }
 
 	//////////////////////////////////////////////////////////////////////////////
 
