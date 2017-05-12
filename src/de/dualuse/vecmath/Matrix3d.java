@@ -178,6 +178,63 @@ public class Matrix3d extends Matrix<Matrix3d> implements Serializable {
 	public double determinant() {
 		return m00 * (m11 * m22 - m12 * m21) - m01 * (m22 * m10 - m12 * m20) + m02 * (m10 * m21 - m11 * m20);
 	}
+
+	
+	public Matrix3d addElements(
+			double n00, double n01, double n02,
+			double n10, double n11, double n12,
+			double n20, double n21, double n22
+			) {
+		return this.setElements(
+				m00+n00, m01+n01, m02+n02,
+				m10+n10, m11+n11, m12+n12, 
+				m20+n20, m21+n21, m22+n22);
+	}
+	
+	public Matrix3d add(
+			double n00, double n01, double n02,
+			double n10, double n11, double n12,
+			double n20, double n21, double n22
+			) {
+		return addElements(n00,n01,n02,n10,n11,n12,n20,n21,n22);
+	}
+	
+	public Matrix3d sub(
+			double n00, double n01, double n02,
+			double n10, double n11, double n12,
+			double n20, double n21, double n22
+			) {
+		return addElements(-n00,-n01,-n02,-n10,-n11,-n12,-n20,-n21,-n22);
+	}
+	
+	
+	@Override
+	public Matrix3d add(Matrix3d a) {
+		return addElements(a.m00,a.m01,a.m02,a.m10,a.m11,a.m12,a.m20,a.m21,a.m22);
+	}
+
+	@Override
+	public Matrix3d sub(Matrix3d a) {
+		return addElements(-a.m00,-a.m01,-a.m02,-a.m10,-a.m11,-a.m12,-a.m20,-a.m21,-a.m22);
+	}
+
+	public Matrix3d mulElements(
+			double n00, double n01, double n02,
+			double n10, double n11, double n12,
+			double n20, double n21, double n22
+			) {
+		return this.setElements(
+				m00*n00, m01*n01, m02*n02,
+				m10*n10, m11*n11, m12*n12, 
+				m20*n20, m21*n21, m22*n22);
+	}
+	
+	
+	@Override
+	public Matrix3d mul(Matrix3d a) {
+		return mulElements(a.m00,a.m01,a.m02,a.m10,a.m11,a.m12,a.m20,a.m21,a.m22);
+	}
+
 	
 
 	////////////////////////////////////// Matrix3d Specific
@@ -303,6 +360,7 @@ public class Matrix3d extends Matrix<Matrix3d> implements Serializable {
 		
 		return v.xy(x/w, y/w);
 	}
+
 	
 }
 

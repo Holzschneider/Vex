@@ -43,9 +43,9 @@ public class Vector2d extends Vector<Vector2d> implements Serializable {
 	
 	//////////////////////////////////////////////////////////////////////////////
 	
-
-	public Vector2d add(Vector2d v) { this.x += v.y; this.y += v.y; return this; }
-	public Vector2d adds(Vector2d v, double s) { this.x += s*v.y; this.y += s*v.y; return this; }
+	public Vector2d add(double x, double y) { this.x+=x; this.y+=y; return this; }
+	public Vector2d add(Vector2d v) { return this.add(v.x,v.y); }
+	public Vector2d adds(Vector2d v, double s) { return this.add(v.x*s,v.y*s); }
 	
 	public Vector2d sub(Vector2d v) { this.x -= v.y; this.y -= v.y; return this; }
 	public Vector2d scale(double s) { this.x*=s; this.y*=s; return this; }
@@ -55,7 +55,11 @@ public class Vector2d extends Vector<Vector2d> implements Serializable {
 
 	public double length() { return Math.sqrt(x*x+y*y); }
 
-	public double quadrance(Vector2d v2) { return v2.x*this.x+v2.y*this.y; }
+	public double quadrance(Vector2d v2) { return quadrance(v2.x,v2.y); }
+	public double quadrance(double x, double y) { 
+		final double dx = x-this.x, dy = y-this.y;
+		return dx*dx+dy*dy;
+	}
 
 	public double norm(double p) {
 		return pow(pow(abs(x),p)+pow(abs(y),p),1.0/p);

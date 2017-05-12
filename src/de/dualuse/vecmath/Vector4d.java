@@ -62,8 +62,10 @@ public class Vector4d	extends Vector<Vector4d>
 	//////////////////////////////////////////////////////////////////////////////
 
 	
-	public Vector4d add(Vector4d v) { xyzw(x+v.x,y+v.y,z+v.z,w+v.w); return this; }
-	public Vector4d adds(Vector4d v, double scale) { xyzw(x+v.x*scale,y+v.y*scale,z+v.z*scale, w+v.w*scale); return this; }
+	public Vector4d add(double x, double y, double z) { return xyzw(x+this.x,y+this.y,z+this.z,w+this.w); }
+	
+	public Vector4d add(Vector4d v) { return xyzw(x+v.x,y+v.y,z+v.z,w+v.w); }
+	public Vector4d adds(Vector4d v, double scale) { return xyzw(x+v.x*scale,y+v.y*scale,z+v.z*scale, w+v.w*scale); }
 	
 	public Vector4d sub(Vector4d v) { xyzw(x-v.x,y-v.y,z-v.z, w-v.w); return this; }
 	
@@ -76,9 +78,11 @@ public class Vector4d	extends Vector<Vector4d>
 	public double norm(double p) {
 		return pow(pow(abs(x),p)+pow(abs(y),p)+pow(abs(z),p)+pow(abs(w),p),1.0/p);
 	}
+
 	
-	public double quadrance(Vector4d v) {  
-		final double dx = v.x-this.x, dy = v.y-this.y, dz = v.z-this.z; 
+	public double quadrance(Vector4d v) { return quadrance(v.x,v.y,v.z,v.w); }
+	public double quadrance(double vx, double vy, double vz, double vw) {  
+		final double dx = vx-this.x, dy = vy-this.y, dz = vz-this.z; 
 		return dx*dx+dy*dy+dz*dz; 
 	}
 

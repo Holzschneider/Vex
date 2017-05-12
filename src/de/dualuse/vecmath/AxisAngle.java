@@ -88,4 +88,22 @@ public class AxisAngle extends Tuple<AxisAngle> implements Serializable {
 	}
 
 	
+	
+//	final public AxisAngle getAxisAngleTo(final Vec3 v, AxisAngle rotationAxisAngle) {
+//		final double bothLen = Math.sqrt(x*x + y*y + z*z) * Math.sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
+//		if (bothLen == 0)
+//			return rotationAxisAngle.set(1, 0, 0, 0);
+//		
+//		rotationAxisAngle.x = (y*v.z - z*v.y) / bothLen;
+//		rotationAxisAngle.y = (z*v.x - x*v.z) / bothLen;
+//		rotationAxisAngle.z = (x*v.y - y*v.x) / bothLen;
+//		rotationAxisAngle.angle = Math.sqrt(rotationAxisAngle.x*rotationAxisAngle.x + rotationAxisAngle.y*rotationAxisAngle.y + rotationAxisAngle.z*rotationAxisAngle.z);
+//		
+//		rotationAxisAngle.x /= rotationAxisAngle.angle;
+//		rotationAxisAngle.y /= rotationAxisAngle.angle;
+//		rotationAxisAngle.z /= rotationAxisAngle.angle;
+//		return rotationAxisAngle;
+//	}
+
+	
 }

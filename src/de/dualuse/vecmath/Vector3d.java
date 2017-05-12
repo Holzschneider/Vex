@@ -12,6 +12,7 @@ public class Vector3d	extends Vector<Vector3d>
 	
 	public double x, y, z;
 
+	public Vector3d() { };
 	public Vector3d(double x, double y, double z) { this.x=x; this.y=y; this.z=z; };
 	public static Vector3d from(double x, double y, double z) { return new Vector3d(x,y,z); }
 	
@@ -55,20 +56,28 @@ public class Vector3d	extends Vector<Vector3d>
 	//////////////////////////////////////////////////////////////////////////////
 
 
+	public Vector3d addVector(Vector3d v) { return this.addElements(v.x, v.y, v.z); }
+	public Vector3d addElements(double x, double y, double z) { this.x+=x; this.y+=y; this.z+=z; return this; }
 	
-	public Vector3d add(Vector3d v) { this.x+=v.x; this.y+=v.y; this.z+=v.z; return this; }
-	public Vector3d adds(Vector3d v, double s) { this.x+=s*v.x; this.y+=s*v.y; this.z+=s*v.z; return this; }
 	
-	public Vector3d sub(Vector3d v) { this.x-=v.x; this.y-=v.y; this.z-=v.z; return this; }
+	public Vector3d add(double x, double y, double z) { return this.addElements(x,y,z); }
+	public Vector3d add(Vector3d v) { return this.addElements(v.x,v.y,v.z); }
+
+	public Vector3d adds(Vector3d v, double s) { return this.addElements(v.x*s,v.y*s,v.z*s); }
+	public Vector3d sub(double x, double y, double z) { return this.addElements(-x, -y, -z); }
+	public Vector3d sub(Vector3d v) { return this.addElements(-v.x, -v.y, -v.z); }
 
 	public Vector3d scale(double s) { this.x*=s; this.y*=s; this.z*=s; return this; }
 	public Vector3d normalize() { return scale(1./length()); }
 
-	public double dot(Vector3d v) { return x*v.x+y*v.y+z*v.z; }
+	public double dot(double x, double y, double z) { return this.x*x+this.y*y+this.z*z; } 
+	public double dot(Vector3d v) { return dot(v.x,v.y,v.z); }
 
 	public double length() { return Math.sqrt(x*x+y*y+z*z); }
-	public double quadrance(Vector3d v) {  
-		final double dx = v.x-this.x, dy = v.y-this.y, dz = v.z-this.z; 
+
+	public double quadrance(Vector3d v) { return quadrance(v.x,v.y,v.z); }
+	public double quadrance(double x, double y, double z) { 
+		final double dx = x-this.x, dy = y-this.y, dz = z-this.z; 
 		return dx*dx+dy*dy+dz*dz; 
 	}
 	
@@ -78,62 +87,6 @@ public class Vector3d	extends Vector<Vector3d>
 	}
 	
 	
-	
-//	final public AxisAngle getAxisAngleTo(final Vec3 v, AxisAngle rotationAxisAngle) {
-//		final double bothLen = Math.sqrt(x*x + y*y + z*z) * Math.sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
-//		if (bothLen == 0)
-//			return rotationAxisAngle.set(1, 0, 0, 0);
-//		
-//		rotationAxisAngle.x = (y*v.z - z*v.y) / bothLen;
-//		rotationAxisAngle.y = (z*v.x - x*v.z) / bothLen;
-//		rotationAxisAngle.z = (x*v.y - y*v.x) / bothLen;
-//		rotationAxisAngle.angle = Math.sqrt(rotationAxisAngle.x*rotationAxisAngle.x + rotationAxisAngle.y*rotationAxisAngle.y + rotationAxisAngle.z*rotationAxisAngle.z);
-//		
-//		rotationAxisAngle.x /= rotationAxisAngle.angle;
-//		rotationAxisAngle.y /= rotationAxisAngle.angle;
-//		rotationAxisAngle.z /= rotationAxisAngle.angle;
-//		return rotationAxisAngle;
-//	}
-	
-//	// transform / rotates this vector by the quaternion
-//	public Vec3 transformBy(Quaternion quaternion) {
-//		double t2 =   quaternion.w*quaternion.x;
-//		double t3 =   quaternion.w*quaternion.y;
-//		double t4 =   quaternion.w*quaternion.z;
-//		double t5 =  -quaternion.x*quaternion.x;
-//		double t6 =   quaternion.x*quaternion.y;
-//		double t7 =   quaternion.x*quaternion.z;
-//		double t8 =  -quaternion.y*quaternion.y;
-//		double t9 =   quaternion.y*quaternion.z;
-//		double t10 = -quaternion.z*quaternion.z;
-//		return set(
-//				2*( (t8 + t10)*this.x + (t6 -  t4)*this.y + (t3 + t7)*this.z ) + this.x,
-//				2*( (t4 +  t6)*this.x + (t5 + t10)*this.y + (t9 - t2)*this.z ) + this.y,
-//				2*( (t7 -  t3)*this.x + (t2 +  t9)*this.y + (t5 + t8)*this.z ) + this.z
-//		);
-//	}
-	
-//	// transform / rotates this vector by the quaternion inverse
-//	public Vec3 transformByInverse(Quaternion quaternion) {
-//		double inv = 1.0 / quaternion.length();
-//		inv *=inv;
-//		double t2 =  -quaternion.w*quaternion.x*inv;
-//		double t3 =  -quaternion.w*quaternion.y*inv;
-//		double t4 =  -quaternion.w*quaternion.z*inv;
-//		double t5 =  -quaternion.x*quaternion.x*inv;
-//		double t6 =   quaternion.x*quaternion.y*inv;
-//		double t7 =   quaternion.x*quaternion.z*inv;
-//		double t8 =  -quaternion.y*quaternion.y*inv;
-//		double t9 =   quaternion.y*quaternion.z*inv;
-//		double t10 = -quaternion.z*quaternion.z*inv;
-//		return set(
-//				2*( (t8 + t10)*this.x + (t6 -  t4)*this.y + (t3 + t7)*this.z ) + this.x,
-//				2*( (t4 +  t6)*this.x + (t5 + t10)*this.y + (t9 - t2)*this.z ) + this.y,
-//				2*( (t7 -  t3)*this.x + (t2 +  t9)*this.y + (t5 + t8)*this.z ) + this.z
-//		);
-//	}
-	
-
 	////////// Convenience Methods
 	
 	public Vector3d augment(Vector2d v) { return this.xyz(v.x, v.y, 1); }

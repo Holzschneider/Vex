@@ -258,6 +258,76 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 	}
 
 
+	public Matrix4d addElements(
+			double n00, double n01, double n02, double n03,
+			double n10, double n11, double n12, double n13,
+			double n20, double n21, double n22, double n23,
+			double n30, double n31, double n32, double n33
+			) {
+		return this.setElements(
+				m00+n00, m01+n01, m02+n02, m03+n03,
+				m10+n10, m11+n11, m12+n12, m13+n13,
+				m20+n20, m21+n21, m22+n22, m23+n23,
+				m30+n30, m31+n31, m32+n32, m33+n33);
+	}
+	
+	public Matrix4d add(
+			double n00, double n01, double n02, double n03,
+			double n10, double n11, double n12, double n13,
+			double n20, double n21, double n22, double n23,
+			double n30, double n31, double n32, double n33
+			) {
+		return addElements(n00,n01,n02,n03,n10,n11,n12,n13,n20,n21,n22,n23,n30,n31,n32,n33);
+	}
+	
+	public Matrix4d sub(
+			double n00, double n01, double n02, double n03,
+			double n10, double n11, double n12, double n13,
+			double n20, double n21, double n22, double n23,
+			double n30, double n31, double n32, double n33
+			) {
+		return addElements(-n00,-n01,-n02,-n03,-n10,-n11,-n12,-n13,-n20,-n21,-n22,-n23,-n30,-n31,-n32,-n33);
+	}
+	
+	
+	@Override
+	public Matrix4d add(Matrix4d a) {
+		return addElements(	a.m00,a.m01,a.m02,a.m03,
+							a.m10,a.m11,a.m12,a.m13,
+							a.m20,a.m21,a.m22,a.m23,
+							a.m30,a.m31,a.m32,a.m33	);	
+	}
+
+	@Override
+	public Matrix4d sub(Matrix4d a) {
+		return addElements(	-a.m00,-a.m01,-a.m02,-a.m03,
+							-a.m10,-a.m11,-a.m12,-a.m13,
+							-a.m20,-a.m21,-a.m22,-a.m23,
+							-a.m30,-a.m31,-a.m32,-a.m33	);
+	}
+
+	public Matrix4d mulElements(
+			double n00, double n01, double n02, double n03,
+			double n10, double n11, double n12, double n13,
+			double n20, double n21, double n22, double n23,
+			double n30, double n31, double n32, double n33
+			) {
+		return this.setElements(
+				m00*n00, m01*n01, m02*n02, m03*n03,
+				m10*n10, m11*n11, m12*n12, m13*n13,
+				m20*n20, m21*n21, m22*n22, m23*n23,
+				m30*n30, m31*n31, m32*n32, m33*n33);
+	}
+	
+	
+	@Override
+	public Matrix4d mul(Matrix4d a) {
+		return mulElements(	a.m00,a.m01,a.m02,a.m03,
+							a.m10,a.m11,a.m12,a.m13,
+							a.m20,a.m21,a.m22,a.m23,
+							a.m30,a.m31,a.m32,a.m33	);	
+	}
+	
 	////////////////////////////////////// Matrix4d Specific
 
 	private Matrix4d concat( 
@@ -290,6 +360,23 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 			);
 	}
 	
+	
+	public Matrix4d rotate(Quaternion q) {
+		final double x = q.x, y = q.y, z = q.z, w = q.w;
+
+		final double ww = w*w, xx = x*x, yy= y*y, zz = z*z;
+		final double xy = x*x, xz = x*z, xw = x*w;
+		final double yz = y*z, yw = y*w, zw = z*w; 
+		
+		return this.concat(
+				ww+xx-yy-zz, 2*xy-2*zw, 2*xz+2*yw, 0.,
+				2*xy+2*zw, ww-xx+yy-zz, 2*yz-2*xw, 0.,						
+				2*xz-2*yw, 2*yz+2*xw, ww-xx-yy+zz, 0.,
+				0.0, 0.0, 0.0, 	ww+xx+yy+zz
+				);
+	}
+
+	public Matrix4d rotate(AxisAngle aa) { return this.rotate(aa.x,aa.y,aa.z,aa.theta); }
 	
 	public Matrix4d rotate(double ax, double ay, double az, double theta) {
 		// compare '$ man glRotate' or 'javax.vecmath.Matrix4d.set(AxisAngle4d a1)'

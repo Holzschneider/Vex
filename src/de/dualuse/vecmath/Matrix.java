@@ -3,6 +3,10 @@ package de.dualuse.vecmath;
 abstract class Matrix<MatrixType extends Matrix<?>> 
 implements Value<MatrixType,MatrixType>, MatrixAlgebra<MatrixType> 
 {
+	abstract public MatrixType add(MatrixType a);
+	abstract public MatrixType sub(MatrixType a);
+	abstract public MatrixType mul(MatrixType a);
+	
 	
 	abstract public MatrixType set(MatrixType a);
 	abstract public MatrixType fromString(String r);
