@@ -12,92 +12,95 @@ public class Vector3d	extends Vector<Vector3d>
 	
 	public double x, y, z;
 
-	public Vector3d() { };
-	public Vector3d(double x, double y, double z) { this.x=x; this.y=y; this.z=z; };
-	public static Vector3d from(double x, double y, double z) { return new Vector3d(x,y,z); }
+//==[ Constructors ]================================================================================
 	
-	public Vector3d fromString(String r) {
-		int s1 = r.indexOf(' ');
-		int s2 = r.indexOf(' ', s1 + 1);
-		
-		return this.xyz(
-				new Double(r.substring(0, s1)),
-				new Double(r.substring(s1, s2)),
-				new Double(r.substring(s2, r.length()))
-		);
+	public Vector3d() {}
+	
+	public Vector3d(double x, double y, double z) {
+		this.x=x; this.y=y; this.z=z;
 	}
-
-	public String toString() { return x+" "+y+" "+z; };
 	
-	public Vector3d clone() {
+	public static Vector3d from(double x, double y, double z) {
 		return new Vector3d(x,y,z);
 	}
-	
-	@Override
-	public int hashCode() {
-		return new Double(x*x+y*y+z*z).hashCode();
-	}
-	
-	public boolean elementsEqual(Vector3d a) {
-		return x==a.x && y==a.y && z==a.z;
-	}
-	
-	@Override
-	public Vector3d set(Vector3d a) {
-		return this.xyz(a.x,a.y,a.z);
-	}
 
+//==[ Getter & Setter ]=============================================================================
+	
 	public Vector3d setElements(double x, double y, double z) { return this.xyz(x, y, z); } 
 	public Vector3d xyz(double x, double y, double z) { this.x=x; this.y=y; this.z=z; return this; }
 //	public Vector3d x(double x) { this.x=x; return this; }
 //	public Vector3d y(double y) { this.y=y; return this; }
 //	public Vector3d z(double z) { this.z=z; return this; }
 
-	//////////////////////////////////////////////////////////////////////////////
+//==[ Tuple<Vector3d> ]=============================================================================
+	
+	@Override public Vector3d fromString(String r) {
+		int s1 = r.indexOf(' ');
+		int s2 = r.indexOf(' ', s1 + 1);
+		
+		return this.xyz(
+			new Double(r.substring(0, s1)),
+			new Double(r.substring(s1, s2)),
+			new Double(r.substring(s2, r.length()))
+		);
+	}
 
+	@Override public String toString() {
+		return x+" "+y+" "+z;
+	}
+	
+	@Override public Vector3d clone() {
+		return new Vector3d(x,y,z);
+	}
+	
+	@Override public int hashCode() {
+		return new Double(x*x+y*y+z*z).hashCode();
+	}
+	
+	@Override public boolean elementsEqual(Vector3d a) {
+		return x==a.x && y==a.y && z==a.z;
+	}
+	
+	@Override public Vector3d set(Vector3d a) {
+		return this.xyz(a.x,a.y,a.z);
+	}
+
+//==[ VectorAlgebra<Vector3d> ]=====================================================================
 
 	public Vector3d addVector(Vector3d v) { return this.addElements(v.x, v.y, v.z); }
 	public Vector3d addElements(double x, double y, double z) { this.x+=x; this.y+=y; this.z+=z; return this; }
 	
 	
+	@Override public Vector3d add(Vector3d v) { return this.addElements(v.x,v.y,v.z); }
 	public Vector3d add(double x, double y, double z) { return this.addElements(x,y,z); }
-	public Vector3d add(Vector3d v) { return this.addElements(v.x,v.y,v.z); }
-
-	public Vector3d adds(Vector3d v, double s) { return this.addElements(v.x*s,v.y*s,v.z*s); }
+	
+	@Override public Vector3d adds(Vector3d v, double s) { return this.addElements(v.x*s,v.y*s,v.z*s); }
+	public Vector3d adds(double x, double y, double z, double s) { return this.addElements(x*s, y*s, z*s); }
+	
+	@Override public Vector3d sub(Vector3d v) { return this.addElements(-v.x, -v.y, -v.z); }
 	public Vector3d sub(double x, double y, double z) { return this.addElements(-x, -y, -z); }
-	public Vector3d sub(Vector3d v) { return this.addElements(-v.x, -v.y, -v.z); }
-
-	public Vector3d scale(double s) { this.x*=s; this.y*=s; this.z*=s; return this; }
-	public Vector3d normalize() { return scale(1./length()); }
+	
+	@Override public Vector3d scale(double s) { this.x*=s; this.y*=s; this.z*=s; return this; }
+	@Override public Vector3d normalize() { return scale(1./length()); }
 
 	public double dot(double x, double y, double z) { return this.x*x+this.y*y+this.z*z; } 
-	public double dot(Vector3d v) { return dot(v.x,v.y,v.z); }
+	@Override public double dot(Vector3d v) { return dot(v.x,v.y,v.z); }
 
-	public double length() { return Math.sqrt(x*x+y*y+z*z); }
+	@Override public double length() { return Math.sqrt(x*x+y*y+z*z); }
 
-	public double quadrance(Vector3d v) { return quadrance(v.x,v.y,v.z); }
+	@Override public double quadrance(Vector3d v) { return quadrance(v.x,v.y,v.z); }
 	public double quadrance(double x, double y, double z) { 
 		final double dx = x-this.x, dy = y-this.y, dz = z-this.z; 
 		return dx*dx+dy*dy+dz*dz; 
 	}
 	
-	@Override
-	public double norm(double p) { 
+	@Override public double norm(double p) { 
 		return pow(pow(abs(x),p)+pow(abs(y),p)+pow(abs(z),p),1.0/p);
 	}
 	
-	
-	////////// Convenience Methods
-	
-	public Vector3d augment(Vector2d v) { return this.xyz(v.x, v.y, 1); }
-	public Vector3d transformation(Matrix3d m) { return m.transform(this); }
-	public Vector3d projection(Matrix4d m) { return m.project(this); }
-	
-	
-	////////// Interpolatable
-	
+//==[ Interpolatable<Vector3d> ]====================================================================	
 
-	public Vector3d line(Vector3d a, Vector3d b, double r) {
+	@Override public Vector3d line(Vector3d a, Vector3d b, double r) {
 		final double omr = 1.-r; 
 		final double x = a.x*omr+b.x*r;
 		final double y = a.y*omr+b.y*r;
@@ -109,7 +112,7 @@ public class Vector3d	extends Vector<Vector3d>
 		return this;
 	}
 	
-	public Vector3d spline(Vector3d a, Vector3d da, Vector3d dd, Vector3d d, double r) {
+	@Override public Vector3d spline(Vector3d a, Vector3d da, Vector3d dd, Vector3d d, double r) {
 		final double omr = 1-r; 
 				
 		final double p0x = a.x, p0y = a.y, p0z = a.z;
@@ -134,9 +137,14 @@ public class Vector3d	extends Vector<Vector3d>
 		
 		return this;
 	}
+
+//==[ Convenience Methods ]=========================================================================
 	
+	public Vector3d augment(Vector2d v) { return this.xyz(v.x, v.y, 1); }
+	public Vector3d transformation(Matrix3d m) { return m.transform(this); }
+	public Vector3d projection(Matrix4d m) { return m.project(this); }
 	
-	////////////////////////////////////// Vector3d Specific
+//==[ Vector3d Specific ]===========================================================================
 
 	public Vector3d cross(Vector3d a, Vector3d b) {
 		this.x = a.y*b.z - a.z*b.y; 
@@ -144,7 +152,6 @@ public class Vector3d	extends Vector<Vector3d>
 		this.z = a.x*b.y - a.y*b.x;
 		return this;
 	}
-	
 	
 }
 
