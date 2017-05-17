@@ -4,8 +4,6 @@ import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 
 import java.io.Serializable;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 
 public class Matrix3d extends Matrix<Matrix3d> implements Serializable {
 	private static final long serialVersionUID = 1L;
