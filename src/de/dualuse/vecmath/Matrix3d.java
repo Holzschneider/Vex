@@ -350,11 +350,15 @@ public class Matrix3d extends Matrix<Matrix3d> implements Serializable {
 		return v;
 	}
 	
-	public <E> E project(double px, double py, BiFunction<Double, Double, E> f) {
+	public interface TransformPoint<T> {
+		public T define(double x, double y);
+	}
+	
+	public <E> E project(double px, double py, TransformPoint<E> f) {
 		final double x = px*m00+py*m01+m02; 
 		final double y = px*m10+py*m11+m12;
 		final double w = px*m20+py*m21+m22;
-		return f.apply(x/w,y/y);
+		return f.define(x/w,y/y);
 	}
 	
 	//as in cast a shadow on an object
