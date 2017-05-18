@@ -332,6 +332,33 @@ public class Matrix3d extends Matrix<Matrix3d> implements Serializable {
 		);
 	}
 	
+
+	public double[] transform(double[] v) {
+		for (int i=0;i<v.length;i+=3) {
+			final int j = i+1, k = j+1;
+			final double x = v[i], y = v[j], z = v[k];
+			
+			v[i] = x*m00+y*m01+z*m02; 
+			v[j] = x*m10+y*m11+z*m12;
+			v[k] = x*m20+y*m21+z*m22;
+		}
+		return v;
+		
+	}
+
+	public interface TransformedPoint<T> {
+		public T define(double x, double y, double z);
+	}
+	
+	public <E> E transform(double px, double py, double pz, TransformedPoint<E> f) {
+		final double x = px*m00+py*m01+pz*m02; 
+		final double y = px*m10+py*m11+pz*m12;
+		final double z = px*m20+py*m21+pz*m22;
+		return f.define(x,y,z);
+	}
+	
+	///////
+	
 	public Vector2d project(Vector2d v) {
 		final double x = v.x*m00+v.y*m01+m02; 
 		final double y = v.x*m10+v.y*m11+m12;
@@ -340,24 +367,33 @@ public class Matrix3d extends Matrix<Matrix3d> implements Serializable {
 	}
 	
 	public double[] project(double[] v) {
-		final double x = v[0]*m00+v[1]*m01+m02; 
-		final double y = v[0]*m10+v[1]*m11+m12;
-		final double w = v[0]*m20+v[1]*m21+m22;
-		v[0] = x/w;
-		v[1] = y/w;
+		for (int i=0;i<v.length;i+=2) {
+			int j = i+1;
+			final double x = v[i], y = v[j];
+			
+			final double X = x*m00+y*m01+m02; 
+			final double Y = x*m10+y*m11+m12;
+			final double W = x*m20+y*m21+m22;
+			v[i] = X/W;
+			v[j] = Y/W;
+		}
 		return v;
 	}
 	
-	public interface TransformPoint<T> {
+	public interface ProjectedPoint<T> {
 		public T define(double x, double y);
 	}
 	
-	public <E> E project(double px, double py, TransformPoint<E> f) {
+	public <E> E project(double px, double py, ProjectedPoint<E> f) {
 		final double x = px*m00+py*m01+m02; 
 		final double y = px*m10+py*m11+m12;
 		final double w = px*m20+py*m21+m22;
-		return f.define(x/w,y/y);
+		return f.define(x/w,y/w);
 	}
+	
+	
+	/////////
+	
 	
 	//as in cast a shadow on an object
 	public Vector2d intersect(Vector2d v) {
