@@ -328,7 +328,7 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 		);
 	}
 
-	private Matrix4d concat( 
+	Matrix4d concat( 
 			double n00, double n01, double n02, double n03,
 			double n10, double n11, double n12, double n13,
 			double n20, double n21, double n22, double n23,
@@ -336,25 +336,25 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 			) {
 
 		return setElements(
-			n00*m00+n10*m01+n20*m02+n30*m03,
-			n01*m00+n11*m01+n21*m02+n31*m03,
-			n02*m00+n12*m01+n22*m02+n32*m03,
-			n03*m00+n13*m01+n23*m02+n33*m03,
+			m00*n00+m01*n10+m02*n20+m03*n30,
+			m00*n01+m01*n11+m02*n21+m03*n31,
+			m00*n02+m01*n12+m02*n22+m03*n32,
+			m00*n03+m01*n13+m02*n23+m03*n33,
 
-			n00*m10+n10*m11+n20*m12+n30*m13,
-			n02*m10+n12*m11+n22*m12+n32*m13,
-			n01*m10+n11*m11+n21*m12+n31*m13,
-			n03*m10+n13*m11+n23*m12+n33*m13,
+			m10*n00+m11*n10+m12*n20+m13*n30,
+			m10*n01+m11*n11+m12*n21+m13*n31,
+			m10*n02+m11*n12+m12*n22+m13*n32,
+			m10*n03+m11*n13+m12*n23+m13*n33,
 				
-			n00*m20+n10*m21+n20*m22+n30*m23,
-			n01*m20+n11*m21+n21*m22+n31*m23,
-			n02*m20+n12*m21+n22*m22+n32*m23,
-			n03*m20+n13*m21+n23*m22+n33*m23,
+			m20*n00+m21*n10+m22*n20+m23*n30,
+			m20*n01+m21*n11+m22*n21+m23*n31,
+			m20*n02+m21*n12+m22*n22+m23*n32,
+			m20*n03+m21*n13+m22*n23+m23*n33,
 				
-			n00*m30+n10*m31+n20*m32+n30*m33,
-			n01*m30+n11*m31+n21*m32+n31*m33,
-			n02*m30+n12*m31+n22*m32+n32*m33,
-			n03*m30+n13*m31+n23*m32+n33*m33
+			m30*n00+m31*n10+m32*n20+m33*n30,
+			m30*n01+m31*n11+m32*n21+m33*n31,
+			m30*n02+m31*n12+m32*n22+m33*n32,
+			m30*n03+m31*n13+m32*n23+m33*n33
 		);
 	}
 	
@@ -377,16 +377,18 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 	public Matrix4d rotate(AxisAngle aa) { return this.rotate(aa.x,aa.y,aa.z,aa.t); }
 	
 	public Matrix4d rotate(double ax, double ay, double az, double theta) {
-		// compare '$ man glRotate' or 'javax.vecmath.Matrix4d.set(AxisAngle4d a1)'
+//		// compare '$ man glRotate' or 'javax.vecmath.Matrix4d.set(AxisAngle4d a1)'
+		
 		final double s = sin(theta), c = cos(theta), t = 1-c, l = sqrt(ax*ax+ay*ay+az*az);
-		final double x = ax/l, y = ay/l, z= az/l, xz = x*z, xy = x*y, yz = y*z, xx=x*x, yy=y*y, zz=z*z;
+		final double x = (ax/l), y = (ay/l), z= (az/l);
+		final double xz = x*z, xy = x*y, yz = y*z, xx=x*x, yy=y*y, zz=z*z;
 		
 		return this.concat(
-			t*xx+c  , t*xy-s*z, t*xz+s*y, 0,
-			t*xy+s*z, t*yy+c  , t*yz-s*x, 0,
-			t*xz-s*y, t*yz+s*x, t*zz+c  , 0,
-			       0,        0,      0,   1
-		);
+				t*xx+c  , t*xy-s*z, t*xz+s*y, 0,
+				t*xy+s*z, t*yy+c  , t*yz-s*x, 0,
+				t*xz-s*y, t*yz+s*x, t*zz+c  , 0,
+				       0,        0,      0,   1);
+
 	}
 
 //	public Matrix4d translate(Vector3d v);

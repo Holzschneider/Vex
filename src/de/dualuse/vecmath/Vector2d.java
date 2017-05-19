@@ -44,6 +44,9 @@ public class Vector2d extends Vector<Vector2d> implements Serializable {
 //	public Vector2d y(double y) { this.y=y; return this; }
 	
 	//////////////////////////////////////////////////////////////////////////////
+
+	@Override public Vector2d sum(Vector2d a, Vector2d b) { return this.xy(a.x+b.x,a.y+b.y); }
+	@Override public Vector2d difference(Vector2d a, Vector2d b) { return this.xy(a.x-b.x, a.y-b.y); }
 	
 	public Vector2d add(double x, double y) { this.x+=x; this.y+=y; return this; }
 	public Vector2d add(Vector2d v) { return this.add(v.x,v.y); }
@@ -56,6 +59,7 @@ public class Vector2d extends Vector<Vector2d> implements Serializable {
 	public double dot(Vector2d v) { return this.x*v.x+this.y*v.y; }
 
 	public double length() { return Math.sqrt(x*x+y*y); }
+	public double distance(Vector2d v) { return Math.sqrt(quadrance(v)); }
 
 	public double quadrance(Vector2d v2) { return quadrance(v2.x,v2.y); }
 	public double quadrance(double x, double y) { 

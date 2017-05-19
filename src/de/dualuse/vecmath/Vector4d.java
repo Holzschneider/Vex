@@ -53,7 +53,8 @@ public class Vector4d	extends Vector<Vector4d>
 	
 	public Vector4d setElements(double x, double y, double z, double w) { return this.xyzw(x, y, z, w); }
 	public Vector4d xyzw(double x, double y, double z, double w) { this.x=x; this.y=y; this.z=z; this.w=w;return this;}
-//	public Vector4d xyz(double x, double y, double z) { this.x=x; this.y=y; this.z=z; return this;}
+	public Vector4d xyz(double x, double y, double z) { this.x=x; this.y=y; this.z=z; return this;}
+	public Vector4d xy(double x, double y) { this.x=x; this.y=y; return this;}
 	
 	//method and field names collide in javascript
 //	public Vector4d x(double x) { this.x=x; return this; }
@@ -62,8 +63,10 @@ public class Vector4d	extends Vector<Vector4d>
 //	public Vector4d w(double w) { this.w=w; return this; }
 
 	//////////////////////////////////////////////////////////////////////////////
-
 	
+	@Override public Vector4d sum(Vector4d a, Vector4d b) { return this.xyzw(a.x+b.x,a.y+b.y,a.z+b.z, a.w+b.w); }
+	@Override public Vector4d difference(Vector4d a, Vector4d b) { return this.xyzw(a.x-b.x,a.y-b.y,a.z-b.z,a.w-b.w); }
+
 	public Vector4d add(double x, double y, double z) { return xyzw(x+this.x,y+this.y,z+this.z,w+this.w); }
 	
 	public Vector4d add(Vector4d v) { return xyzw(x+v.x,y+v.y,z+v.z,w+v.w); }
@@ -81,7 +84,8 @@ public class Vector4d	extends Vector<Vector4d>
 		return pow(pow(abs(x),p)+pow(abs(y),p)+pow(abs(z),p)+pow(abs(w),p),1.0/p);
 	}
 
-	
+	public double distance(Vector4d v) { return Math.sqrt(quadrance(v)); }
+
 	public double quadrance(Vector4d v) { return quadrance(v.x,v.y,v.z,v.w); }
 	public double quadrance(double vx, double vy, double vz, double vw) {  
 		final double dx = vx-this.x, dy = vy-this.y, dz = vz-this.z; 

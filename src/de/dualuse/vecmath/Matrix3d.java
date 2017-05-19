@@ -26,6 +26,19 @@ public class Matrix3d extends Matrix<Matrix3d> implements Serializable {
 		return new Matrix3d().setElements(m00, m01, m02, m10, m11, m12, m20, m21, m22);
 	}
 	
+	public static Matrix3d fromProjection(Matrix4d m, double zPlane) {
+		return new Matrix3d().setElements(
+			m.m00, m.m01, zPlane*m.m02+m.m03, 
+			m.m10, m.m11, zPlane*m.m12+m.m13,
+			m.m30, m.m31, zPlane*m.m32+m.m33 
+		);
+	}
+	
+	public static Matrix3d fromConcatenation(Matrix3d A, Matrix3d B) {
+		return new Matrix3d().concatenation(A, B);
+	}
+
+	
 //	public Matrix3d(
 //			double m00,double m01,double m02,
 //			double m10,double m11,double m12,
@@ -285,10 +298,18 @@ public class Matrix3d extends Matrix<Matrix3d> implements Serializable {
 		);
 	}
 	
+	
 	//////////
+//	XXX Specify a Plane in this-Matrix Projective Space? maybe need three points for proper coordinate system 
+//	public Matrix3d projection(Matrix4d m, Vector3d plane) {
+//	return this;
+//}
+//	public Matrix3d projection(Matrix4d m, double nx, double ny, double nz) {
+//		return this;
+//	}
 
 	/// UNTESTED
-	public Matrix3d setProjection(Matrix4d m, double zPlane) {
+	public Matrix3d projection(Matrix4d m, double zPlane) {
 		return this.setElements(
 			m.m00, m.m01, zPlane*m.m02+m.m03, 
 			m.m10, m.m11, zPlane*m.m12+m.m13,
@@ -356,7 +377,6 @@ public class Matrix3d extends Matrix<Matrix3d> implements Serializable {
 	/////////
 	
 	
-	//as in cast a shadow on an object
 	public Vector2d intersect(Vector2d v) {
 		final double A = (m11*m22-m12*m21), D =-(m01*m22-m02*m21), G = (m01*m12-m02*m11);
 		final double B =-(m10*m22-m12*m20), E = (m00*m22-m02*m20), H =-(m00*m12-m02*m10);
@@ -369,6 +389,39 @@ public class Matrix3d extends Matrix<Matrix3d> implements Serializable {
 		double w= (v.x*C+v.y*F+I)/detA;
 		
 		return v.xy(x/w, y/w);
+	}
+	
+
+	public <E> E intersect(double vx, double vy, Value2<E> f) {
+		final double A = (m11*m22-m12*m21), D =-(m01*m22-m02*m21), G = (m01*m12-m02*m11);
+		final double B =-(m10*m22-m12*m20), E = (m00*m22-m02*m20), H =-(m00*m12-m02*m10);
+		final double C = (m10*m21-m11*m20), F =-(m00*m21-m01*m20), I = (m00*m11-m01*m10);
+	
+		final double detA = (m00*A-m01*B+m02*C);
+		
+		double x= (vx*A+vy*D+G)/detA;
+		double y= (vx*B+vy*E+H)/detA;
+		double w= (vx*C+vy*F+I)/detA;
+		
+		return f.set(x/w, y/w);
+	}
+	
+	public double[] intersect(double[] v) {
+		final double A = (m11*m22-m12*m21), D =-(m01*m22-m02*m21), G = (m01*m12-m02*m11);
+		final double B =-(m10*m22-m12*m20), E = (m00*m22-m02*m20), H =-(m00*m12-m02*m10);
+		final double C = (m10*m21-m11*m20), F =-(m00*m21-m01*m20), I = (m00*m11-m01*m10);
+	
+		final double detA = (m00*A-m01*B+m02*C), ooDetA = 1.0/detA;
+		
+		for (int i=0,j=v.length;i<j;i++) {
+			final int x = i, y = i+1;
+			final double vx = v[x], vy = v[y];
+			final double w = (vx*C+vy*F+I)/detA;
+			v[x] = (vx*A+vy*D+G)*ooDetA/w;
+			v[y] = (vx*B+vy*E+H)*ooDetA/w;
+		}
+		
+		return v;
 	}
 }
 

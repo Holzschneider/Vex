@@ -28,9 +28,9 @@ public class Vector3d	extends Vector<Vector3d>
 	
 	public Vector3d setElements(double x, double y, double z) { return this.xyz(x, y, z); } 
 	public Vector3d xyz(double x, double y, double z) { this.x=x; this.y=y; this.z=z; return this; }
-	public Vector3d x(double x) { this.x=x; return this; }
-	public Vector3d y(double y) { this.y=y; return this; }
-	public Vector3d z(double z) { this.z=z; return this; }
+	public Vector3d xy(double x, double y) { this.x=x; this.y=y; return this; }
+	public Vector3d xz(double x, double z) { this.x=x; this.z=z; return this; }
+	public Vector3d yz(double y, double z) { this.y=y; this.z=z; return this; }
 	
 //==[ Tuple<Vector3d> ]=============================================================================
 	
@@ -66,10 +66,14 @@ public class Vector3d	extends Vector<Vector3d>
 	}
 
 //==[ VectorAlgebra<Vector3d> ]=====================================================================
-
+	
 	public Vector3d addVector(Vector3d v) { return this.addElements(v.x, v.y, v.z); }
 	public Vector3d addElements(double x, double y, double z) { this.x+=x; this.y+=y; this.z+=z; return this; }
 	
+	
+	@Override public Vector3d sum(Vector3d a, Vector3d b) { return this.xyz(a.x+b.x,a.y+b.y,a.z+b.z); }
+	@Override public Vector3d difference(Vector3d a, Vector3d b) { return this.xyz(a.x-b.x, a.y-b.y, a.z-b.z); }
+
 	
 	@Override public Vector3d add(Vector3d v) { return this.addElements(v.x,v.y,v.z); }
 	public Vector3d add(double x, double y, double z) { return this.addElements(x,y,z); }
@@ -88,6 +92,8 @@ public class Vector3d	extends Vector<Vector3d>
 
 	@Override public double length() { return Math.sqrt(x*x+y*y+z*z); }
 
+	@Override public double distance(Vector3d v) { return Math.sqrt(quadrance(v)); }
+	
 	@Override public double quadrance(Vector3d v) { return quadrance(v.x,v.y,v.z); }
 	public double quadrance(double x, double y, double z) { 
 		final double dx = x-this.x, dy = y-this.y, dz = z-this.z; 
