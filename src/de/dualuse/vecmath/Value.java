@@ -1,5 +1,5 @@
 package de.dualuse.vecmath;
 
-public interface Value<Q,T> { 
-	Q set(T v); 
+public interface Value<T,U> { 
+	T set(U v); 
 }

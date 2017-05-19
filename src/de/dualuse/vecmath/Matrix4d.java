@@ -505,6 +505,30 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 		return v.xyz( x/w, y/w, z/w );
 	}
 	
+	public<T> T project(double vx, double vy, double vz, Value3<T> v) {
+		final double x = vx * m00 + vy * m01 + vz * m02 + m03; 
+		final double y = vx * m10 + vy * m11 + vz * m12 + m13; 
+		final double z = vx * m20 + vy * m21 + vz * m22 + m23;
+		final double w = vx * m30 + vy * m31 + vz * m32 + m33;
+		
+		return v.set( x/w, y/w, z/w );		
+	}
+	
+	public double[] project(double[] v) {
+		for (int i=0,I=v.length;i<I;i+=3) {
+			final int x = i, y = i+1, z = i+2;
+			final double vx = v[x], vy = v[y], vz = v[z];
+			
+			double W = vx * m30 + vy * m31 + vz * m32 +  m33;
+			v[x] = (vx * m00 + vy * m01 + vz * m02 + m03)/W;
+			v[y] = (vx * m10 + vy * m11 + vz * m12 + m13)/W;
+			v[z] = (vx * m20 + vy * m21 + vz * m22 + m23)/W;
+		}
+		
+		return v;
+	}
+
+	
 	public Vector4d transform(Vector4d v) {
 		return v.xyzw(	
 			v.x * m00 + v.y * m01 + v.z * m02 + v.w * m03, 
@@ -513,7 +537,29 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 			v.x * m30 + v.y * m31 + v.z * m32 + v.w * m33
 		);
 	}
-
+	
+	public<T> T transform(double vx, double vy, double vz, double vw, Value4<T> v) {
+		final double x = vx * m00 + vy * m01 + vz * m02 + vw * m03; 
+		final double y = vx * m10 + vy * m11 + vz * m12 + vw * m13; 
+		final double z = vx * m20 + vy * m21 + vz * m22 + vw * m23;
+		final double w = vx * m30 + vy * m31 + vz * m32 + vw * m33;
+		
+		return v.set( x, y, z, w );		
+	}
+	
+	public double[] transform(double[] v) {
+		for (int i=0,I=v.length;i<I;i+=4) {
+			final int x = i, y = i+1, z = i+2, w = i+3;
+			final double vx = v[x], vy = v[y], vz = v[z], vw = v[w];
+			
+			v[x] = vx * m00 + vy * m01 + vz * m02 + vw * m03; 
+			v[y] = vx * m10 + vy * m11 + vz * m12 + vw * m13; 
+			v[z] = vx * m20 + vy * m21 + vz * m22 + vw * m23;
+			v[w] = vx * m30 + vy * m31 + vz * m32 + vw * m33;
+		}
+		
+		return v;
+	}
 
 	
 //	public Matrix4 decompose(Vec3 translation, Quaternion rotation, Vec3 scaling) {

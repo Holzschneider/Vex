@@ -289,31 +289,6 @@ public class Matrix3d extends Matrix<Matrix3d> implements Serializable {
 
 	/// UNTESTED
 	public Matrix3d setProjection(Matrix4d m, double zPlane) {
-//		final double n00 = 1, n01 = 0, n02 = 0, n03 = 0;
-//		final double n10 = 0, n11 = 1, n12 = 0, n13 = 0;
-//		final double n20 = 0, n21 = 0, n22 = 1, n23 = zPlane;
-//		final double n30 = 0, n31 = 0, n32 = 0, n33 = 1;
-//		
-//		double m00 = n00*m.m00+n10*m.m01+n20*m.m02+n30*m.m03;
-//		double m01 = n01*m.m00+n11*m.m01+n21*m.m02+n31*m.m03;
-////		double m02 = n02*m.m00+n12*m.m01+n22*m.m02+n32*m.m03;
-//		double m03 = n03*m.m00+n13*m.m01+n23*m.m02+n33*m.m03;
-//
-//		double m10 = n00*m.m10+n10*m.m11+n20*m.m12+n30*m.m13;
-//		double m11 = n02*m.m10+n12*m.m11+n22*m.m12+n32*m.m13;
-////		double m12 = n01*m.m10+n11*m.m11+n21*m.m12+n31*m.m13;
-//		double m13 = n03*m.m10+n13*m.m11+n23*m.m12+n33*m.m13;
-//		
-////		double m20 = n00*m.m20+n10*m.m21+n20*m.m22+n30*m.m23;
-////		double m21 = n01*m.m20+n11*m.m21+n21*m.m22+n31*m.m23;
-////		double m22 = n02*m.m20+n12*m.m21+n22*m.m22+n32*m.m23;
-////		double m23 = n03*m.m20+n13*m.m21+n23*m.m22+n33*m.m23;
-//		
-//		double m30 = n00*m.m30+n10*m.m31+n20*m.m32+n30*m.m33;
-//		double m31 = n01*m.m30+n11*m.m31+n21*m.m32+n31*m.m33;
-////		double m32 = n02*m.m30+n12*m.m31+n22*m.m32+n32*m.m33;
-//		double m33 = n03*m.m30+n13*m.m31+n23*m.m32+n33*m.m33;
-
 		return this.setElements(
 			m.m00, m.m01, zPlane*m.m02+m.m03, 
 			m.m10, m.m11, zPlane*m.m12+m.m13,
@@ -323,7 +298,6 @@ public class Matrix3d extends Matrix<Matrix3d> implements Serializable {
 	
 	//////////
 
-
 	public Vector3d transform(Vector3d v) {
 		return v.xyz(
 			v.x*m00+v.y*m01+v.z*m02, 
@@ -332,29 +306,23 @@ public class Matrix3d extends Matrix<Matrix3d> implements Serializable {
 		);
 	}
 	
-
 	public double[] transform(double[] v) {
 		for (int i=0;i<v.length;i+=3) {
-			final int j = i+1, k = j+1;
-			final double x = v[i], y = v[j], z = v[k];
+			final int x = i, y = i+1, z = y+1;
+			final double vx = v[x], vy = v[y], vz = v[z];
 			
-			v[i] = x*m00+y*m01+z*m02; 
-			v[j] = x*m10+y*m11+z*m12;
-			v[k] = x*m20+y*m21+z*m22;
+			v[x] = vx*m00+vy*m01+vz*m02; 
+			v[y] = vx*m10+vy*m11+vz*m12;
+			v[z] = vx*m20+vy*m21+vz*m22;
 		}
 		return v;
-		
 	}
 
-	public interface TransformedPoint<T> {
-		public T define(double x, double y, double z);
-	}
-	
-	public <E> E transform(double px, double py, double pz, TransformedPoint<E> f) {
+	public <E> E transform(double px, double py, double pz, Value3<E> f) {
 		final double x = px*m00+py*m01+pz*m02; 
 		final double y = px*m10+py*m11+pz*m12;
 		final double z = px*m20+py*m21+pz*m22;
-		return f.define(x,y,z);
+		return f.set(x,y,z);
 	}
 	
 	///////
@@ -368,29 +336,22 @@ public class Matrix3d extends Matrix<Matrix3d> implements Serializable {
 	
 	public double[] project(double[] v) {
 		for (int i=0;i<v.length;i+=2) {
-			int j = i+1;
-			final double x = v[i], y = v[j];
+			final int x = i, y = i+1;
+			final double vx = v[x], vy = v[y];
 			
-			final double X = x*m00+y*m01+m02; 
-			final double Y = x*m10+y*m11+m12;
-			final double W = x*m20+y*m21+m22;
-			v[i] = X/W;
-			v[j] = Y/W;
+			final double W = vx*m20+vy*m21+m22;
+			v[x] = (vx*m00+vy*m01+m02)/W;
+			v[y] = (vx*m10+vy*m11+m12)/W;
 		}
 		return v;
 	}
 	
-	public interface ProjectedPoint<T> {
-		public T define(double x, double y);
-	}
-	
-	public <E> E project(double px, double py, ProjectedPoint<E> f) {
+	public <E> E project(double px, double py, Value2<E> f) {
 		final double x = px*m00+py*m01+m02; 
 		final double y = px*m10+py*m11+m12;
 		final double w = px*m20+py*m21+m22;
-		return f.define(x/w,y/w);
+		return f.set(x/w,y/w);
 	}
-	
 	
 	/////////
 	
