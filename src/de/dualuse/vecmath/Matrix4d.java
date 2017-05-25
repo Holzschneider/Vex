@@ -192,22 +192,22 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 		if (EPSILON < det && det < EPSILON )
 			throw new RuntimeException("Non invertible transform");
 
-		final double im0 = +m11 * fB5 - m12 * fB4 + m13 * fB3;
-		final double im4 = -m10 * fB5 + m12 * fB2 - m13 * fB1;
-		final double im8 = +m10 * fB4 - m11 * fB2 + m13 * fB0;
-		final double im12 = -m10 * fB3 + m11 * fB1 - m12 * fB0;
-		final double im1 = -m01 * fB5 + m02 * fB4 - m03 * fB3;
-		final double im5 = +m00 * fB5 - m02 * fB2 + m03 * fB1;
-		final double im9 = -m00 * fB4 + m01 * fB2 - m03 * fB0;
-		final double im13 = +m00 * fB3 - m01 * fB1 + m02 * fB0;
-		final double im2 = +m31 * fA5 - m32 * fA4 + m33 * fA3;
-		final double im6 = -m30 * fA5 + m32 * fA2 - m33 * fA1;
-		final double im10 = +m30 * fA4 - m31 * fA2 + m33 * fA0;
-		final double im14 = -m30 * fA3 + m31 * fA1 - m32 * fA0;
-		final double im3 = -m21 * fA5 + m22 * fA4 - m23 * fA3;
-		final double im7 = +m20 * fA5 - m22 * fA2 + m23 * fA1;
-		final double im11 = -m20 * fA4 + m21 * fA2 - m23 * fA0;
-		final double im15 = +m20 * fA3 - m21 * fA1 + m22 * fA0;
+		final double im0 = +m.m11 * fB5 -m.m12 * fB4 +m.m13 * fB3;
+		final double im4 = -m.m10 * fB5 +m.m12 * fB2 -m.m13 * fB1;
+		final double im8 = +m.m10 * fB4 -m.m11 * fB2 +m.m13 * fB0;
+		final double im12 = -m.m10 * fB3 +m.m11 * fB1 -m.m12 * fB0;
+		final double im1 = -m.m01 * fB5 +m.m02 * fB4 -m.m03 * fB3;
+		final double im5 = +m.m00 * fB5 -m.m02 * fB2 +m.m03 * fB1;
+		final double im9 = -m.m00 * fB4 +m.m01 * fB2 -m.m03 * fB0;
+		final double im13 = +m.m00 * fB3 -m.m01 * fB1 +m.m02 * fB0;
+		final double im2 = +m.m31 * fA5 -m.m32 * fA4 +m.m33 * fA3;
+		final double im6 = -m.m30 * fA5 +m.m32 * fA2 -m.m33 * fA1;
+		final double im10 = +m.m30 * fA4 -m.m31 * fA2 +m.m33 * fA0;
+		final double im14 = -m.m30 * fA3 +m.m31 * fA1 -m.m32 * fA0;
+		final double im3 = -m.m21 * fA5 +m.m22 * fA4 -m.m23 * fA3;
+		final double im7 = +m.m20 * fA5 -m.m22 * fA2 +m.m23 * fA1;
+		final double im11 = -m.m20 * fA4 +m.m21 * fA2 -m.m23 * fA0;
+		final double im15 = +m.m20 * fA3 -m.m21 * fA1 +m.m22 * fA0;
 
 		final double iDet = 1. / det;
 
