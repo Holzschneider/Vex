@@ -6,6 +6,8 @@ import static java.lang.Math.sqrt;
 
 import java.io.Serializable;
 
+import de.dualuse.vecmath.Matrix3d.Values;
+
 public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 	private static final double EPSILON = 1.0E-10;
 	private static final long serialVersionUID = 1L;
@@ -37,6 +39,30 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 			double m30, double m31, double m32, double m33
 			) {
 		return new Matrix4d().setElements(m00,m01,m02,m03,m10,m11,m12,m13,m20,m21,m22,m23,m30,m31,m32,m33);
+	}
+	
+	public static Matrix4d fromRows( double[][] rowArray ) {
+		return new Matrix4d().setRows(rowArray);
+	}
+	
+	public static Matrix4d fromRows(double[] m0, double[] m1, double[] m2, double[] m3) {
+		return new Matrix4d().setRows(m0,m1,m2,m3);
+	}
+	
+	public static Matrix4d fromRows(Vector4d m0, Vector4d m1, Vector4d m2, Vector4d m3) {
+		return new Matrix4d().setRows(m0,m1,m2,m3);
+	}
+
+	public static Matrix4d fromColumns( double[][] rowArray ) {
+		return new Matrix4d().setColumns(rowArray);
+	}
+	
+	public static Matrix4d fromColumns(double[] m0, double[] m1, double[] m2, double[] m3) {
+		return new Matrix4d().setColumns(m0,m1,m2,m3);
+	}
+	
+	public static Matrix4d fromColumns(Vector4d m0, Vector4d m1, Vector4d m2, Vector4d m3) {
+		return new Matrix4d().setColumns(m0,m1,m2, m3);
 	}
 
 	
@@ -167,6 +193,46 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 		);
 	}
 
+	public double[][] getRows( double[][] rowArray ) {
+		double m[][] = rowArray;
+		
+		m[0][0] = m00; m[0][1] = m01; m[0][2] = m02; m[0][3] = m03;
+		m[1][0] = m10; m[1][1] = m11; m[1][2] = m12; m[1][3] = m13;
+		m[2][0] = m20; m[2][1] = m21; m[2][2] = m22; m[2][3] = m23;
+		m[3][0] = m30; m[3][1] = m31; m[3][2] = m32; m[3][3] = m33;
+		
+		return rowArray;
+	}
+	
+	public double[][] getColumns( double[][] rowArray ) {
+		double m[][] = rowArray;
+		
+		m[0][0] = m00; m[0][1] = m10; m[0][2] = m20; m[0][3] = m30;
+		m[1][0] = m01; m[1][1] = m11; m[1][2] = m21; m[1][3] = m31;
+		m[2][0] = m02; m[2][1] = m12; m[2][2] = m22; m[2][3] = m32;
+		m[3][0] = m03; m[3][1] = m13; m[3][2] = m23; m[3][3] = m33;
+		
+		return rowArray;
+	}
+	
+	
+	public static interface Values<T> {
+		public T set(
+				double m00, double m01, double m02, double m03,
+				double m10, double m11, double m12, double m13,
+				double m20, double m21, double m22, double m23,
+				double m30, double m31, double m32, double m33
+			);
+	}
+	
+	public<T> T get(Values<T> v) {
+		return v.set(	m00, m01, m02, m03, 
+						m10, m11, m12, m13,
+						m20, m21, m22, m23,
+						m30, m31, m32, m33 );
+	}
+	
+	
 //==[ MatrixAlgebra<Matrix4d> ]=====================================================================
 
 	@Override public Matrix4d zero() { 
@@ -343,6 +409,42 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 			y.x, y.y, y.z, y.w,
 			z.x, z.y, z.z, z.w,
 			w.x, w.y, w.z, w.w
+		);
+	}
+
+	public Matrix4d setColumns(double[] c0, double[] c1, double[] c2, double[] c3) {
+		return setElements(
+			c0[0], c1[0], c2[0], c3[0], 
+			c0[1], c1[1], c2[1], c3[1], 
+			c0[2], c1[2], c2[2], c3[2], 
+			c0[3], c1[3], c2[3], c3[3] 
+		);
+	}
+
+	public Matrix4d setRows(double[] m0, double[] m1, double[] m2, double[] m3) {
+		return setElements(
+			m0[0], m0[1], m0[2], m0[3], 
+			m1[0], m1[1], m1[2], m1[3], 
+			m2[0], m2[1], m2[2], m2[3], 
+			m3[0], m3[1], m3[2], m3[3] 
+		);
+	}
+	
+	public Matrix4d setColumns(double[][] c) {
+		return setElements(
+			c[0][0], c[1][0], c[2][0], c[3][0], 
+			c[0][1], c[1][1], c[2][1], c[3][1], 
+			c[0][2], c[1][2], c[2][2], c[3][2], 
+			c[0][3], c[1][3], c[2][3], c[3][3] 
+		);
+	}
+
+	public Matrix4d setRows(double[][] m) {
+		return setElements(
+			m[0][0], m[0][1], m[0][2], m[0][3], 
+			m[1][0], m[1][1], m[1][2], m[1][3], 
+			m[2][0], m[2][1], m[2][2], m[2][3], 
+			m[3][0], m[3][1], m[3][2], m[3][3] 
 		);
 	}
 

@@ -210,6 +210,40 @@ public class Matrix3d extends Matrix<Matrix3d> implements Serializable {
 		return this;
 	}
 	
+	public double[][] getRows( double[][] rowArray ) {
+		double m[][] = rowArray;
+		
+		m[0][0] = m00; m[0][1] = m01; m[0][2] = m02;
+		m[1][0] = m10; m[1][1] = m11; m[1][2] = m12;
+		m[2][0] = m20; m[2][1] = m21; m[2][2] = m22;
+		
+		return rowArray;
+	}
+	
+	public double[][] getColumns( double[][] rowArray ) {
+		double m[][] = rowArray;
+		
+		m[0][0] = m00; m[0][1] = m10; m[0][2] = m20;
+		m[1][0] = m01; m[1][1] = m11; m[1][2] = m21;
+		m[2][0] = m02; m[2][1] = m12; m[2][2] = m22;
+		
+		return rowArray;
+	}
+	
+	
+	public static interface Values<T> {
+		public T set(
+				double m00, double m01, double m02,
+				double m10, double m11, double m12,
+				double m20, double m21, double m22
+			);
+	}
+	
+	public<T> T get(Values<T> v) {
+		return v.set(m00, m01, m02, m10, m11, m12, m20, m21, m22);
+	}
+	
+	
 //==[ MatrixAlgebra<Matrix3d> ]=====================================================================	
 
 	@Override public Matrix3d zero() {
