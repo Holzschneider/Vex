@@ -19,10 +19,45 @@ public class Matrix3d extends Matrix<Matrix3d> implements Serializable {
 	}
 	
 	public static Matrix3d from(
-				double m00,double m01,double m02,
-				double m10,double m11,double m12,
-				double m20,double m21,double m22
-			) {
+			double m00,double m01,double m02,
+			double m10,double m11,double m12,
+			double m20,double m21,double m22
+		) {
+		return new Matrix3d().setElements(m00, m01, m02, m10, m11, m12, m20, m21, m22);
+	}
+
+	public static Matrix3d fromRows( double[][] rowArray ) {
+		return new Matrix3d().setRows(rowArray);
+	}
+	
+	public static Matrix3d fromRows(double[] m0, double[] m1, double[] m2) {
+		return new Matrix3d().setRows(m0,m1,m2);
+	}
+	
+	public static Matrix3d fromRows(Vector3d m0, Vector3d m1, Vector3d m2) {
+		return new Matrix3d().setRows(m0,m1,m2);
+	}
+
+	public static Matrix3d fromColumns( double[][] rowArray ) {
+		return new Matrix3d().setColumns(rowArray);
+	}
+	
+	public static Matrix3d fromColumns(double[] m0, double[] m1, double[] m2) {
+		return new Matrix3d().setColumns(m0,m1,m2);
+	}
+	
+	public static Matrix3d fromColumns(Vector3d m0, Vector3d m1, Vector3d m2) {
+		return new Matrix3d().setColumns(m0,m1,m2);
+	}
+	
+	
+	
+	
+	public static Matrix3d fromElements(
+			double m00,double m01,double m02,
+			double m10,double m11,double m12,
+			double m20,double m21,double m22
+		) {
 		return new Matrix3d().setElements(m00, m01, m02, m10, m11, m12, m20, m21, m22);
 	}
 	
@@ -33,21 +68,8 @@ public class Matrix3d extends Matrix<Matrix3d> implements Serializable {
 			m.m30, m.m31, zPlane*m.m32+m.m33 
 		);
 	}
-	
-	public static Matrix3d fromConcatenation(Matrix3d A, Matrix3d B) {
-		return new Matrix3d().concatenation(A, B);
-	}
 
 	
-//	public Matrix3d(
-//			double m00,double m01,double m02,
-//			double m10,double m11,double m12,
-//			double m20,double m21,double m22
-//			)
-//	{
-//		this.setElements(m00, m01, m02, m10, m11, m12, m20, m21, m22);
-//	}
-
 //==[ Element-wise Operations ]=====================================================================
 	
 	public Matrix3d setElements(
@@ -63,6 +85,32 @@ public class Matrix3d extends Matrix<Matrix3d> implements Serializable {
 		return this;
 	}
 
+	public Matrix3d setRows( Vector3d m0, Vector3d m1, Vector3d m2 ) {
+		return this.setElements(m0.x, m0.y, m0.z, m1.x, m1.y, m1.z, m2.x, m2.y, m2.z);
+	}
+
+	public Matrix3d setRows( double[] m0, double[] m1, double[] m2 ) {
+		return this.setElements(m0[0], m0[1], m0[2], m1[0], m1[1], m1[2], m2[0], m2[1], m2[2]);
+	}
+	
+	public Matrix3d setRows( double[][] m ) {
+		return this.setElements(m[0][0], m[0][1], m[0][2], m[1][0], m[1][1], m[1][2], m[2][0], m[2][1], m[2][2]);
+	}
+	
+	public Matrix3d setColumns( Vector3d c0, Vector3d c1, Vector3d c2 ) {
+		return this.setElements(c0.x, c1.x, c2.x, c0.y, c1.y, c2.y, c0.z, c1.z, c2.z);
+	}
+
+	public Matrix3d setColumns( double[] m0, double[] m1, double[] m2 ) {
+		return this.setElements(m0[0], m1[0], m2[0], m0[1], m1[1], m2[1], m0[2], m1[2], m2[2]);
+	}
+	
+	public Matrix3d setColumns( double[][] m ) {
+		return this.setElements(m[0][0], m[1][0], m[2][0], m[0][1], m[1][1], m[2][1], m[0][2], m[1][2], m[2][2]);
+	}
+	
+	/////////////////////////
+	
 	public Matrix3d addElements(
 			double n00, double n01, double n02,
 			double n10, double n11, double n12,
@@ -86,7 +134,7 @@ public class Matrix3d extends Matrix<Matrix3d> implements Serializable {
 			m20*n20, m21*n21, m22*n22
 		);
 	}
-
+	
 	/////
 	
 	public Matrix3d add(
@@ -103,6 +151,14 @@ public class Matrix3d extends Matrix<Matrix3d> implements Serializable {
 			double n20, double n21, double n22
 			) {
 		return addElements(-n00,-n01,-n02,-n10,-n11,-n12,-n20,-n21,-n22);
+	}
+
+	public Matrix3d mul(
+			double n00, double n01, double n02,
+			double n10, double n11, double n12,
+			double n20, double n21, double n22
+			) {
+		return mulElements(n00,n01,n02,n10,n11,n12,n20,n21,n22);
 	}
 
 //==[ Tuple<Matrix3d> ]=============================================================================
@@ -200,9 +256,9 @@ public class Matrix3d extends Matrix<Matrix3d> implements Serializable {
 	
 	@Override public Matrix3d transposition(Matrix3d m) {
 		return this.setElements(
-			m.m00, m.m01, m.m02,
-			m.m10, m.m11, m.m12,
-			m.m20, m.m21, m.m22
+			m.m00, m.m10, m.m20,
+			m.m01, m.m11, m.m21,
+			m.m02, m.m12, m.m22
 		);
 	}
 
@@ -308,7 +364,10 @@ public class Matrix3d extends Matrix<Matrix3d> implements Serializable {
 //		return this;
 //	}
 
-	/// UNTESTED
+	public Matrix3d projection(Matrix4d m) {
+		return this.projection(m,0);
+	}
+	
 	public Matrix3d projection(Matrix4d m, double zPlane) {
 		return this.setElements(
 			m.m00, m.m01, zPlane*m.m02+m.m03, 

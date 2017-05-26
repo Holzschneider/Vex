@@ -64,6 +64,11 @@ public class Vector3d	extends Vector<Vector3d>
 	@Override public Vector3d set(Vector3d a) {
 		return this.xyz(a.x,a.y,a.z);
 	}
+	
+	public<T> T get(Value3<T> v) { return v.set(this.x, this.y, this.z); }
+
+	public double[] get(double[] v) { v[0]=x; v[1]=y; v[2]=z; return v; };
+
 
 //==[ VectorAlgebra<Vector3d> ]=====================================================================
 	

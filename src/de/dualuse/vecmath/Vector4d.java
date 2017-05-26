@@ -46,6 +46,12 @@ public class Vector4d	extends Vector<Vector4d>
 	
 	public Vector4d get(Vector4d q) { q.set(this); return this; }
 	
+	public<T> T get(Value4<T> v) { return v.set(this.x, this.y, this.z, this.w); }
+	public<T> T get(Value3<T> v) { return v.set(this.x, this.y, this.z); }
+	
+	public double[] get(double[] v) { v[0]=x; v[1]=y; v[2]=z; v[3]=w; return v; };
+
+
 	@Override
 	public Vector4d set(Vector4d v) {
 		return xyzw(v.x,v.y,v.z,v.w);

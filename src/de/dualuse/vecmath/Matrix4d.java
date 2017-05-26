@@ -30,6 +30,24 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 		return new Matrix4d().setElements(m00,m01,m02,m03,m10,m11,m12,m13,m20,m21,m22,m23,m30,m31,m32,m33);
 	}
 	
+	public static Matrix4d fromElements(
+			double m00, double m01, double m02, double m03,
+			double m10, double m11, double m12, double m13,
+			double m20, double m21, double m22, double m23,
+			double m30, double m31, double m32, double m33
+			) {
+		return new Matrix4d().setElements(m00,m01,m02,m03,m10,m11,m12,m13,m20,m21,m22,m23,m30,m31,m32,m33);
+	}
+
+	
+	public static Matrix4d fromViewport(double x, double y, double width, double height) {
+		return new Matrix4d().viewport(x, y, width, height);
+	}
+	
+	public static Matrix4d fromFrustum(double left, double right, double bottom, double top, double near, double far) {
+		return new Matrix4d().frustum(left, right, bottom, top, near, far);		
+	}
+
 //==[ Element-wise Operations ]=====================================================================
 
 	public Matrix4d setElements(

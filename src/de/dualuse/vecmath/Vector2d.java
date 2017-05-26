@@ -43,6 +43,10 @@ public class Vector2d extends Vector<Vector2d> implements Serializable {
 //	public Vector2d x(double x) { this.x=x; return this; }
 //	public Vector2d y(double y) { this.y=y; return this; }
 	
+	public<T> T get(Value2<T> v) { return v.set(this.x, this.y); }
+	
+	public double[] get(double[] v) { v[0]=x; v[1]=y; return v; };
+
 	//////////////////////////////////////////////////////////////////////////////
 
 	@Override public Vector2d sum(Vector2d a, Vector2d b) { return this.xy(a.x+b.x,a.y+b.y); }
