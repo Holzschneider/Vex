@@ -17,6 +17,14 @@ public class Matrix3d extends Matrix<Matrix3d> implements Serializable {
 	public Matrix3d() {
 		identity();
 	}
+
+	public Matrix3d(Matrix3d m) {
+		setElements(
+			m.m00, m.m01, m.m02, 
+			m.m10, m.m11, m.m12,
+			m.m20, m.m21, m.m22 
+		);
+	}
 	
 	public static Matrix3d from(
 			double m00,double m01,double m02,
