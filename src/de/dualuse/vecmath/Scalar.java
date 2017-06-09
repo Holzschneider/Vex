@@ -1,10 +1,31 @@
 package de.dualuse.vecmath;
 
 import java.io.Serializable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Scalar extends Number implements Interpolatable<Scalar>, Serializable {
 	private static final long serialVersionUID = 1L;
 	public double v;
+	
+	static public final Pattern DECIMAL 
+		= Pattern.compile( "([\\-+]?([1-9]\\d*\\.\\d*([eE][\\-+]?\\d+)?|\\.\\d+([eE][\\-+]?\\d+)?)|([1-9]\\d*)([eE][\\-+]?\\d+)?)" );
+//	static public final Pattern DECIMAL = Pattern.compile("[\\d+-\\.]{1,8}([eE][+\\-]?\\d{1,8})?");
+//	static public final Pattern DECIMAL = Pattern.compile("[\\d+-\\.eE]{1,10}");
+	
+	public static Scalar fromString(String s) {
+		for (Matcher m = DECIMAL.matcher(s);m.find();) {
+			System.out.println(m.group());
+			return new Scalar(new Double(m.group()));
+		}
+		
+		throw new NumberFormatException("Unable to parse: "+ s);
+	}
+	
+	public static void main(String[] args) {
+		
+		System.out.println( Scalar.fromString("hallo +192.3e12 123 welt") );
+	}
 	
 	public Scalar(double v) { this.v = v; }
 	public Scalar get(Scalar q) { q.set(this); return this; }

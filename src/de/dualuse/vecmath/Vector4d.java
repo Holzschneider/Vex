@@ -4,6 +4,7 @@ import static java.lang.Math.abs;
 import static java.lang.Math.pow;
 
 import java.io.Serializable;
+import java.util.regex.Matcher;
 
 public class Vector4d	extends Vector<Vector4d>
 						implements	VectorAlgebra<Vector4d>, 
@@ -13,20 +14,27 @@ public class Vector4d	extends Vector<Vector4d>
 	private static final long serialVersionUID = 1L;
 	public double x, y, z, w;
 
+	public Vector4d() {}
 	public Vector4d(double x, double y, double z, double w) { this.xyzw(x, y, z, w); };
 	public static Vector4d from(double x, double y, double z, double w) { return new Vector4d(x,y,z,w); }
 	
-
-	@Override
-	public Vector4d fromString(String r) {
-		int s1 = r.indexOf(' ');
-		int s2 = r.indexOf(' ', s1 + 1);
-		int s3 = r.indexOf(' ', s2 + 1);
-		return this.xyzw(
-				new Double(r.substring(0, s1)),
-				new Double(r.substring(s1, s2)), 
-				new Double(r.substring(s2, s3)),
-				new Double(r.substring(s3, r.length())));
+	
+	static public Vector4d from(Object... objs) {
+		StringBuilder b = new StringBuilder(16*3);
+		for(Object o: objs)
+			b.append(o).append(' ');
+		
+		return fromString(b.toString());
+	}
+	
+	static public Vector4d fromString(String r) {
+		Matcher m = Scalar.DECIMAL.matcher(r);
+		m.find(); double x = Double.parseDouble(m.group());
+		m.find(); double y = Double.parseDouble(m.group());
+		m.find(); double z = Double.parseDouble(m.group());
+		m.find(); double w = Double.parseDouble(m.group());
+		
+		return new Vector4d().xyzw(x, y, z, w);
 	}
 
 	@Override

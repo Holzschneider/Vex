@@ -5,6 +5,7 @@ import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 
 import java.io.Serializable;
+import java.util.regex.Matcher;
 
 public class Quaternion extends Tuple<Quaternion> implements Interpolatable<Quaternion>, Serializable {
 	static final double FLT_EPSILON = 0.0000000001;
@@ -14,12 +15,31 @@ public class Quaternion extends Tuple<Quaternion> implements Interpolatable<Quat
 	public double x,y,z,w;
 	
 	public Quaternion() { identity(); }
+	public Quaternion(double x, double y, double z, double w) { 
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.w = w;
+	}
 
-	public Quaternion fromString(String r) {
-		String c[] = r.split("\\s+");
-		return this.xyzw( new Double(c[0]),new Double(c[1]),new Double(c[2]),new Double(c[3]) );
+	static public Quaternion from(Object... objs) {
+		StringBuilder b = new StringBuilder(16*3);
+		for(Object o: objs)
+			b.append(o).append(' ');
+		
+		return fromString(b.toString());
 	}
 	
+	static public Quaternion fromString(String r) {
+		Matcher m = Scalar.DECIMAL.matcher(r);
+		m.find(); double x = Double.parseDouble(m.group());
+		m.find(); double y = Double.parseDouble(m.group());
+		m.find(); double z = Double.parseDouble(m.group());
+		m.find(); double w = Double.parseDouble(m.group());
+		
+		return new Quaternion().xyzw(x, y, z, w);
+	}
+
 	@Override 
 	public String toString() {
 		return x+" "+y+" "+z+" "+w;
@@ -53,6 +73,14 @@ public class Quaternion extends Tuple<Quaternion> implements Interpolatable<Quat
 		return this;
 	}
 	
+	public Quaternion wxyz(double w, double x, double y, double z) {
+		this.w = w;
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		
+		return this;
+	}
 	///////////////////////////////////////////////////////
 	
 	public Quaternion identity() {

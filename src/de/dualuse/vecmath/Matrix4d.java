@@ -5,6 +5,7 @@ import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 
 import java.io.Serializable;
+import java.util.regex.Matcher;
 
 import de.dualuse.vecmath.Matrix3d.Values;
 
@@ -23,6 +24,14 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 		identity(); 
 	}	
 	
+	public static Matrix4d from( Object... elements ) {
+		StringBuilder sb = new StringBuilder(elements.length*16);
+		for (Object o: elements)
+			sb.append(o.toString()).append(' ');
+		
+		return Matrix4d.fromString( sb.toString() );
+	}
+
 	public static Matrix4d from(
 			double m00, double m01, double m02, double m03,
 			double m10, double m11, double m12, double m13,
@@ -140,16 +149,32 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 
 //==[ Tuple<Matrix3d> ]=============================================================================
 	
-	@Override public Matrix4d fromString(String r) {
-		String c[] = r.split("\\s+");
+	static public Matrix4d fromString(String r) {
+		Matcher m = Scalar.DECIMAL.matcher(r);
+		m.find(); double m00 = Double.parseDouble(m.group());
+		m.find(); double m01 = Double.parseDouble(m.group());
+		m.find(); double m02 = Double.parseDouble(m.group());
+		m.find(); double m03 = Double.parseDouble(m.group());
+		
+		m.find(); double m10 = Double.parseDouble(m.group());
+		m.find(); double m11 = Double.parseDouble(m.group());
+		m.find(); double m12 = Double.parseDouble(m.group());
+		m.find(); double m13 = Double.parseDouble(m.group());
 
-		return this.setElements(
-			new Double(c[ 0]), new Double(c[ 1]), new Double(c[ 2]), new Double(c[ 3]),
-			new Double(c[ 4]), new Double(c[ 5]), new Double(c[ 6]), new Double(c[ 7]),
-			new Double(c[ 8]), new Double(c[ 9]), new Double(c[10]), new Double(c[11]),
-			new Double(c[12]), new Double(c[13]), new Double(c[14]), new Double(c[15])
-		);
+		m.find(); double m20 = Double.parseDouble(m.group());
+		m.find(); double m21 = Double.parseDouble(m.group());
+		m.find(); double m22 = Double.parseDouble(m.group());
+		m.find(); double m23 = Double.parseDouble(m.group());
+
+		m.find(); double m30 = Double.parseDouble(m.group());
+		m.find(); double m31 = Double.parseDouble(m.group());
+		m.find(); double m32 = Double.parseDouble(m.group());
+		m.find(); double m33 = Double.parseDouble(m.group());
+		
+		return Matrix4d.fromElements(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33);
 	}
+	
+	
 	
 	@Override public String toString() {
 		return	m00+" "+m01+" "+m02+" "+m03+
@@ -511,7 +536,10 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 
 	}
 
-//	public Matrix4d translate(Vector3d v);
+	public Matrix4d translate(Vector3d v) {
+		return translate(v.x,v.y,v.z);
+	}
+	
 	public Matrix4d translate(double tx, double ty, double tz) {
 		return this.concat(
 			1,0,0,tx,
@@ -521,7 +549,10 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 		);
 	}
 
-//	public Matrix4d scale(Vector3d v);
+	public Matrix4d scale(Vector3d v) {
+		return this.scale(v.x,v.y,v.z);
+	}
+	
 	public Matrix4d scale(double sx, double sy, double sz) {
 		return this.concat(
 			sx, 0, 0, 0,

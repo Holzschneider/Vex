@@ -2,7 +2,7 @@ package de.dualuse.vecmath;
 
 abstract class Tuple<T> implements Value<T,T> {
 
-	public abstract T fromString(String r);
+//	public abstract T fromString(String r);
 	public abstract T clone();
 	
 	public abstract T set(T a);

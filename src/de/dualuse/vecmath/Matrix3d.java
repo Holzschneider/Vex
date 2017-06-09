@@ -4,6 +4,8 @@ import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 
 import java.io.Serializable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Matrix3d extends Matrix<Matrix3d> implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -57,8 +59,6 @@ public class Matrix3d extends Matrix<Matrix3d> implements Serializable {
 	public static Matrix3d fromColumns(Vector3d m0, Vector3d m1, Vector3d m2) {
 		return new Matrix3d().setColumns(m0,m1,m2);
 	}
-	
-	
 	
 	
 	public static Matrix3d fromElements(
@@ -170,15 +170,29 @@ public class Matrix3d extends Matrix<Matrix3d> implements Serializable {
 	}
 
 //==[ Tuple<Matrix3d> ]=============================================================================
+	public static Matrix3d from( Object... elements ) {
+		StringBuilder sb = new StringBuilder(elements.length*16);
+		for (Object o: elements)
+			sb.append(o.toString()).append(' ');
+		
+		return Matrix3d.fromString( sb.toString() );
+	}
 	
-	@Override public Matrix3d fromString(String r) {
-		String c[] = r.split("\\s+");
-
-		return this.setElements(
-			new Double(c[0]), new Double(c[1]), new Double(c[2]),
-			new Double(c[3]), new Double(c[4]), new Double(c[5]),
-			new Double(c[6]), new Double(c[7]), new Double(c[8])
-		);
+	static public Matrix3d fromString(String r) {
+		Matcher m = Scalar.DECIMAL.matcher(r);
+		m.find(); double m00 = Double.parseDouble(m.group());
+		m.find(); double m01 = Double.parseDouble(m.group());
+		m.find(); double m02 = Double.parseDouble(m.group());
+		
+		m.find(); double m10 = Double.parseDouble(m.group());
+		m.find(); double m11 = Double.parseDouble(m.group());
+		m.find(); double m12 = Double.parseDouble(m.group());
+		
+		m.find(); double m20 = Double.parseDouble(m.group());
+		m.find(); double m21 = Double.parseDouble(m.group());
+		m.find(); double m22 = Double.parseDouble(m.group());
+		
+		return Matrix3d.fromElements(m00, m01, m02, m10, m11, m12, m20, m21, m22);
 	}
 	
 	@Override public String toString() {

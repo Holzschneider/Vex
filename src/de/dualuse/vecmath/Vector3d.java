@@ -3,6 +3,9 @@ package de.dualuse.vecmath;
 import static java.lang.Math.abs;
 import static java.lang.Math.pow;
 
+import java.util.Arrays;
+import java.util.regex.Matcher;
+
 public class Vector3d	extends Vector<Vector3d>
 						implements  VectorAlgebra<Vector3d>, 
 									Interpolatable<Vector3d>, 
@@ -13,7 +16,6 @@ public class Vector3d	extends Vector<Vector3d>
 	public double x, y, z;
 
 //==[ Constructors ]================================================================================
-	
 	public Vector3d() {}
 	
 	public Vector3d(double x, double y, double z) {
@@ -34,15 +36,21 @@ public class Vector3d	extends Vector<Vector3d>
 	
 //==[ Tuple<Vector3d> ]=============================================================================
 	
-	@Override public Vector3d fromString(String r) {
-		int s1 = r.indexOf(' ');
-		int s2 = r.indexOf(' ', s1 + 1);
+	static public Vector3d from(Object... objs) {
+		StringBuilder b = new StringBuilder(16*3);
+		for(Object o: objs)
+			b.append(o).append(' ');
 		
-		return this.xyz(
-			new Double(r.substring(0, s1)),
-			new Double(r.substring(s1, s2)),
-			new Double(r.substring(s2, r.length()))
-		);
+		return fromString(b.toString());
+	}
+	
+	static public Vector3d fromString(String r) {
+		Matcher m = Scalar.DECIMAL.matcher(r);
+		m.find(); double x = Double.parseDouble(m.group());
+		m.find(); double y = Double.parseDouble(m.group());
+		m.find(); double z = Double.parseDouble(m.group());
+		
+		return new Vector3d().xyz(x, y, z);
 	}
 
 	@Override public String toString() {

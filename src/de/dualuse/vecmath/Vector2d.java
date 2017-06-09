@@ -4,21 +4,32 @@ import static java.lang.Math.abs;
 import static java.lang.Math.pow;
 
 import java.io.Serializable;
+import java.util.regex.Matcher;
 
 public class Vector2d extends Vector<Vector2d> implements Serializable {
 	private static final long serialVersionUID = 1L;
 	public double x, y;
 	
+	public Vector2d() {};
 	public Vector2d(double x, double y) { this.x=x; this.y=y; };
 	public static Vector2d from(double x, double y) { return new Vector2d(x,y); }
 	
-	public Vector2d fromString(String r) {
-		int split = r.indexOf(' ');
-		this.xy(new Double(r.substring(0, split)),
-				new Double(r.substring(split, r.length())));
-		return this;
+	static public Vector2d from(Object... objs) {
+		StringBuilder b = new StringBuilder(16*3);
+		for(Object o: objs)
+			b.append(o).append(' ');
+		
+		return fromString(b.toString());
 	}
-
+	
+	static public Vector2d fromString(String r) {
+		Matcher m = Scalar.DECIMAL.matcher(r);
+		m.find(); double x = Double.parseDouble(m.group());
+		m.find(); double y = Double.parseDouble(m.group());
+		
+		return new Vector2d().xy(x, y);
+	}
+	
 	public String toString() { return x+" "+y; };
 	
 	@Override
