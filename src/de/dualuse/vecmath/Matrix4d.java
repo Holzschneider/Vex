@@ -558,6 +558,11 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 		);
 	}
 
+	public Matrix4d scale(double s) {
+		return this.scale(s,s,s);
+	}
+	
+	
 	public Matrix4d scale(Vector3d v) {
 		return this.scale(v.x,v.y,v.z);
 	}

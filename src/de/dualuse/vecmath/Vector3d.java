@@ -73,6 +73,15 @@ public class Vector3d	extends Vector<Vector3d>
 		return this.xyz(a.x,a.y,a.z);
 	}
 	
+	
+	public interface ConsumerDouble3 {
+		void set(double x, double y, double z);
+	}
+	
+
+	public Vector3d read(ConsumerDouble3 cd3) { cd3.set(this.x, this.y, this.z); return this; }
+
+	
 	public<T> T get(Value3<T> v) { return v.set(this.x, this.y, this.z); }
 
 	public double[] get(double[] v) { v[0]=x; v[1]=y; v[2]=z; return v; };

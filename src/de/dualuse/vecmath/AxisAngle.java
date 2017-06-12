@@ -10,6 +10,14 @@ public class AxisAngle extends Tuple<AxisAngle> implements Serializable {
 	
 	public double x,y,z,t;
 	
+	public AxisAngle(Vector3d axis, double theta) {
+		this.x = axis.x;
+		this.y = axis.x;
+		this.z = axis.x;
+		this.t = theta;
+		
+	}
+	
 	public AxisAngle(double x, double y, double z, double theta) {
 		this.x = x;
 		this.y = y;
@@ -49,6 +57,7 @@ public class AxisAngle extends Tuple<AxisAngle> implements Serializable {
 	public AxisAngle xyz(double x,double y,double z) { this.x=x; this.y=y; this.z=z; return this; }
 	public AxisAngle angle(double degrees) { this.t = degrees*PI/180.0; return this; }
 	public AxisAngle theta(double theta) { this.t = theta; return this; }
+	public AxisAngle axis(Vector3d v) { this.x = v.x; this.y = v.y; this.z = v.z; return this; };
 	
 	public double theta() { return t; }
 	public double angle() { return t*180.0/PI; }
