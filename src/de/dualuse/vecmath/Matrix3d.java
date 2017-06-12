@@ -442,6 +442,12 @@ public class Matrix3d extends Matrix<Matrix3d> implements Serializable {
 	
 	//////////
 
+	public Vector3d[] transform(Vector3d[] vs) {
+		for (Vector3d v: vs)
+			transform(v);
+		return vs;
+	}
+	
 	public Vector3d transform(Vector3d v) {
 		return v.xyz(
 			v.x*m00+v.y*m01+v.z*m02, 

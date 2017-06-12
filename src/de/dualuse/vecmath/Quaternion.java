@@ -81,6 +81,11 @@ public class Quaternion extends Tuple<Quaternion> implements Interpolatable<Quat
 		
 		return this;
 	}
+	
+
+	public<T> T get(Value4<T> v) { return v.set(this.x, this.y, this.z, this.w); }
+
+	
 	///////////////////////////////////////////////////////
 	
 	public Quaternion identity() {
