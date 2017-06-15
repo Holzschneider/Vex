@@ -93,7 +93,29 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 	}
 
 //==[ Element-wise Operations ]=====================================================================
-
+	public double getElement(int row, int col) {
+		switch ((row<<2)|col) {
+		case  0|0: return m00;
+		case  0|1: return m01;
+		case  0|2: return m02;
+		case  0|3: return m03;
+		case  4|0: return m10;
+		case  4|1: return m11;
+		case  4|2: return m12;
+		case  4|3: return m13;
+		case  8|0: return m20;
+		case  8|1: return m21;
+		case  8|2: return m22;
+		case  8|3: return m23;
+		case 12|0: return m30;
+		case 12|1: return m31;
+		case 12|2: return m32;
+		case 12|3: return m33;
+		}
+		throw new IndexOutOfBoundsException("("+row+","+col+") must be in [0,4)x[0,4).");
+	}
+	
+	
 	public Matrix4d setElements(
 			double m00, double m01, double m02, double m03, 
 			double m10, double m11, double m12, double m13, 
@@ -514,20 +536,59 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 	
 	
 	public Matrix4d rotate(Quaternion q) {
-		final double x = q.x, y = q.y, z = q.z, w = q.w;
-
-		final double ww = w*w, xx = x*x, yy= y*y, zz = z*z;
-		final double xy = x*x, xz = x*z, xw = x*w;
-		final double yz = y*z, yw = y*w, zw = z*w; 
-		
-		return this.concat(
-			ww+xx-yy-zz, 2*xy-2*zw, 2*xz+2*yw, 0.,
-			2*xy+2*zw, ww-xx+yy-zz, 2*yz-2*xw, 0.,						
-			2*xz-2*yw, 2*yz+2*xw, ww-xx-yy+zz, 0.,
-			0.0, 0.0, 0.0, 	ww+xx+yy+zz
-		);
+		double w2 = q.w*q.w, x2 = q.x * q.x, y2 = q.y * q.y, z2 = q.z * q.z;
+        double zw = q.z * q.w, xy = q.x * q.y, xz = q.x * q.z, yw = q.y * q.w;
+        double yz = q.y * q.z, xw = q.x * q.w;
+        double rm00 = w2 + x2 - z2 - y2;
+        double rm01 = xy + zw + zw + xy;
+        double rm02 = xz - yw + xz - yw;
+        double rm10 = -zw + xy - zw + xy;
+        double rm11 = y2 - z2 + w2 - x2;
+        double rm12 = yz + yz + xw + xw;
+        double rm20 = yw + xz + xz + yw;
+        double rm21 = yz + yz - xw - xw;
+        double rm22 = z2 - y2 - x2 + w2;
+        double nm00 = m00 * rm00 + m01 * rm01 + m02 * rm02;
+        double nm01 = m10 * rm00 + m11 * rm01 + m12 * rm02;
+        double nm02 = m20 * rm00 + m21 * rm01 + m22 * rm02;
+        double nm03 = m30 * rm00 + m31 * rm01 + m32 * rm02;
+        double nm10 = m00 * rm10 + m01 * rm11 + m02 * rm12;
+        double nm11 = m10 * rm10 + m11 * rm11 + m12 * rm12;
+        double nm12 = m20 * rm10 + m21 * rm11 + m22 * rm12;
+        double nm13 = m30 * rm10 + m31 * rm11 + m32 * rm12;
+        this.m02 = m00 * rm20 + m01 * rm21 + m02 * rm22;
+        this.m12 = m10 * rm20 + m11 * rm21 + m12 * rm22;
+        this.m22 = m20 * rm20 + m21 * rm21 + m22 * rm22;
+        this.m32 = m30 * rm20 + m31 * rm21 + m32 * rm22;
+        this.m00 = nm00;
+        this.m10 = nm01;
+        this.m20 = nm02;
+        this.m30 = nm03;
+        this.m01 = nm10;
+        this.m11 = nm11;
+        this.m21 = nm12;
+        this.m31 = nm13;
+        
+        return this;
+        
+//		final double x = quat.x, y = quat.y, z = quat.z, w = quat.w;
+//
+//		final double ww = w*w, xx = x*x, yy= y*y, zz = z*z;
+//		final double xy = x*x, xz = x*z, xw = x*w;
+//		final double yz = y*z, yw = y*w, zw = z*w; 
+//		
+//		return this.concat(
+//			ww+xx-yy-zz, 2*xy-2*zw, 2*xz+2*yw, 0.,
+//			2*xy+2*zw, ww-xx+yy-zz, 2*yz-2*xw, 0.,						
+//			2*xz-2*yw, 2*yz+2*xw, ww-xx-yy+zz, 0.,
+//			0.0, 0.0, 0.0, 	ww+xx+yy+zz
+//		);
 	}
 
+//0.9600355901578292 -0.017984601236694688 -0.2792988833897462 0.0 
+//0.022000758365039237 0.9996944668749703 0.01125104639691226 0.0 
+//0.2790112520594198 -0.01694619520775671 0.9601381120475891 0.0 
+//0.0 0.0 0.0 1.0
 	public Matrix4d rotate(AxisAngle aa) { return this.rotate(aa.x,aa.y,aa.z,aa.t); }
 	
 	public Matrix4d rotate(double ax, double ay, double az, double theta) {
@@ -599,8 +660,8 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 	}
 
 	public static Matrix4d fromRotation( Quaternion q ) { return new Matrix4d().setRotation(q); }
-	public Matrix4d setRotation(Quaternion quat) {
-		final double x = quat.x, y = quat.y, z = quat.z, w = quat.w;
+	public Matrix4d setRotation(Quaternion q) {
+		final double x = q.x, y = q.y, z = q.z, w = q.w;
 
 		final double ww = w*w, xx = x*x, yy= y*y, zz = z*z;
 		final double xy = x*x, xz = x*z, xw = x*w;
@@ -612,7 +673,6 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 			2*xz-2*yw, 2*yz+2*xw, ww-xx-yy+zz, 0.,
 			0.0, 0.0, 0.0, 	ww+xx+yy+zz
 		);
-				
 	}
 
 	public static Matrix4d fromTranslation( Vector3d v ) { return new Matrix4d().setTranslation( v ); }
@@ -652,7 +712,8 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 		final double C = -(far + near)/(far - near);
 		final double D = -(2 * far * near) /( far -near);
 		
-		return this.setElements(
+		return this.concat(
+//		return this.setElements(
 			(2*near)/(right-left),                     0, A, 0,
 			0                    , (2*near)/(top-bottom), B, 0,
 			0                    ,                     0, C, D,

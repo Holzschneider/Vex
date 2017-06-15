@@ -1,8 +1,6 @@
 package de.dualuse.vecmath;
 
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
-import static java.lang.Math.sqrt;
+import static java.lang.Math.*;
 
 import java.io.Serializable;
 import java.util.regex.Matcher;
@@ -114,13 +112,16 @@ public class Quaternion extends Tuple<Quaternion> implements Interpolatable<Quat
 	
 
 	public Quaternion invert() { 
-		final double inv = 1.0 / Math.sqrt(x*x+y*y+z*z+w*w); 
-		return this.xyzw(-this.x*inv, -this.y*inv, -this.z*inv, this.w*inv); 
+		return inversion(this); 
 	}
 	
-	public Quaternion inversion(Quaternion q) { 
-		final double inv = 1.0 / Math.sqrt(q.x*q.x+q.y*q.y+q.z*q.z+q.w*q.w); 
-		return q.xyzw(-q.x*inv, -q.y*inv, -q.z*inv, q.w*inv); 
+	public Quaternion inversion(Quaternion q) {
+        double invNorm = 1.0 / (q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w);
+        this.x = -q.x * invNorm;
+        this.y = -q.y * invNorm;
+        this.z = -q.z * invNorm;
+        this.w = w * invNorm;
+        return this;
 	}
 
 	

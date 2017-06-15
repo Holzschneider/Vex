@@ -1,6 +1,6 @@
 package de.dualuse.vecmath;
 
-import static java.lang.Math.PI;
+import static java.lang.Math.*;
 
 import java.io.Serializable;
 
@@ -9,6 +9,8 @@ public class AxisAngle extends Tuple<AxisAngle> implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	public double x,y,z,t;
+	
+	public AxisAngle() { }
 	
 	public AxisAngle(Vector3d axis, double theta) {
 		this.x = axis.x;
@@ -75,9 +77,17 @@ public class AxisAngle extends Tuple<AxisAngle> implements Serializable {
 	
 	public AxisAngle identity() { return this.setElements(0, 0, 0, 0); }
 	
-	public AxisAngle setRotation(Quaternion q) {
-		double theta = 2 * Math.acos(q.w), norm = Math.sqrt(1-q.w*q.w);
-		return this.setElements(-q.x / norm, -q.y / norm, -q.z / norm, theta);
+	public AxisAngle invert() {
+		return this.xyzt(-x, -y, -z, t);
+	}
+	
+	public AxisAngle rotation(Quaternion q) {
+		double theta = 2 * acos(q.w), norm = sqrt(1-q.w*q.w);
+		double x = q.x / norm;
+		double y = q.y / norm;
+		double z = q.z / norm;
+		
+		return this.setElements(x,y,z,theta);
 		
 //		final double w = q.w;
 //		double radians = 0.;
