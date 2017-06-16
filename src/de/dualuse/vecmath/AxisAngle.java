@@ -2,12 +2,7 @@ package de.dualuse.vecmath;
 
 import static java.lang.Math.PI;
 
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.io.Serializable;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 
 public class AxisAngle extends Tuple<AxisAngle> implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -16,7 +11,7 @@ public class AxisAngle extends Tuple<AxisAngle> implements Serializable {
     public double x;
     public double y;
     public double z;
-
+    
     public AxisAngle() {
         z = 1.0;
     }
