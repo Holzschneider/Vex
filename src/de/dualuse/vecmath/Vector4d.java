@@ -65,7 +65,7 @@ public class Vector4d	extends Vector<Vector4d>
 		return xyzw(v.x,v.y,v.z,v.w);
 	}
 	
-	public Vector4d setElements(double x, double y, double z, double w) { return this.xyzw(x, y, z, w); }
+	public Vector4d set(double x, double y, double z, double w) { return this.xyzw(x, y, z, w); }
 	public Vector4d xyzw(double x, double y, double z, double w) { this.x=x; this.y=y; this.z=z; this.w=w;return this;}
 	public Vector4d xyz(double x, double y, double z) { this.x=x; this.y=y; this.z=z; return this;}
 	public Vector4d xy(double x, double y) { this.x=x; this.y=y; return this;}

@@ -140,25 +140,24 @@ public class Quaternion extends Tuple<Quaternion> implements Interpolatable<Quat
 	}
 	
 	
-	public static Quaternion fromRotation(AxisAngle aa) { return new Quaternion().setRotation(aa); } 
-	public Quaternion setRotation(AxisAngle aa) {
+	public Quaternion set(AxisAngle aa) {
 		final double s = sin(aa.t / 2.), c= cos(aa.t / 2.);
 		final double x = aa.x, y = aa.y, z = aa.z, l = sqrt(x*x+y*y+z*z);
 		
 		return this.xyzw(x*s/l, y*s/l, z*s/l, c);
 	}	
 
-//	// transform / rotates this vector by the quaternion
-//	public Vector3d transform(Vector3d v) {
-//		final double t2 =   w*x, t3 =   w*y, t4 =   w*z;
-//		final double t5 =  -x*x, t6 =   x*y, t7 =   x*z;
-//		final double t8 =  -y*y, t9 =   y*z, t10 = -z*z;
-//		return v.set(
-//				2*( (t8 + t10)*v.x + (t6 -  t4)*v.y + (t3 + t7)*v.z ) + v.x,
-//				2*( (t4 +  t6)*v.x + (t5 + t10)*v.y + (t9 - t2)*v.z ) + v.y,
-//				2*( (t7 -  t3)*v.x + (t2 +  t9)*v.y + (t5 + t8)*v.z ) + v.z
-//		);
-//	}
+	// transform / rotates this vector by the quaternion
+	public Vector3d transform(Vector3d v) {
+		final double t2 =   w*x, t3 =   w*y, t4 =   w*z;
+		final double t5 =  -x*x, t6 =   x*y, t7 =   x*z;
+		final double t8 =  -y*y, t9 =   y*z, t10 = -z*z;
+		return v.xyz(
+				2*( (t8 + t10)*v.x + (t6 -  t4)*v.y + (t3 + t7)*v.z ) + v.x,
+				2*( (t4 +  t6)*v.x + (t5 + t10)*v.y + (t9 - t2)*v.z ) + v.y,
+				2*( (t7 -  t3)*v.x + (t2 +  t9)*v.y + (t5 + t8)*v.z ) + v.z
+		);
+	}
 	
 	
 	////////////////////////////////////// Interpolatable Specific

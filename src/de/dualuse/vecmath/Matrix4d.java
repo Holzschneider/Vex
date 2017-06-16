@@ -33,22 +33,22 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 		setElements(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33);
 	}
 	
-	public static Matrix4d from( Object... elements ) {
-		StringBuilder sb = new StringBuilder(elements.length*16);
-		for (Object o: elements)
-			sb.append(o.toString()).append(' ');
-		
-		return Matrix4d.fromString( sb.toString() );
-	}
-
-	public static Matrix4d from(
-			double m00, double m01, double m02, double m03,
-			double m10, double m11, double m12, double m13,
-			double m20, double m21, double m22, double m23,
-			double m30, double m31, double m32, double m33
-			) {
-		return new Matrix4d().setElements(m00,m01,m02,m03,m10,m11,m12,m13,m20,m21,m22,m23,m30,m31,m32,m33);
-	}
+//	public static Matrix4d from( Object... elements ) {
+//		StringBuilder sb = new StringBuilder(elements.length*16);
+//		for (Object o: elements)
+//			sb.append(o.toString()).append(' ');
+//		
+//		return Matrix4d.fromString( sb.toString() );
+//	}
+//
+//	public static Matrix4d from(
+//			double m00, double m01, double m02, double m03,
+//			double m10, double m11, double m12, double m13,
+//			double m20, double m21, double m22, double m23,
+//			double m30, double m31, double m32, double m33
+//			) {
+//		return new Matrix4d().setElements(m00,m01,m02,m03,m10,m11,m12,m13,m20,m21,m22,m23,m30,m31,m32,m33);
+//	}
 	
 	public static Matrix4d fromElements(
 			double m00, double m01, double m02, double m03,
@@ -535,63 +535,33 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 	}
 	
 	
+
+	private Matrix4d rotateWithQuaternion(double x, double y, double z, double w) {
+		final double ww = w*w, xx = x*x, yy= y*y, zz = z*z;
+		final double xy = x*y, xz = x*z, xw = x*w;
+		final double yz = y*z, yw = y*w, zw = z*w; 
+		
+		return this.concat(
+			ww+xx-yy-zz, 2*xy-2*zw, 2*xz+2*yw, 0.,
+			2*xy+2*zw, ww-xx+yy-zz, 2*yz-2*xw, 0.,						
+			2*xz-2*yw, 2*yz+2*xw, ww-xx-yy+zz, 0.,
+			0.0, 0.0, 0.0, 	ww+xx+yy+zz
+		);
+	}
+	
 	public Matrix4d rotate(Quaternion q) {
-		double w2 = q.w*q.w, x2 = q.x * q.x, y2 = q.y * q.y, z2 = q.z * q.z;
-        double zw = q.z * q.w, xy = q.x * q.y, xz = q.x * q.z, yw = q.y * q.w;
-        double yz = q.y * q.z, xw = q.x * q.w;
-        double rm00 = w2 + x2 - z2 - y2;
-        double rm01 = xy + zw + zw + xy;
-        double rm02 = xz - yw + xz - yw;
-        double rm10 = -zw + xy - zw + xy;
-        double rm11 = y2 - z2 + w2 - x2;
-        double rm12 = yz + yz + xw + xw;
-        double rm20 = yw + xz + xz + yw;
-        double rm21 = yz + yz - xw - xw;
-        double rm22 = z2 - y2 - x2 + w2;
-        double nm00 = m00 * rm00 + m01 * rm01 + m02 * rm02;
-        double nm01 = m10 * rm00 + m11 * rm01 + m12 * rm02;
-        double nm02 = m20 * rm00 + m21 * rm01 + m22 * rm02;
-        double nm03 = m30 * rm00 + m31 * rm01 + m32 * rm02;
-        double nm10 = m00 * rm10 + m01 * rm11 + m02 * rm12;
-        double nm11 = m10 * rm10 + m11 * rm11 + m12 * rm12;
-        double nm12 = m20 * rm10 + m21 * rm11 + m22 * rm12;
-        double nm13 = m30 * rm10 + m31 * rm11 + m32 * rm12;
-        this.m02 = m00 * rm20 + m01 * rm21 + m02 * rm22;
-        this.m12 = m10 * rm20 + m11 * rm21 + m12 * rm22;
-        this.m22 = m20 * rm20 + m21 * rm21 + m22 * rm22;
-        this.m32 = m30 * rm20 + m31 * rm21 + m32 * rm22;
-        this.m00 = nm00;
-        this.m10 = nm01;
-        this.m20 = nm02;
-        this.m30 = nm03;
-        this.m01 = nm10;
-        this.m11 = nm11;
-        this.m21 = nm12;
-        this.m31 = nm13;
-        
-        return this;
-        
-//		final double x = quat.x, y = quat.y, z = quat.z, w = quat.w;
-//
-//		final double ww = w*w, xx = x*x, yy= y*y, zz = z*z;
-//		final double xy = x*x, xz = x*z, xw = x*w;
-//		final double yz = y*z, yw = y*w, zw = z*w; 
-//		
-//		return this.concat(
-//			ww+xx-yy-zz, 2*xy-2*zw, 2*xz+2*yw, 0.,
-//			2*xy+2*zw, ww-xx+yy-zz, 2*yz-2*xw, 0.,						
-//			2*xz-2*yw, 2*yz+2*xw, ww-xx-yy+zz, 0.,
-//			0.0, 0.0, 0.0, 	ww+xx+yy+zz
-//		);
+		return rotateWithQuaternion(q.x,q.y,q.z,q.w);
 	}
 
-//0.9600355901578292 -0.017984601236694688 -0.2792988833897462 0.0 
-//0.022000758365039237 0.9996944668749703 0.01125104639691226 0.0 
-//0.2790112520594198 -0.01694619520775671 0.9601381120475891 0.0 
-//0.0 0.0 0.0 1.0
-	public Matrix4d rotate(AxisAngle aa) { return this.rotate(aa.x,aa.y,aa.z,aa.t); }
+	public Matrix4d rotateInverse(Quaternion q) {
+		final double invNorm = 1.0 / (q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w);
+		return rotateWithQuaternion(-q.x * invNorm,-q.y * invNorm, -q.z * invNorm, q.w * invNorm);
+	}
 	
-	public Matrix4d rotate(double ax, double ay, double az, double theta) {
+	public Matrix4d rotate(AxisAngle aa) { return this.rotate(aa.t,aa.x,aa.y,aa.z); }
+	public Matrix4d rotate(double theta, Vector3d axis) { return rotate(theta, axis.x, axis.y, axis.z); }
+	
+	private Matrix4d rotate(double theta, double ax, double ay, double az) {
 //		// compare '$ man glRotate' or 'javax.vecmath.Matrix4d.set(AxisAngle4d a1)'
 		
 		final double s = sin(theta), c = cos(theta), t = 1-c, l = sqrt(ax*ax+ay*ay+az*az);
@@ -649,14 +619,28 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 		);
 	}
 
-	public static Matrix4d fromProjection( Matrix3d m ) { return new Matrix4d().setProjection( m ); }
-	public Matrix4d setProjection(Matrix3d m) {
+//	public static Matrix4d fromProjection( Matrix3d m ) { return new Matrix4d().setProjection( m ); }
+//	public Matrix4d setProjection(Matrix3d m) {
+//		return this.setElements(
+//			m.m00, m.m01,   0, m.m02, 
+//			m.m10, m.m11,   0, m.m12,
+//			    0,     0,   0,     0,
+//			m.m20, m.m21,   0, m.m22 
+//		);
+//	}
+
+	public Matrix4d setRotation(AxisAngle a) {
+		double theta = a.t, ax = a.x, ay = a.y, az = a.z;
+		final double s = sin(theta), c = cos(theta), t = 1-c, l = sqrt(ax*ax+ay*ay+az*az);
+		final double x = (ax/l), y = (ay/l), z= (az/l);
+		final double xz = x*z, xy = x*y, yz = y*z, xx=x*x, yy=y*y, zz=z*z;
+		
 		return this.setElements(
-			m.m00, m.m01,   0, m.m02, 
-			m.m10, m.m11,   0, m.m12,
-			    0,     0,   0,     0,
-			m.m20, m.m21,   0, m.m22 
-		);
+				t*xx+c  , t*xy-s*z, t*xz+s*y, 0,
+				t*xy+s*z, t*yy+c  , t*yz-s*x, 0,
+				t*xz-s*y, t*yz+s*x, t*zz+c  , 0,
+				       0,        0,      0,   1);
+
 	}
 
 	public static Matrix4d fromRotation( Quaternion q ) { return new Matrix4d().setRotation(q); }

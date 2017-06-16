@@ -21,14 +21,19 @@ public class Vector3d	extends Vector<Vector3d>
 	public Vector3d(double x, double y, double z) {
 		this.x=x; this.y=y; this.z=z;
 	}
+
 	
-	public static Vector3d from(double x, double y, double z) {
+	public static Vector3d of(double x, double y, double z) {
+		return new Vector3d(x,y,z);
+	}
+	
+	public static Vector3d fromElements(double x, double y, double z) {
 		return new Vector3d(x,y,z);
 	}
 
 //==[ Getter & Setter ]=============================================================================
 	
-	public Vector3d setElements(double x, double y, double z) { return this.xyz(x, y, z); } 
+	public Vector3d set(double x, double y, double z) { return this.xyz(x, y, z); } 
 	public Vector3d xyz(double x, double y, double z) { this.x=x; this.y=y; this.z=z; return this; }
 	public Vector3d xy(double x, double y) { this.x=x; this.y=y; return this; }
 	public Vector3d xz(double x, double z) { this.x=x; this.z=z; return this; }
