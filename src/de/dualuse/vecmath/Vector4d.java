@@ -16,7 +16,7 @@ public class Vector4d	extends Vector<Vector4d>
 
 	public Vector4d() {}
 	public Vector4d(double x, double y, double z, double w) { this.xyzw(x, y, z, w); };
-	public static Vector4d from(double x, double y, double z, double w) { return new Vector4d(x,y,z,w); }
+	public static Vector4d of(double x, double y, double z, double w) { return new Vector4d(x,y,z,w); }
 	
 	
 	static public Vector4d from(Object... objs) {
@@ -55,7 +55,7 @@ public class Vector4d	extends Vector<Vector4d>
 	public Vector4d get(Vector4d q) { q.set(this); return this; }
 	
 	public<T> T get(Value4<T> v) { return v.set(this.x, this.y, this.z, this.w); }
-	public<T> T get(Value3<T> v) { return v.set(this.x, this.y, this.z); }
+//	public<T> T get(Value3<T> v) { return v.set(this.x, this.y, this.z); }
 	
 	public double[] get(double[] v) { v[0]=x; v[1]=y; v[2]=z; v[3]=w; return v; };
 
@@ -81,7 +81,7 @@ public class Vector4d	extends Vector<Vector4d>
 	@Override public Vector4d sum(Vector4d a, Vector4d b) { return this.xyzw(a.x+b.x,a.y+b.y,a.z+b.z, a.w+b.w); }
 	@Override public Vector4d difference(Vector4d a, Vector4d b) { return this.xyzw(a.x-b.x,a.y-b.y,a.z-b.z,a.w-b.w); }
 
-	public Vector4d add(double x, double y, double z) { return xyzw(x+this.x,y+this.y,z+this.z,w+this.w); }
+	public Vector4d add(double x, double y, double z, double w) { return xyzw(x+this.x,y+this.y,z+this.z,w+this.w); }
 	
 	public Vector4d add(Vector4d v) { return xyzw(x+v.x,y+v.y,z+v.z,w+v.w); }
 	public Vector4d adds(Vector4d v, double scale) { return xyzw(x+v.x*scale,y+v.y*scale,z+v.z*scale, w+v.w*scale); }

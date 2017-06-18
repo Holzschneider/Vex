@@ -7,8 +7,9 @@ import java.util.Arrays;
 import java.util.regex.Matcher;
 
 public class Vector3d	extends Vector<Vector3d>
-						implements  VectorAlgebra<Vector3d>, 
-									Interpolatable<Vector3d>, 
+						implements	Value3<Vector3d>,
+									VectorAlgebra<Vector3d>, 
+									Interpolatable<Vector3d>,
 									java.io.Serializable 
 {
 	private static final long serialVersionUID = 1L;
@@ -178,6 +179,10 @@ public class Vector3d	extends Vector<Vector3d>
 	public Vector3d projection(Matrix4d m) { return m.project(this); }
 	
 //==[ Vector3d Specific ]===========================================================================
+
+	public Vector3d cross(Vector3d that) {
+		return cross(this,that);
+	}
 
 	public Vector3d cross(Vector3d a, Vector3d b) {
 		this.x = a.y*b.z - a.z*b.y; 

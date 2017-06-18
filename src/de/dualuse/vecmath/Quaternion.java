@@ -2,6 +2,7 @@ package de.dualuse.vecmath;
 
 import static java.lang.Math.*;
 
+import java.awt.geom.AffineTransform;
 import java.io.Serializable;
 import java.util.regex.Matcher;
 
@@ -120,14 +121,15 @@ public class Quaternion extends Tuple<Quaternion> implements Interpolatable<Quat
         this.x = -q.x * invNorm;
         this.y = -q.y * invNorm;
         this.z = -q.z * invNorm;
-        this.w = w * invNorm;
+        this.w = q.w * invNorm;
         return this;
 	}
 
 	
 	////////////////////////////////////// Quaternion Specific
+	public Quaternion concatenate(AxisAngle aa) { return this.rotate( aa.t, aa.x, aa.y, aa.z ); }
 	
-	public Quaternion rotate(double x, double y, double z, double theta) {
+	private Quaternion rotate(double theta, double x, double y, double z) {
 		final double s = sin(theta / 2.), c = cos(theta / 2.), l = sqrt(x*x+y*y+z*z);
 		final double qx = x*s/l, qy = y*s/l, qz = z*s/l, qw = c;
 		
@@ -158,7 +160,23 @@ public class Quaternion extends Tuple<Quaternion> implements Interpolatable<Quat
 				2*( (t7 -  t3)*v.x + (t2 +  t9)*v.y + (t5 + t8)*v.z ) + v.z
 		);
 	}
-	
+
+	// transform / rotates this vector by the quaternion
+	public Vector3d transformInverse(Vector3d v) {
+//		double invNorm = 1.0 / (this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w);
+//        double x = -this.x * invNorm, y = -this.y * invNorm, z = -this.z * invNorm, w = this.w * invNorm;
+        double x = -this.x, y = -this.y, z = -this.z , w = this.w;
+
+		final double t2 =   w*x, t3 =   w*y, t4 =   w*z;
+		final double t5 =  -x*x, t6 =   x*y, t7 =   x*z;
+		final double t8 =  -y*y, t9 =   y*z, t10 = -z*z;
+		return v.xyz(
+				2*( (t8 + t10)*v.x + (t6 -  t4)*v.y + (t3 + t7)*v.z ) + v.x,
+				2*( (t4 +  t6)*v.x + (t5 + t10)*v.y + (t9 - t2)*v.z ) + v.y,
+				2*( (t7 -  t3)*v.x + (t2 +  t9)*v.y + (t5 + t8)*v.z ) + v.z
+		);
+	}
+
 	
 	////////////////////////////////////// Interpolatable Specific
 

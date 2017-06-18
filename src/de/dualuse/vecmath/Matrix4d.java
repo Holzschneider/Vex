@@ -1,18 +1,14 @@
 package de.dualuse.vecmath;
 
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
-import static java.lang.Math.sqrt;
+import static java.lang.Math.*;
 
 import java.io.Serializable;
 import java.util.regex.Matcher;
 
-import de.dualuse.vecmath.Matrix3d.Values;
-
-public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
+public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>, Serializable {
 	private static final double EPSILON = 1.0E-10;
 	private static final long serialVersionUID = 1L;
-
+	
 	public double m00,m01,m02,m03;
 	public double m10,m11,m12,m13;
 	public double m20,m21,m22,m23;
@@ -32,24 +28,16 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 			) { 
 		setElements(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33);
 	}
-	
-//	public static Matrix4d from( Object... elements ) {
-//		StringBuilder sb = new StringBuilder(elements.length*16);
-//		for (Object o: elements)
-//			sb.append(o.toString()).append(' ');
-//		
-//		return Matrix4d.fromString( sb.toString() );
-//	}
-//
-//	public static Matrix4d from(
-//			double m00, double m01, double m02, double m03,
-//			double m10, double m11, double m12, double m13,
-//			double m20, double m21, double m22, double m23,
-//			double m30, double m31, double m32, double m33
-//			) {
-//		return new Matrix4d().setElements(m00,m01,m02,m03,m10,m11,m12,m13,m20,m21,m22,m23,m30,m31,m32,m33);
-//	}
-	
+
+	public static Matrix4d of(
+			double m00, double m01, double m02, double m03,
+			double m10, double m11, double m12, double m13,
+			double m20, double m21, double m22, double m23,
+			double m30, double m31, double m32, double m33
+			) {
+		return new Matrix4d().setElements(m00,m01,m02,m03,m10,m11,m12,m13,m20,m21,m22,m23,m30,m31,m32,m33);
+	}
+
 	public static Matrix4d fromElements(
 			double m00, double m01, double m02, double m03,
 			double m10, double m11, double m12, double m13,
@@ -228,6 +216,12 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 		return Matrix4d.fromElements(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33);
 	}
 	
+	public String toFormattedString() {
+		return	m00+" "+m01+" "+m02+" "+m03+"\n"+
+				m10+" "+m11+" "+m12+" "+m13+"\n"+
+				m20+" "+m21+" "+m22+" "+m23+"\n"+
+				m30+" "+m31+" "+m32+" "+m33;
+	}
 	
 	
 	@Override public String toString() {
@@ -398,7 +392,8 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 	@Override public Matrix4d concatenate(Matrix4d that) {
 		return concatenation(this, that);
 	}
-	
+
+
 	@Override public Matrix4d concatenation(Matrix4d A, Matrix4d B) {
 		return this.setElements(
 			A.m00 * B.m00 + A.m01 * B.m10 + A.m02 * B.m20 + A.m03 * B.m30,
@@ -527,7 +522,7 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 		);
 	}
 
-	Matrix4d concat( 
+	public Matrix4d concatenate( 
 			double n00, double n01, double n02, double n03,
 			double n10, double n11, double n12, double n13,
 			double n20, double n21, double n22, double n23,
@@ -564,7 +559,7 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 		final double xy = x*y, xz = x*z, xw = x*w;
 		final double yz = y*z, yw = y*w, zw = z*w; 
 		
-		return this.concat(
+		return this.concatenate(
 			ww+xx-yy-zz, 2*xy-2*zw, 2*xz+2*yw, 0.,
 			2*xy+2*zw, ww-xx+yy-zz, 2*yz-2*xw, 0.,						
 			2*xz-2*yw, 2*yz+2*xw, ww-xx-yy+zz, 0.,
@@ -591,7 +586,7 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 		final double x = (ax/l), y = (ay/l), z= (az/l);
 		final double xz = x*z, xy = x*y, yz = y*z, xx=x*x, yy=y*y, zz=z*z;
 		
-		return this.concat(
+		return this.concatenate(
 				t*xx+c  , t*xy-s*z, t*xz+s*y, 0,
 				t*xy+s*z, t*yy+c  , t*yz-s*x, 0,
 				t*xz-s*y, t*yz+s*x, t*zz+c  , 0,
@@ -602,9 +597,14 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 	public Matrix4d translate(Vector3d v) {
 		return translate(v.x,v.y,v.z);
 	}
+
+	public Matrix4d translate(Vector3d v, double times) {
+		return translate(v.x*times,v.y*times,v.z*times);
+	}
+
 	
 	public Matrix4d translate(double tx, double ty, double tz) {
-		return this.concat(
+		return this.concatenate(
 			1,0,0,tx,
 			0,1,0,ty,
 			0,0,1,tz,
@@ -622,7 +622,7 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 	}
 	
 	public Matrix4d scale(double sx, double sy, double sz) {
-		return this.concat(
+		return this.concatenate(
 			sx, 0, 0, 0,
 			 0,sy, 0, 0,
 			 0, 0,sz, 0,
@@ -712,6 +712,20 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 			.translate(1,-1,0);
 	}
 	
+
+	public Matrix4d ortho(double left, double right, double bottom, double top, double near, double far) {
+        float tx = (float) (- (right + left) / (right - left));
+        float ty = (float) (- (top + bottom) / (top - bottom));
+		float tz = (float) (- (far + near) / (far - near));
+		
+		return this.concatenate(
+				 2/(right-left), 0,0, tx ,
+				 0, 2/(top-bottom), 0, ty,
+				 0, 0, -2/(far-near), tz,
+				0,0,0,1
+				);
+	}
+	
 	public Matrix4d frustum(double left, double right, double bottom, double top, double near, double far) {
 		// see '$ man glFrustum'
 		final double A = (right + left)/(right - left);
@@ -719,7 +733,7 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 		final double C = -(far + near)/(far - near);
 		final double D = -(2 * far * near) /( far -near);
 		
-		return this.concat(
+		return this.concatenate(
 //		return this.setElements(
 			(2*near)/(right-left),                     0, A, 0,
 			0                    , (2*near)/(top-bottom), B, 0,
@@ -733,6 +747,29 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 //	public Vector2d project(Vector2d v, double z);
 //	public Vector2d intersect(Vector2d v, double z);
 
+	public Vector3d transform(Vector3d v) {
+		final double x = v.x * m00 + v.y * m01 + v.z * m02 + m03; 
+		final double y = v.x * m10 + v.y * m11 + v.z * m12 + m13; 
+		final double z = v.x * m20 + v.y * m21 + v.z * m22 + m23;
+		
+		return v.xyz( x, y, z );
+	}
+	
+	public<T> T transform(double vx, double vy, double vz, Value3<T> v) {
+		final double x = vx * m00 + vy * m01 + vz * m02 + m03; 
+		final double y = vx * m10 + vy * m11 + vz * m12 + m13; 
+		final double z = vx * m20 + vy * m21 + vz * m22 + m23;
+		
+		return v.set( x, y, z );		
+	}
+	
+
+	public<T> T transform(Vector3d v, Value3<T> w) {
+		return project(v.x,v.y,v.z,w);
+	}
+	
+
+	
 	public Vector3d project(Vector3d v) {
 		final double x = v.x * m00 + v.y * m01 + v.z * m02 + m03; 
 		final double y = v.x * m10 + v.y * m11 + v.z * m12 + m13; 
@@ -749,6 +786,11 @@ public class Matrix4d extends Matrix<Matrix4d> implements Serializable {
 		final double w = vx * m30 + vy * m31 + vz * m32 + m33;
 		
 		return v.set( x/w, y/w, z/w );		
+	}
+	
+
+	public<T> T project(Vector3d v, Value3<T> w) {
+		return project(v.x,v.y,v.z,w);
 	}
 	
 	public double[] project(double[] v) {

@@ -1,13 +1,11 @@
 package de.dualuse.vecmath;
 
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
+import static java.lang.Math.*;
 
 import java.io.Serializable;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-public class Matrix3d extends Matrix<Matrix3d> implements Serializable {
+public class Matrix3d extends Matrix<Matrix3d> implements ValueMatrix3<Matrix3d>, Serializable {
 	private static final long serialVersionUID = 1L;
 
 	public double m00,m01,m02;
@@ -36,7 +34,7 @@ public class Matrix3d extends Matrix<Matrix3d> implements Serializable {
 		);
 	}
 	
-	public static Matrix3d from(
+	public static Matrix3d of(
 			double m00,double m01,double m02,
 			double m10,double m11,double m12,
 			double m20,double m21,double m22
@@ -87,6 +85,12 @@ public class Matrix3d extends Matrix<Matrix3d> implements Serializable {
 
 	
 //==[ Element-wise Operations ]=====================================================================
+
+	public Matrix3d set(double m00, double m01, double m02, 
+			double m10, double m11, double m12, 
+			double m20, double m21, double m22) 
+	{ return this.setElements(m00, m01, m02, m10, m11, m12, m20, m21, m22); }
+	
 	
 	public Matrix3d setElements(
 			double m00, double m01, double m02, 
@@ -351,7 +355,7 @@ public class Matrix3d extends Matrix<Matrix3d> implements Serializable {
 	}
 
 //==[ Matrix<Matrix3d> ]============================================================================
-		
+	
 	@Override public Matrix3d add(Matrix3d a) {
 		return addElements(a.m00,a.m01,a.m02,a.m10,a.m11,a.m12,a.m20,a.m21,a.m22);
 	}
@@ -365,6 +369,20 @@ public class Matrix3d extends Matrix<Matrix3d> implements Serializable {
 	}
 	
 //==[ Matrix3d Specific ]===========================================================================
+	public Matrix3d setRotation(Quaternion q) {
+		final double x = q.x, y = q.y, z = q.z, w = q.w;
+
+		final double ww = w*w, xx = x*x, yy= y*y, zz = z*z;
+		final double xy = x*x, xz = x*z, xw = x*w;
+		final double yz = y*z, yw = y*w, zw = z*w; 
+		final double n = 1/(ww+xx+yy+zz);
+		return this.setElements(
+			(ww+xx-yy-zz)*n, (2*xy-2*zw)*n, (2*xz+2*yw)*n,
+			(2*xy+2*zw)*n, (ww-xx+yy-zz)*n, (2*yz-2*xw)*n,						
+			(2*xz-2*yw)*n, (2*yz+2*xw)*n, (ww-xx-yy+zz)*n
+		);
+
+	}
 	
 	private Matrix3d concat( 
 			double n00, double n01, double n02,
