@@ -8,6 +8,8 @@ public class Scalar extends Number implements Interpolatable<Scalar>, Serializab
 	private static final long serialVersionUID = 1L;
 	public double v;
 	
+	// XXX Matches decimals like 0.3989 as "0" and ".3989"
+	@Deprecated 
 	static public final Pattern DECIMAL 
 		= Pattern.compile( "(0\\.0|[\\-+]?0|[\\-+]?([1-9]\\d*\\.\\d*([eE][\\-+]?\\d+)?|\\.\\d+([eE][\\-+]?\\d+)?)|([1-9]\\d*)([eE][\\-+]?\\d+)?)" );
 //	static public final Pattern DECIMAL = Pattern.compile("[\\d+-\\.]{1,8}([eE][+\\-]?\\d{1,8})?");
@@ -24,7 +26,13 @@ public class Scalar extends Number implements Interpolatable<Scalar>, Serializab
 	
 	public static void main(String[] args) {
 		
-		System.out.println( Scalar.fromString("0.3984"));
+		String example = "0.3984";
+		Matcher m = Scalar.DECIMAL.matcher(example);
+		
+		m.find(); System.out.println("'" + m.group() + "'");
+		m.find(); System.out.println("'" + m.group() + "'");
+		
+		// System.out.println( Scalar.fromString("0.3984"));
 		// System.out.println( Scalar.fromString("hallo +192.3e12 123 welt") );
 	}
 	
