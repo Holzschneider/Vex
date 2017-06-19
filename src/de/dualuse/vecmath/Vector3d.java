@@ -185,9 +185,13 @@ public class Vector3d	extends Vector<Vector3d>
 	}
 
 	public Vector3d cross(Vector3d a, Vector3d b) {
-		this.x = a.y*b.z - a.z*b.y; 
-		this.y = a.z*b.x - a.x*b.z;
-		this.z = a.x*b.y - a.y*b.x;
+		double ax = a.x, bx = b.x;
+		double ay = a.y, by = b.y;
+		double az = a.z, bz = b.z;
+		
+		this.x = ay*bz - az*by; 
+		this.y = az*bx - ax*bz;
+		this.z = ax*by - ay*bx;
 		return this;
 	}
 	

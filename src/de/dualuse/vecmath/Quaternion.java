@@ -103,7 +103,7 @@ public class Quaternion extends Tuple<Quaternion> implements Interpolatable<Quat
 				x*q.w + w*q.x + y*q.z - z*q.y);
 	}
 	
-	public Quaternion concatenation(Quaternion a, Quaternion q) {
+	public Quaternion setConcatenation(Quaternion a, Quaternion q) {
 		return xyzw(
 				a.x*q.x - a.y*q.y - a.z*q.z - a.w*q.w,
 				a.x*q.y + a.y*q.x + a.z*q.w - a.w*q.z,
@@ -127,7 +127,7 @@ public class Quaternion extends Tuple<Quaternion> implements Interpolatable<Quat
 
 	
 	////////////////////////////////////// Quaternion Specific
-	public Quaternion concatenate(AxisAngle aa) { return this.rotate( aa.t, aa.x, aa.y, aa.z ); }
+	public Quaternion concatenate(AxisAngle aa) { return this.rotate( aa.r, aa.x, aa.y, aa.z ); }
 	
 	private Quaternion rotate(double theta, double x, double y, double z) {
 		final double s = sin(theta / 2.), c = cos(theta / 2.), l = sqrt(x*x+y*y+z*z);
@@ -143,7 +143,7 @@ public class Quaternion extends Tuple<Quaternion> implements Interpolatable<Quat
 	
 	
 	public Quaternion set(AxisAngle aa) {
-		final double s = sin(aa.t / 2.), c= cos(aa.t / 2.);
+		final double s = sin(aa.r / 2.), c= cos(aa.r / 2.);
 		final double x = aa.x, y = aa.y, z = aa.z, l = sqrt(x*x+y*y+z*z);
 		
 		return this.xyzw(x*s/l, y*s/l, z*s/l, c);
