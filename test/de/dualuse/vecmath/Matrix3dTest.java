@@ -58,7 +58,8 @@ public class Matrix3dTest {
 		String s = a.toString();
 		assertEquals("1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0",s);
 		
-		b.fromString(s);
+//		b.fromString(s);
+		b = Matrix3d.fromString(s);
 		assertEquals(a, b);
 		
 		
