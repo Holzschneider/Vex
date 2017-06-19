@@ -191,18 +191,30 @@ public class Matrix3d extends Matrix<Matrix3d> implements ValueMatrix3<Matrix3d>
 	}
 	
 	static public Matrix3d fromString(String r) {
-		Matcher m = Scalar.DECIMAL.matcher(r);
-		m.find(); double m00 = Double.parseDouble(m.group());
-		m.find(); double m01 = Double.parseDouble(m.group());
-		m.find(); double m02 = Double.parseDouble(m.group());
 		
-		m.find(); double m10 = Double.parseDouble(m.group());
-		m.find(); double m11 = Double.parseDouble(m.group());
-		m.find(); double m12 = Double.parseDouble(m.group());
+		String[] groups = r.trim().split("[ \t]+");
+		if (groups.length!=9) throw new IllegalArgumentException("Expected string with 9 decimals");
 		
-		m.find(); double m20 = Double.parseDouble(m.group());
-		m.find(); double m21 = Double.parseDouble(m.group());
-		m.find(); double m22 = Double.parseDouble(m.group());
+		double m00 = Double.parseDouble(groups[0]);
+		double m01 = Double.parseDouble(groups[1]);
+		double m02 = Double.parseDouble(groups[2]);
+		double m10 = Double.parseDouble(groups[3]);
+		double m11 = Double.parseDouble(groups[4]);
+		double m12 = Double.parseDouble(groups[5]);
+		double m20 = Double.parseDouble(groups[6]);
+		double m21 = Double.parseDouble(groups[7]);
+		double m22 = Double.parseDouble(groups[8]);
+		
+//		Matcher m = Scalar.DECIMAL.matcher(r);
+//		m.find(); double m00 = Double.parseDouble(m.group());
+//		m.find(); double m01 = Double.parseDouble(m.group());
+//		m.find(); double m02 = Double.parseDouble(m.group());
+//		m.find(); double m10 = Double.parseDouble(m.group());
+//		m.find(); double m11 = Double.parseDouble(m.group());
+//		m.find(); double m12 = Double.parseDouble(m.group());
+//		m.find(); double m20 = Double.parseDouble(m.group());
+//		m.find(); double m21 = Double.parseDouble(m.group());
+//		m.find(); double m22 = Double.parseDouble(m.group());
 		
 		return Matrix3d.fromElements(m00, m01, m02, m10, m11, m12, m20, m21, m22);
 	}
