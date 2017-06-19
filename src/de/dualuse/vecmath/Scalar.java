@@ -9,7 +9,7 @@ public class Scalar extends Number implements Interpolatable<Scalar>, Serializab
 	public double v;
 	
 	static public final Pattern DECIMAL 
-		= Pattern.compile( "([\\-+]?0|[\\-+]?([1-9]\\d*\\.\\d*([eE][\\-+]?\\d+)?|\\.\\d+([eE][\\-+]?\\d+)?)|([1-9]\\d*)([eE][\\-+]?\\d+)?)" );
+		= Pattern.compile( "(0\\.0|[\\-+]?0|[\\-+]?([1-9]\\d*\\.\\d*([eE][\\-+]?\\d+)?|\\.\\d+([eE][\\-+]?\\d+)?)|([1-9]\\d*)([eE][\\-+]?\\d+)?)" );
 //	static public final Pattern DECIMAL = Pattern.compile("[\\d+-\\.]{1,8}([eE][+\\-]?\\d{1,8})?");
 //	static public final Pattern DECIMAL = Pattern.compile("[\\d+-\\.eE]{1,10}");
 	
@@ -24,7 +24,8 @@ public class Scalar extends Number implements Interpolatable<Scalar>, Serializab
 	
 	public static void main(String[] args) {
 		
-		System.out.println( Scalar.fromString("hallo +192.3e12 123 welt") );
+		System.out.println( Scalar.fromString("0.3984"));
+		// System.out.println( Scalar.fromString("hallo +192.3e12 123 welt") );
 	}
 	
 	public Scalar(double v) { this.v = v; }

@@ -219,6 +219,10 @@ public class Matrix3d extends Matrix<Matrix3d> implements ValueMatrix3<Matrix3d>
 		return Matrix3d.fromElements(m00, m01, m02, m10, m11, m12, m20, m21, m22);
 	}
 	
+	static void printGroup(Matcher m) {
+		System.out.println("(" + m.start() + "-" + m.end() + "): " + m.group());
+	}
+	
 	@Override public String toString() {
 		return	m00+" "+m01+" "+m02+" "+
 				m10+" "+m11+" "+m12+" "+

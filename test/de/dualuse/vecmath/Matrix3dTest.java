@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.Arrays;
+import java.util.Random;
 
 import org.junit.Test;
 
@@ -85,6 +86,49 @@ public class Matrix3dTest {
 		assertEquals( m321, Matrix3d.fromColumns(new double[] {1,2,3}, new double[] {4,5,6}, new double[] {7,8,9}) );
 		assertEquals( m321, Matrix3d.fromColumns(new Vector3d(1,2,3), new Vector3d(4,5,6), new Vector3d(7,8,9)));
 		
+	}
+	
+	@Test public void matrixParseTest() {
+		
+		// Identity
+		Matrix3d from = new Matrix3d();
+		String s = from.toString();
+		Matrix3d to = Matrix3d.fromString(s);
+		assertEquals(from, to);
+		
+		// Zero
+		from.scale(0, 0);
+		s = from.toString();
+		to = Matrix3d.fromString(s);
+		assertEquals(from, to);
+		
+		// Random matrices
+		Random rand = new Random(System.currentTimeMillis());
+		for (int i=0; i<1000; i++) {
+			
+			from.m00 = -50 + 100*rand.nextDouble();
+			from.m01 = -50 + 100*rand.nextDouble();
+			from.m02 = -50 + 100*rand.nextDouble();
+			
+			from.m10 = -50 + 100*rand.nextDouble();
+			from.m11 = -50 + 100*rand.nextDouble();
+			from.m12 = -50 + 100*rand.nextDouble();
+			
+			from.m20 = -50 + 100*rand.nextDouble();
+			from.m21 = -50 + 100*rand.nextDouble();
+			from.m22 = -50 + 100*rand.nextDouble();
+			
+			s = from.toString();
+			to = Matrix3d.fromString(s);
+			
+			if (!from.equals(to)) {
+				System.out.println("from: " + from.toString());
+				System.out.println("to  : " + to.toString());
+			}
+			
+			assertEquals(from, to);
+			
+		}
 	}
 	
 	@Test public void matrixAlgebraTest() {
