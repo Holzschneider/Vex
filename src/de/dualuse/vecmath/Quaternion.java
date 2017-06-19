@@ -113,10 +113,10 @@ public class Quaternion extends Tuple<Quaternion> implements Interpolatable<Quat
 	
 
 	public Quaternion invert() { 
-		return setInverse(this); 
+		return inversion(this); 
 	}
 	
-	public Quaternion setInverse(Quaternion q) {
+	public Quaternion inversion(Quaternion q) {
         double invNorm = 1.0 / (q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w);
         this.x = -q.x * invNorm;
         this.y = -q.y * invNorm;
