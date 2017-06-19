@@ -29,11 +29,11 @@ public class AxisAngle extends Tuple<AxisAngle> implements Serializable {
 	public AxisAngle xyzt(double x,double y,double z,double t) { this.x=x; this.y=y; this.z=z; this.t=t; return this; }
 	public AxisAngle xyz(double x,double y,double z) { this.x=x; this.y=y; this.z=z; return this; }
 	public AxisAngle txyz(double t, double x,double y,double z) { return this.xyzt(x, y, z, t); }
-	public AxisAngle angle(double degrees) { this.t = degrees*PI/180.0; return this; }
-	public AxisAngle theta(double theta) { this.t = theta; return this; }
+	public AxisAngle degrees(double degrees) { this.t = degrees*PI/180.0; return this; }
+	public AxisAngle radians(double theta) { this.t = theta; return this; }
 	public AxisAngle axis(Vector3d v) { this.x = v.x; this.y = v.y; this.z = v.z; return this; };
-	public double theta() { return t; }
-	public double angle() { return t*180.0/PI; }
+	public double radians() { return t; }
+	public double degrees() { return t*180.0/PI; }
 
     public AxisAngle set(double theta, double x, double y, double z) {
     	this.t = normalize(theta);
