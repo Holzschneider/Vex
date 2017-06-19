@@ -15,7 +15,7 @@ public class Matrix3d extends Matrix<Matrix3d> implements ValueMatrix3<Matrix3d>
 //==[ Constructors ]================================================================================
 	
 	public Matrix3d() {
-		identity();
+		setIdentity();
 	}
 
 	public Matrix3d(
@@ -280,7 +280,7 @@ public class Matrix3d extends Matrix<Matrix3d> implements ValueMatrix3<Matrix3d>
 	
 //==[ MatrixAlgebra<Matrix3d> ]=====================================================================	
 
-	@Override public Matrix3d zero() {
+	@Override public Matrix3d setZero() {
 		return this.setElements(
 			0,0,0,
 			0,0,0,
@@ -288,7 +288,7 @@ public class Matrix3d extends Matrix<Matrix3d> implements ValueMatrix3<Matrix3d>
 		);
 	}
 
-	@Override public Matrix3d identity() {
+	@Override public Matrix3d setIdentity() {
 		return this.setElements(
 			1,0,0,
 			0,1,0,
@@ -297,10 +297,10 @@ public class Matrix3d extends Matrix<Matrix3d> implements ValueMatrix3<Matrix3d>
 	}
 
 	@Override public Matrix3d invert() {
-		return this.inversion(this);
+		return this.setInverse(this);
 	}
 	
-	@Override public Matrix3d inversion(Matrix3d m) {
+	@Override public Matrix3d setInverse(Matrix3d m) {
 		final double a = m.m00, b = m.m01, c = m.m02;
 		final double d = m.m10, e = m.m11, f = m.m12;
 		final double g = m.m20, h = m.m21, i = m.m22;
@@ -319,10 +319,10 @@ public class Matrix3d extends Matrix<Matrix3d> implements ValueMatrix3<Matrix3d>
 	}
 	
 	@Override public Matrix3d transpose() {
-		return this.transposition(this);
+		return this.setTransposed(this);
 	}
 	
-	@Override public Matrix3d transposition(Matrix3d m) {
+	@Override public Matrix3d setTransposed(Matrix3d m) {
 		return this.setElements(
 			m.m00, m.m10, m.m20,
 			m.m01, m.m11, m.m21,
@@ -331,10 +331,10 @@ public class Matrix3d extends Matrix<Matrix3d> implements ValueMatrix3<Matrix3d>
 	}
 
 	@Override public Matrix3d concatenate(Matrix3d that) {
-		return concatenation(this, that);
+		return setConcatenation(this, that);
 	}
 	
-	@Override public Matrix3d concatenation(Matrix3d A, Matrix3d B) {
+	@Override public Matrix3d setConcatenation(Matrix3d A, Matrix3d B) {
 		return this.setElements(
 			A.m00*B.m00+A.m01*B.m10+A.m02*B.m20,
 			A.m00*B.m01+A.m01*B.m11+A.m02*B.m21,

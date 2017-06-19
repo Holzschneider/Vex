@@ -17,7 +17,7 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 //==[ Constructors ]================================================================================
 	
 	public Matrix4d() { 
-		identity(); 
+		setIdentity(); 
 	}
 	
 	public Matrix4d(
@@ -72,9 +72,9 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 	}
 
 	
-	public static Matrix4d fromViewport(double x, double y, double width, double height) {
-		return new Matrix4d().viewport(x, y, width, height);
-	}
+//	public static Matrix4d fromViewport(double x, double y, double width, double height) {
+//		return new Matrix4d().viewport(x, y, width, height);
+//	}
 	
 	public static Matrix4d fromFrustum(double left, double right, double bottom, double top, double near, double far) {
 		return new Matrix4d().frustum(left, right, bottom, top, near, far);		
@@ -308,7 +308,7 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 	
 //==[ MatrixAlgebra<Matrix4d> ]=====================================================================
 
-	@Override public Matrix4d zero() { 
+	@Override public Matrix4d setZero() { 
 		return setElements(
 			0.0,0.0,0.0,0.0,
 			0.0,0.0,0.0,0.0,
@@ -317,7 +317,7 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 		);
 	}
 	
-	@Override public Matrix4d identity() { 
+	@Override public Matrix4d setIdentity() { 
 		return setElements(
 			1.0,0.0,0.0,0.0,
 			0.0,1.0,0.0,0.0,
@@ -327,10 +327,10 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 	}
 
 	@Override public Matrix4d invert() {
-		return this.inversion(this);
+		return this.setInverse(this);
 	}
 	
-	@Override public Matrix4d inversion(Matrix4d m) {
+	@Override public Matrix4d setInverse(Matrix4d m) {
 		final double fA0 = m.m00 * m.m11 - m.m01 * m.m10;
 		final double fA1 = m.m00 * m.m12 - m.m02 * m.m10;
 		final double fA2 = m.m00 * m.m13 - m.m03 * m.m10;
@@ -377,10 +377,10 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 	}
 
 	@Override public Matrix4d transpose() {
-		return this.transposition(this);
+		return this.setTransposed(this);
 	}
 	
-	@Override public Matrix4d transposition(Matrix4d m) {
+	@Override public Matrix4d setTransposed(Matrix4d m) {
 		return this.setElements(
 			m.m00, m.m10, m.m20, m.m30,
 			m.m01, m.m11, m.m21, m.m31,
@@ -390,11 +390,11 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 	}
 
 	@Override public Matrix4d concatenate(Matrix4d that) {
-		return concatenation(this, that);
+		return setConcatenation(this, that);
 	}
 
 
-	@Override public Matrix4d concatenation(Matrix4d A, Matrix4d B) {
+	@Override public Matrix4d setConcatenation(Matrix4d A, Matrix4d B) {
 		return this.setElements(
 			A.m00 * B.m00 + A.m01 * B.m10 + A.m02 * B.m20 + A.m03 * B.m30,
 			A.m00 * B.m01 + A.m01 * B.m11 + A.m02 * B.m21 + A.m03 * B.m31,
@@ -704,15 +704,14 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 		);
 	}
 	
-	public Matrix4d viewport(double x, double y, double width, double height) {
-		return this
-			.translate(x, y, 0)
-			.scale(width,height,1)
-			.scale(0.5,-0.5,1)
-			.translate(1,-1,0);
-	}
+//	public Matrix4d viewport(double x, double y, double width, double height) {
+//		return this
+//			.translate(x, y, 0)
+//			.scale(width,height,1)
+//			.scale(0.5,-0.5,1)
+//			.translate(1,-1,0);
+//	}
 	
-
 	public Matrix4d ortho(double left, double right, double bottom, double top, double near, double far) {
         float tx = (float) (- (right + left) / (right - left));
         float ty = (float) (- (top + bottom) / (top - bottom));

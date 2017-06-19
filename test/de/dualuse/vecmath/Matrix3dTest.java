@@ -79,7 +79,7 @@ public class Matrix3dTest {
 		assertEquals( m123, Matrix3d.fromRows(new double[] {1,2,3}, new double[] {4,5,6}, new double[] {7,8,9}) );
 		assertEquals( m123, Matrix3d.fromRows(new Vector3d(1,2,3), new Vector3d(4,5,6), new Vector3d(7,8,9)));
 		
-		Matrix3d m321 = new Matrix3d().transposition(m123);
+		Matrix3d m321 = new Matrix3d().setTransposed(m123);
 		
 		assertEquals( m321, Matrix3d.fromColumns(new double[][] {{1,2,3}, {4,5,6}, {7,8,9}}) );
 		assertEquals( m321, Matrix3d.fromColumns(new double[] {1,2,3}, new double[] {4,5,6}, new double[] {7,8,9}) );
@@ -91,7 +91,7 @@ public class Matrix3dTest {
 		
 		Matrix3d a = Matrix3d.fromElements(1, 2, 3, 4, 5, 6, 7, 8, 9);
 		Matrix3d b = Matrix3d.fromElements(11,12,13,14,15,16,17,18,19);
-		Matrix3d c = new Matrix3d().concatenation(a,b);
+		Matrix3d c = new Matrix3d().setConcatenation(a,b);
 		
 		Matrix3d ab = Matrix3d.fromElements(90, 96, 102, 216, 231, 246, 342, 366, 390); 
 		a.concatenate(b);
@@ -106,7 +106,7 @@ public class Matrix3dTest {
 				12,15,18,
 				13,16,19);
 
-		Matrix3d bt = new Matrix3d().transposition(b);
+		Matrix3d bt = new Matrix3d().setTransposed(b);
 		assertEquals(bT,bt);
 		
 		Matrix3d dt = Matrix3d.fromRows( new double[][] {{190, 296, 3102}, {4216,5231,6246},{ 7342, 8366, 9390}} );
@@ -139,9 +139,9 @@ public class Matrix3dTest {
 				2.5, 1, -1.5
 				);
 
-		Matrix3d j = new Matrix3d().inversion(m);
+		Matrix3d j = new Matrix3d().setInverse(m);
 		
-		assertEquals(i,j.inversion(m));
+		assertEquals(i,j.setInverse(m));
 		assertEquals(i,m.invert());
 		
 		assertEquals(i.invert(),m.invert());

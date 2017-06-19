@@ -103,7 +103,7 @@ public class Quaternion extends Tuple<Quaternion> implements Interpolatable<Quat
 				x*q.w + w*q.x + y*q.z - z*q.y);
 	}
 	
-	public Quaternion concatenation(Quaternion a, Quaternion q) {
+	public Quaternion setConcatenation(Quaternion a, Quaternion q) {
 		return xyzw(
 				a.x*q.x - a.y*q.y - a.z*q.z - a.w*q.w,
 				a.x*q.y + a.y*q.x + a.z*q.w - a.w*q.z,
@@ -113,10 +113,10 @@ public class Quaternion extends Tuple<Quaternion> implements Interpolatable<Quat
 	
 
 	public Quaternion invert() { 
-		return inversion(this); 
+		return setInverse(this); 
 	}
 	
-	public Quaternion inversion(Quaternion q) {
+	public Quaternion setInverse(Quaternion q) {
         double invNorm = 1.0 / (q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w);
         this.x = -q.x * invNorm;
         this.y = -q.y * invNorm;
