@@ -576,7 +576,7 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 		return rotateQuaternion(-q.x * invNorm,-q.y * invNorm, -q.z * invNorm, q.w * invNorm);
 	}
 	
-	public Matrix4d rotate(AxisAngle aa) { return this.rotate(aa.t,aa.x,aa.y,aa.z); }
+	public Matrix4d rotate(AxisAngle aa) { return this.rotate(aa.r,aa.x,aa.y,aa.z); }
 	public Matrix4d rotate(double theta, Vector3d axis) { return rotate(theta, axis.x, axis.y, axis.z); }
 	
 	private Matrix4d rotate(double theta, double ax, double ay, double az) {
@@ -653,7 +653,7 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 //	}
 
 	public Matrix4d setRotation(AxisAngle a) {
-		double theta = a.t, ax = a.x, ay = a.y, az = a.z;
+		double theta = a.r, ax = a.x, ay = a.y, az = a.z;
 		final double s = sin(theta), c = cos(theta), t = 1-c, l = sqrt(ax*ax+ay*ay+az*az);
 		final double x = (ax/l), y = (ay/l), z= (az/l);
 		final double xz = x*z, xy = x*y, yz = y*z, xx=x*x, yy=y*y, zz=z*z;

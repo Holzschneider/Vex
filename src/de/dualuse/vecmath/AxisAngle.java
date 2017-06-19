@@ -7,7 +7,7 @@ import java.io.Serializable;
 public class AxisAngle extends Tuple<AxisAngle> implements Serializable {
     private static final long serialVersionUID = 1L;
     
-    public double t;
+    public double r;
     public double x;
     public double y;
     public double z;
@@ -16,27 +16,31 @@ public class AxisAngle extends Tuple<AxisAngle> implements Serializable {
         z = 1.0;
     }
 
-    public AxisAngle(AxisAngle a) { this(a.t,a.x,a.y,a.z);    }
+    public AxisAngle(AxisAngle a) { this(a.r,a.x,a.y,a.z);    }
     public AxisAngle(Quaternion q) { this.set(q); }
     public AxisAngle(double theta, double x, double y, double z) { this.set(theta, x,y,z); }
 
     public AxisAngle(double theta, Vector3d v) { this(theta, v.x, v.y, v.z); }
-    public AxisAngle set(AxisAngle a) { this.set(a.t, a.x, a.y, a.z); return this; }
+    public AxisAngle set(AxisAngle a) { this.set(a.r, a.x, a.y, a.z); return this; }
 
 	@Override
-	public AxisAngle clone() { return new AxisAngle(t,x,y,z); }
+	public AxisAngle clone() { return new AxisAngle(r,x,y,z); }
 
-	public AxisAngle xyzt(double x,double y,double z,double t) { this.x=x; this.y=y; this.z=z; this.t=t; return this; }
+	public AxisAngle xyzd(double x,double y,double z,double d) {this.x=x;this.y=y;this.z=z;this.r=r*180/PI;return this;}
+	public AxisAngle dxyz(double d,double x,double y,double z) {this.x=x;this.y=y;this.z=z;this.r=r*180/PI;return this;}
+	public AxisAngle xyzr(double x,double y,double z,double radians) { this.x=x; this.y=y; this.z=z; this.r=radians; return this; }
 	public AxisAngle xyz(double x,double y,double z) { this.x=x; this.y=y; this.z=z; return this; }
-	public AxisAngle txyz(double t, double x,double y,double z) { return this.xyzt(x, y, z, t); }
-	public AxisAngle degrees(double degrees) { this.t = degrees*PI/180.0; return this; }
-	public AxisAngle radians(double theta) { this.t = theta; return this; }
+	public AxisAngle rxyz(double radians, double x,double y,double z) { return this.xyzr(x, y, z, radians); }
+	public AxisAngle degrees(double degrees) { this.r = degrees*PI/180.0; return this; }
+	public AxisAngle radians(double radians) { this.r = radians; return this; }
 	public AxisAngle axis(Vector3d v) { this.x = v.x; this.y = v.y; this.z = v.z; return this; };
-	public double radians() { return t; }
-	public double degrees() { return t*180.0/PI; }
-
+	public double radians() { return r; }
+	public double degrees() { return r*180.0/PI; }
+	
+	
+	
     public AxisAngle set(double theta, double x, double y, double z) {
-    	this.t = normalize(theta);
+    	this.r = normalize(theta);
         this.x = x;
         this.y = y;
         this.z = z;
@@ -44,7 +48,7 @@ public class AxisAngle extends Tuple<AxisAngle> implements Serializable {
     }
 
     public AxisAngle set(double theta, Vector3d v) {
-        return set(t, v.x, v.y, v.z);
+        return set(r, v.x, v.y, v.z);
     }
 
     public AxisAngle set(Quaternion q) {
@@ -53,11 +57,16 @@ public class AxisAngle extends Tuple<AxisAngle> implements Serializable {
         this.x = q.x * invSqrt;
         this.y = q.y * invSqrt;
         this.z = q.z * invSqrt;
-        this.t = acos + acos;
+        this.r = acos + acos;
         return this;
     }
 
 
+//    public<T> T getDxyz(Value4<T> angleAxis) {
+//    	return angleAxis.set(r*180/PI, x, y, z);
+//    };
+    
+    
     public Quaternion get(Quaternion q) { return q.set(this); }
     public Matrix4d get(Matrix4d m) { return m.setRotation(this); }
 //    public Matrix3d get(Matrix3d m) { return m.rotation(this); }
@@ -65,7 +74,7 @@ public class AxisAngle extends Tuple<AxisAngle> implements Serializable {
 	public AxisAngle setIdentity() { return this.set(0, 0, 0, 1); }
 	
 	public AxisAngle invert() {
-		return this.xyzt(-x, -y, -z, t);
+		return this.xyzr(-x, -y, -z, r);
 	}
 
     public AxisAngle normalize() {
@@ -77,7 +86,7 @@ public class AxisAngle extends Tuple<AxisAngle> implements Serializable {
     }
 
     public AxisAngle rotate(double ang) {
-        t = normalize(t+ang);
+        r = normalize(r+ang);
         return this;
     }
 
@@ -86,7 +95,7 @@ public class AxisAngle extends Tuple<AxisAngle> implements Serializable {
     }
 
     public Vector3d transform(Vector3d v, Vector3d dest) {
-        double sin = Math.sin(t), cos = Math.cos(t);
+        double sin = Math.sin(r), cos = Math.cos(r);
         double dot = x * v.x + y * v.y + z * v.z;
         dest.xyz(v.x * cos + sin * (y * v.z - z * v.y) + (1.0 - cos) * dot * x,
                  v.y * cos + sin * (z * v.x - x * v.z) + (1.0 - cos) * dot * y,
@@ -99,7 +108,7 @@ public class AxisAngle extends Tuple<AxisAngle> implements Serializable {
     }
     
     public Vector4d transform(Vector4d v, Vector4d dest) {
-        double sin = Math.sin(t), cos = Math.cos(t);
+        double sin = Math.sin(r), cos = Math.cos(r);
         double dot = x * v.x + y * v.y + z * v.z;
         dest.set(v.x * cos + sin * (y * v.z - z * v.y) + (1.0 - cos) * dot * x,
                  v.y * cos + sin * (z * v.x - x * v.z) + (1.0 - cos) * dot * y,
@@ -112,7 +121,7 @@ public class AxisAngle extends Tuple<AxisAngle> implements Serializable {
         final int prime = 31;
         int result = 1;
         long temp;
-        temp = Double.doubleToLongBits(normalize(t));
+        temp = Double.doubleToLongBits(normalize(r));
         result = prime * result + (int) (temp ^ (temp >>> 32));
         temp = Double.doubleToLongBits(x);
         result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -126,7 +135,7 @@ public class AxisAngle extends Tuple<AxisAngle> implements Serializable {
     
     @Override
     boolean elementsEqual(AxisAngle that) {
-        if (normalize(this.t) != normalize(that.t))
+        if (normalize(this.r) != normalize(that.r))
             return false;
         
         return this.x!=that.x || this.y!=that.y || this.z!=that.z; 
