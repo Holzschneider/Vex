@@ -101,8 +101,8 @@ public class Vector2d extends Vector<Vector2d> implements Serializable {
 	}
 	
 	@Override
-	public Vector2d spline(Vector2d a, Vector2d da, Vector2d dd, Vector2d d, double r) {
-		final double omr = 1-r; 
+	public Vector2d spline(Vector2d a, Vector2d da, Vector2d dd, Vector2d d, double t) {
+		final double omr = t, r = 1-omr; 
 				
 		final double p0x = a.x, p0y = a.y;
 		final double p3x = d.x, p3y = d.y;
