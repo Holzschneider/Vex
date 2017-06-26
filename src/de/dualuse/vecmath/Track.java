@@ -98,6 +98,11 @@ public class Track<A> extends TreeMap<Double, Track.Sample<A>> implements Animat
 	public void setUpperBound( Boundary behavior ) { endBehavior = behavior; }
 	public Boundary getUpperBound() { return endBehavior; }
 	
+	public void setBounds( Boundary lower, Boundary upper) {
+		startBehavior = lower;
+		endBehavior = upper;
+	}
+	
 	
 	private TransitionTimingFunction function = TransitionTimingFunction.Linear;
 	public void setTransition( TransitionTimingFunction timingFunction ) {

@@ -67,7 +67,8 @@ public class Vector2d extends Vector<Vector2d> implements Serializable {
 	public Vector2d add(Vector2d v) { return this.add(v.x,v.y); }
 	public Vector2d adds(Vector2d v, double s) { return this.add(v.x*s,v.y*s); }
 	
-	public Vector2d sub(Vector2d v) { this.x -= v.y; this.y -= v.y; return this; }
+	@Override public Vector2d sub(Vector2d v) { return this.add(-v.x, -v.y); }
+	public Vector2d sub(double x, double y) { return this.add(-x, -y); }
 	public Vector2d scale(double s) { this.x*=s; this.y*=s; return this; }
 	
 	public Vector2d normalize() { return scale(1./length()); }

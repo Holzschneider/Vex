@@ -14,6 +14,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 
 import de.dualuse.vecmath.Track;
+import de.dualuse.vecmath.Track.Boundary;
 import de.dualuse.vecmath.Vector2d;
 
 public class TrackTest {
@@ -30,10 +31,10 @@ public class TrackTest {
 			Vector2d B = new Vector2d(200,100);
 			Vector2d C = new Vector2d(300,200);
 			Vector2d D = new Vector2d(500,500);
+			Vector2d E = new Vector2d(500,300);
+			Vector2d F = new Vector2d(100,200);
 			
-			Vector2d[] ABCD = {A,B,C,D};
-			
-			Track<Vector2d> track = new Track<Vector2d>();
+			Vector2d[] ABCDEF = {A,B,C,D, E,F};
 			
 			
 			MouseAdapter ml = new MouseAdapter() {
@@ -42,7 +43,7 @@ public class TrackTest {
 				@Override
 				public void mousePressed(MouseEvent e) {
 					captured = null;
-					for (Vector2d v: ABCD)
+					for (Vector2d v: ABCDEF)
 						if (v.distance(e.getX(),e.getY())<R*1.5)
 							captured = v;
 					
@@ -71,27 +72,81 @@ public class TrackTest {
 				g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
 				
 				g2.setStroke(new BasicStroke(4));
-				for (Vector2d p: ABCD)
+				for (Vector2d p: ABCDEF)
 					g2.draw(new Ellipse2D.Double(p.x-R, p.y-R, 2*R, 2*R));
 				
-				
-				track.put(0, null, A, B);
-				track.put(1, C, D, null);
-//				track.put(2, null, C, null);
-//				track.put(3, null, D, null);
+				Track<Vector2d> track = new Track<Vector2d>();
 
-				Vector2d v = new Vector2d();
-//				track.get(0.5, v);
+				double path = 0;
+				track.put(0, null, A,  null); //A.clone().adds(v, s));
 				
+				Vector2d J = A;
+				
+				for (int i=1,I=ABCDEF.length-1;i<I;i++) {
+					Vector2d P = ABCDEF[i];
+					
+					Vector2d O = P.clone().adds(ABCDEF[i+1],-1/6d).adds(ABCDEF[i-1],+1/6d);
+					Vector2d Q = P.clone().adds(ABCDEF[i+1],+1/6d).adds(ABCDEF[i-1],-1/6d);
+					
+//					path+= J.distance(O)+O.distance(P)+P.distance(Q);
+					path+=1;
+					
+					J = Q;
+					track.put(path, O,P,Q);
+				}
+				
+				path+= 1;
+//				path+= J.distance( F );
+				track.put(path, null, F,  null); //A.clone().adds(v, s));
+				
+//				Vector2d w = B.clone().adds(A.clone().sub(B),1/6d).adds(B.clone().sub(C), 1/6d);
+//				g2.fill(new Ellipse2D.Double(w.x-r, w.y-r, 2*r, 2*r));
+				
+//				B+(A-B)/6+(B-C)/6 = B+A/6-C/6
+				
+//				double S = 1/6d;
+//				track.put(0, 
+//						null, 
+//						B, 
+//						B.clone().adds(A,-S).adds(C, S)
+//					);
+//				
+//				track.put(
+//						1, 
+//						C.clone().adds(D, -S).adds(B, S),
+//						C, 
+//						C.clone().adds(B,-S).adds(D, S)
+//					);
+//
+//				track.put(
+//						2, 
+//						D.clone().adds(E, -S).adds(C, S),
+//						D, 
+//						D.clone().adds(E, S).adds(C, -S)
+//					);
+//				
+//				track.put(
+//						3, 
+//						E.clone().adds(F, -S).adds(D, S),
+//						E, 
+//						null);
+
+				
+				
+				Vector2d v = new Vector2d();
 				Path2D.Double p = new Path2D.Double();
 				p.moveTo(A.x, A.y);
+
+				track.setLowerBound(Boundary.CLAMP);
+				track.setUpperBound(Boundary.CLAMP);
 				
-				for (double i=0,s=0.05;i<1+s;i+=s) {
+				for (double i=0,s=path/100d;i<path+s;i+=s) {
 					track.get(i, v);
-					p.lineTo(v.x, v.y);
 					
-					g2.draw(new Ellipse2D.Double(v.x-r, v.y-r, 2*r, 2*r));
-					System.out.println(i);
+					if (i==0) p.moveTo(v.x, v.y);
+					else p.lineTo(v.x, v.y);
+					
+					g2.fill(new Ellipse2D.Double(v.x-r, v.y-r, 2*r, 2*r));
 				}
 				
 				g2.setStroke(new BasicStroke(0.66f,BasicStroke.CAP_BUTT,BasicStroke.JOIN_BEVEL,1, new float[] { 5 },0));
@@ -99,7 +154,6 @@ public class TrackTest {
 				
 				g2.dispose();
 			}
-			
 			
 		});
 		
