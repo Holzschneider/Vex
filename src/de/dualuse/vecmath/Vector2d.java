@@ -75,6 +75,7 @@ public class Vector2d extends Vector<Vector2d> implements Serializable {
 
 	public double length() { return Math.sqrt(x*x+y*y); }
 	public double distance(Vector2d v) { return Math.sqrt(quadrance(v)); }
+	public double distance(double x, double y) { return Math.sqrt(quadrance(x,y)); }
 
 	public double quadrance(Vector2d v2) { return quadrance(v2.x,v2.y); }
 	public double quadrance(double x, double y) { 

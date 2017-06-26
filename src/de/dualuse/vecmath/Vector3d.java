@@ -121,6 +121,7 @@ public class Vector3d	extends Vector<Vector3d>
 	@Override public double length() { return Math.sqrt(x*x+y*y+z*z); }
 
 	@Override public double distance(Vector3d v) { return Math.sqrt(quadrance(v)); }
+	public double distance(double x, double y, double z) { return Math.sqrt(quadrance(x,y,z)); }
 	
 	@Override public double quadrance(Vector3d v) { return quadrance(v.x,v.y,v.z); }
 	public double quadrance(double x, double y, double z) { 

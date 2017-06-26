@@ -99,6 +99,8 @@ public class Vector4d	extends Vector<Vector4d>
 	}
 
 	public double distance(Vector4d v) { return Math.sqrt(quadrance(v)); }
+	public double distance(double x, double y, double z, double w) { return Math.sqrt(quadrance(x,y,z,w)); }
+
 
 	public double quadrance(Vector4d v) { return quadrance(v.x,v.y,v.z,v.w); }
 	public double quadrance(double vx, double vy, double vz, double vw) {  
