@@ -36,6 +36,47 @@ public class Track<A> extends TreeMap<Double, Track.Sample<A>> implements Animat
 	}
 	
 	
+	static public class CatmullRomVertex<Q> extends Sample<Q> {
+		private static final long serialVersionUID = 1L;
+
+		public CatmullRomVertex(Q x) {
+			super(null);
+		}
+
+		public CatmullRomVertex(Q x, double t) {
+			super(null);
+		}
+	}
+	
+	
+	static public class C2Bezier<Q> extends Sample<Q> {
+		private static final long serialVersionUID = 1L;
+
+		public C2Bezier(Q x, Q d) {
+			super(null);
+		}
+	}
+	
+	static public class C1Bezier<Q> extends Sample<Q> {
+		private static final long serialVersionUID = 1L;
+
+		public C1Bezier(Q x, Q d, double r) {
+			super(null);
+		}
+	}
+
+	static public class C0Bezier<Q> extends Sample<Q> {
+		private static final long serialVersionUID = 1L;
+
+		public C0Bezier(Q p, Q x, Q d) {
+			super(null);
+		}
+	}
+
+	
+	
+	
+	
 	public<R extends Interpolatable<? super A>> R get(double t, R v) {
 		if (size()==1) {
 			v.set(this.firstEntry().getValue().v);
