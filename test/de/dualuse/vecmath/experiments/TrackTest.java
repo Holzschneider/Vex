@@ -82,11 +82,13 @@ public class TrackTest {
 				
 				Vector2d J = A;
 				
+				double S = 1/6d;
+				
 				for (int i=1,I=ABCDEF.length-1;i<I;i++) {
 					Vector2d P = ABCDEF[i];
 					
-					Vector2d O = P.clone().adds(ABCDEF[i+1],-1/6d).adds(ABCDEF[i-1],+1/6d);
-					Vector2d Q = P.clone().adds(ABCDEF[i+1],+1/6d).adds(ABCDEF[i-1],-1/6d);
+					Vector2d O = P.clone().adds(ABCDEF[i+1],-S).adds(ABCDEF[i-1],+S);
+					Vector2d Q = P.clone().adds(ABCDEF[i+1],+S).adds(ABCDEF[i-1],-S);
 					
 //					path+= J.distance(O)+O.distance(P)+P.distance(Q);
 					path+=1;
@@ -146,7 +148,7 @@ public class TrackTest {
 					if (i==0) p.moveTo(v.x, v.y);
 					else p.lineTo(v.x, v.y);
 					
-					g2.fill(new Ellipse2D.Double(v.x-r, v.y-r, 2*r, 2*r));
+//					g2.fill(new Ellipse2D.Double(v.x-r, v.y-r, 2*r, 2*r));
 				}
 				
 				g2.setStroke(new BasicStroke(0.66f,BasicStroke.CAP_BUTT,BasicStroke.JOIN_BEVEL,1, new float[] { 5 },0));

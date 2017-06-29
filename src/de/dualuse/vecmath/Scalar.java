@@ -41,7 +41,6 @@ public class Scalar extends Number implements Interpolatable<Scalar>, Serializab
 
 	public Scalar clone() { return new Scalar(v); }
 	
-	@Override
 	public Scalar set(Scalar a) {
 		return this.setElement(a.doubleValue());
 	}
@@ -90,5 +89,9 @@ public class Scalar extends Number implements Interpolatable<Scalar>, Serializab
 	public float floatValue() { return (float)v; }
 	public int intValue() { return (int)v; }
 	public long longValue() { return (long)v; }
+
+	public Scalar lerp(Scalar b, double alpha) {
+		return this.setElement(this.v*(1-alpha)+b.v*alpha);
+	}
 	
 }

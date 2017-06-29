@@ -114,16 +114,22 @@ public class Vector4d	extends Vector<Vector4d>
 	public Vector4d transformation(Matrix4d m) { return m.transform(this); }
 	
 	////////// Interpolatable
+
 	
-	@Override 
-	public Vector4d line(Vector4d a, Vector4d b, double r) {
-		final double omr = 1.-r; 
-		return this.xyzw(
-				a.x*omr+b.x*r, 
-				a.y*omr+b.y*r, 
-				a.z*omr+b.z*r, 
-				a.w*omr+b.w*r); 
+	public Vector4d lerp(Vector4d b, double alpha) {
+		final double oma = 1-alpha;
+		return this.xyzw(this.x*oma+b.x*alpha, this.y*oma+b.y*alpha, this.z*oma+b.z*alpha, this.w*oma+b.w*alpha);
 	}
+	
+//	@Override 
+//	public Vector4d line(Vector4d a, Vector4d b, double r) {
+//		final double omr = 1.-r; 
+//		return this.xyzw(
+//				a.x*omr+b.x*r, 
+//				a.y*omr+b.y*r, 
+//				a.z*omr+b.z*r, 
+//				a.w*omr+b.w*r); 
+//	}
 	
 	
 	public Vector4d spline(Vector4d a, Vector4d da, Vector4d dd, Vector4d d, double r) {

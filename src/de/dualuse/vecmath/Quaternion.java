@@ -176,33 +176,52 @@ public class Quaternion extends Tuple<Quaternion> implements Interpolatable<Quat
 				2*( (t7 -  t3)*v.x + (t2 +  t9)*v.y + (t5 + t8)*v.z ) + v.z
 		);
 	}
-
 	
 	////////////////////////////////////// Interpolatable Specific
-
+	
 	@Override
 	public Quaternion set(Quaternion a) {
 		return xyzw(a.x,a.y,a.z,a.w);
 	}
+
+	public Quaternion interpolate(Quaternion target, double alpha) {
+		return interpolate(target, alpha);
+	}
+	
+	
+	public Quaternion slerp(Quaternion target, double alpha) {
+        double cos = x * target.x + y * target.y + z * target.z + w * target.w;
+        double abscos = Math.abs(cos);
+        double u, v;
+        if (1.0 - abscos > 1E-6) {
+            double sinsqr = 1.0 - abscos * abscos;
+            double sin = 1.0 / sqrt(sinsqr);
+            double theta = atan2(sinsqr * sin, abscos);
+            u = sin((1.0 - alpha) * theta) * sin;
+            v = sin(alpha * theta) * sin;
+        } else {
+            u = 1.0 - alpha;
+            v = alpha;
+        }
+        v = cos >= 0.0 ? v : -v;
+        this.x = u * x + v * target.x;
+        this.y = u * y + v * target.y;
+        this.z = u * z + v * target.z;
+        this.w = u * w + v * target.w;
+        
+		return this;
+	}
+
 	
 	///XXX Untested
-	@Override
 	public Quaternion spline(Quaternion a, Quaternion da, Quaternion dd, Quaternion d, double r) {
-		double ax = a.x, ay = a.y, az = a.z, aw = a.w;
-		double dx = d.x, dy = d.y, dz = a.z, dw = d.w;
+		this.set(a).slerp(d, r);
 		
-		a.line(a, da, r); //XXX sux, since it overwrites a & d for a brief moment -> so it's not thread-safe
-		d.line(dd, d,r);
 		
-		this.line(a,d,r);
-		
-		a.xyzw(ax, ay, az, aw);
-		d.xyzw(dx, dy, dz, dw);
 		
 		return this;
 	}
 	
-	@Override
 	public Quaternion line(Quaternion from, Quaternion to, double t) {
 		double toSign = 1.;
 		double dot = from.x * to.x + from.y * to.y + from.z * to.z + from.w * to.w;
@@ -225,7 +244,7 @@ public class Quaternion extends Tuple<Quaternion> implements Interpolatable<Quat
 				scale1 = Math.sin(t * angle) / sinangle;
 			}
 		}
-
+		
 		this.x = from.x*scale0+to.x*scale1*toSign;
 		this.y = from.y*scale0+to.y*scale1*toSign;
 		this.z = from.z*scale0+to.z*scale1*toSign;

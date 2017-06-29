@@ -79,8 +79,10 @@ public class Track<A> extends TreeMap<Double, Track.Sample<A>> implements Animat
 	
 	public<R extends Interpolatable<? super A>> R get(double t, R v) {
 		if (size()==1) {
-			v.set(this.firstEntry().getValue().v);
-			return v;
+//			v.set(this.firstEntry().getValue().v);
+//			v.line(this.firstEntry().getValue().v,this.firstEntry().getValue().v,0);
+//			return v;
+			throw new RuntimeException();
 		}
 		
 		t = timeTransform(t);

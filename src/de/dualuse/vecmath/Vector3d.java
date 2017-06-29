@@ -135,20 +135,25 @@ public class Vector3d	extends Vector<Vector3d>
 	
 //==[ Interpolatable<Vector3d> ]====================================================================	
 
-	@Override public Vector3d line(Vector3d a, Vector3d b, double r) {
-		final double omr = 1.-r; 
-		final double x = a.x*omr+b.x*r;
-		final double y = a.y*omr+b.y*r;
-		final double z = a.z*omr+b.z*r;
-		
-		this.x=x;
-		this.y=y;
-		this.z=z;
-		return this;
+	public Vector3d lerp(Vector3d b, double alpha) {
+		final double oma = 1-alpha;
+		return this.xyz(this.x*oma+b.x*alpha, this.y*oma+b.y*alpha, this.z*oma+b.z*alpha);
 	}
+
+//	@Override public Vector3d line(Vector3d a, Vector3d b, double r) {
+//		final double omr = 1.-r; 
+//		final double x = a.x*omr+b.x*r;
+//		final double y = a.y*omr+b.y*r;
+//		final double z = a.z*omr+b.z*r;
+//		
+//		this.x=x;
+//		this.y=y;
+//		this.z=z;
+//		return this;
+//	}
 	
-	@Override public Vector3d spline(Vector3d a, Vector3d da, Vector3d dd, Vector3d d, double r) {
-		final double omr = 1-r; 
+	@Override public Vector3d spline(Vector3d a, Vector3d da, Vector3d dd, Vector3d d, double t) {
+		final double omr = t, r = 1-omr;
 				
 		final double p0x = a.x, p0y = a.y, p0z = a.z;
 		final double p3x = d.x, p3y = d.y, p3z = d.z;

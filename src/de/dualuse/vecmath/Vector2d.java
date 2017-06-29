@@ -96,9 +96,13 @@ public class Vector2d extends Vector<Vector2d> implements Serializable {
 
 	//////////
 
-	@Override
+	public Vector2d interpolate(Vector2d b, double alpha) {
+		final double oma = 1-alpha;
+		return this.xy(this.x*oma+b.x*alpha, this.y*oma+b.y*alpha);
+	}
+	
 	public Vector2d line(Vector2d a, Vector2d b, final double r) {
-		return this.xy(a.x*r+b.x*(1-r), a.y*r+b.y*(1-r));
+		return this.xy(a.x*(1-r)+b.x*r, a.y*(1-r)+b.y*r);
 	}
 	
 	@Override
