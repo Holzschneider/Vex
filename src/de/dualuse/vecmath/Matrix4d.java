@@ -467,7 +467,24 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 	}
 	
 //==[ Matrix4d Specific ]===========================================================================
-
+	public Matrix4d setRows(double[] m) {
+		return setElements(
+				m[ 0], m[ 1], m[ 2], m[ 3],
+				m[ 4], m[ 5], m[ 6], m[ 7],
+				m[ 8], m[ 9], m[10], m[11],
+				m[12], m[13], m[14], m[15]
+		);
+	}
+	
+	public Matrix4d setColumns(double[] m) {
+		return setElements(
+				m[ 0], m[ 4], m[ 8], m[12],
+				m[ 1], m[ 5], m[ 9], m[13],
+				m[ 2], m[ 6], m[10], m[14],
+				m[ 3], m[ 7], m[11], m[15]
+		);
+	}
+	
 	public Matrix4d setColumns(Vector4d x, Vector4d y, Vector4d z, Vector4d w) {
 		return setElements(
 			x.x, y.x, z.x, w.x,
@@ -579,7 +596,7 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 	public Matrix4d rotate(AxisAngle aa) { return this.rotate(aa.r,aa.x,aa.y,aa.z); }
 	public Matrix4d rotate(double theta, Vector3d axis) { return rotate(theta, axis.x, axis.y, axis.z); }
 	
-	private Matrix4d rotate(double theta, double ax, double ay, double az) {
+	public Matrix4d rotate(double theta, double ax, double ay, double az) {
 //		// compare '$ man glRotate' or 'javax.vecmath.Matrix4d.set(AxisAngle4d a1)'
 		
 		final double s = sin(theta), c = cos(theta), t = 1-c, l = sqrt(ax*ax+ay*ay+az*az);
@@ -601,7 +618,6 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 	public Matrix4d translate(Vector3d v, double times) {
 		return translate(v.x*times,v.y*times,v.z*times);
 	}
-
 	
 	public Matrix4d translate(double tx, double ty, double tz) {
 		return this.concatenate(
@@ -671,7 +687,7 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 		final double x = q.x, y = q.y, z = q.z, w = q.w;
 
 		final double ww = w*w, xx = x*x, yy= y*y, zz = z*z;
-		final double xy = x*x, xz = x*z, xw = x*w;
+		final double xy = x*y, xz = x*z, xw = x*w;
 		final double yz = y*z, yw = y*w, zw = z*w; 
 		
 		return this.setElements(

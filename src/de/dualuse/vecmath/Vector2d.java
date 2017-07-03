@@ -1,12 +1,11 @@
 package de.dualuse.vecmath;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.pow;
+import static java.lang.Math.*;
 
-import java.io.Serializable;
 import java.util.regex.Matcher;
 
-public class Vector2d extends Vector<Vector2d> implements Serializable {
+public class Vector2d extends Vector<Vector2d> implements Value2<Vector2d>, java.io.Serializable 
+{
 	private static final long serialVersionUID = 1L;
 	public double x, y;
 	
@@ -46,6 +45,12 @@ public class Vector2d extends Vector<Vector2d> implements Serializable {
 	
 	@Override
 	public Vector2d set(Vector2d t) { return this.xy(t.x,t.y); }
+	
+	@Override
+	public Vector2d set(double x, double y) {
+		return this.xy(x, y);
+	}
+
 
 	public Vector2d setElements(double x, double y) { return this.xy(x, y); } 
 	public Vector2d xy(double x, double y) { this.x=x; this.y=y; return this; }
@@ -158,5 +163,6 @@ public class Vector2d extends Vector<Vector2d> implements Serializable {
 		return tan;
 	}
 
+	
 	
 }

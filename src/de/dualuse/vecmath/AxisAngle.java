@@ -52,8 +52,12 @@ public class AxisAngle extends Tuple<AxisAngle> implements Serializable {
     }
 
     public AxisAngle set(Quaternion q) {
+		double acos = acos(q.w);
+    	
+		if (acos==0)
+			return setIdentity();
+			
     	double invSqrt = 1.0 / Math.sqrt(1.0 - q.w * q.w);
-        double acos = acos(q.w);
         this.x = q.x * invSqrt;
         this.y = q.y * invSqrt;
         this.z = q.z * invSqrt;
@@ -69,7 +73,6 @@ public class AxisAngle extends Tuple<AxisAngle> implements Serializable {
     
     public Quaternion get(Quaternion q) { return q.set(this); }
     public Matrix4d get(Matrix4d m) { return m.setRotation(this); }
-//    public Matrix3d get(Matrix3d m) { return m.rotation(this); }
 
 	public AxisAngle setIdentity() { return this.set(0, 0, 0, 1); }
 	
@@ -141,6 +144,11 @@ public class AxisAngle extends Tuple<AxisAngle> implements Serializable {
         return this.x!=that.x || this.y!=that.y || this.z!=that.z; 
     }
 
+    
+    @Override
+    public String toString() {
+    	return x+" "+y+" "+z+" "+r;
+    }
 
 
     ///////
