@@ -13,7 +13,7 @@ public class Quaternion extends Tuple<Quaternion> implements Interpolatable<Quat
 	
 	public double x,y,z,w;
 	
-	public Quaternion() { identity(); }
+	public Quaternion() { setIdentity(); }
 	public Quaternion(double x, double y, double z, double w) { 
 		this.x = x;
 		this.y = y;
@@ -87,7 +87,7 @@ public class Quaternion extends Tuple<Quaternion> implements Interpolatable<Quat
 	
 	///////////////////////////////////////////////////////
 	
-	public Quaternion identity() {
+	public Quaternion setIdentity() {
 		return this.xyzw(0, 0, 0, 1);
 	}
 	
