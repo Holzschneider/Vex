@@ -145,7 +145,21 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 			m30+n30, m31+n31, m32+n32, m33+n33
 		);
 	}
-
+	
+	public Matrix4d subElements(
+			double n00, double n01, double n02, double n03,
+			double n10, double n11, double n12, double n13,
+			double n20, double n21, double n22, double n23,
+			double n30, double n31, double n32, double n33
+			) {
+		return this.setElements(
+			m00-n00, m01-n01, m02-n02, m03-n03,
+			m10-n10, m11-n11, m12-n12, m13-n13,
+			m20-n20, m21-n21, m22-n22, m23-n23,
+			m30-n30, m31-n31, m32-n32, m33-n33
+		);
+	}
+	
 	public Matrix4d mulElements(
 			double n00, double n01, double n02, double n03,
 			double n10, double n11, double n12, double n13,
@@ -162,32 +176,32 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 
 	/////
 
-	public Matrix4d mul(
-			double n00, double n01, double n02, double n03,
-			double n10, double n11, double n12, double n13,
-			double n20, double n21, double n22, double n23,
-			double n30, double n31, double n32, double n33
-			) {
-		return mulElements(n00,n01,n02,n03,n10,n11,n12,n13,n20,n21,n22,n23,n30,n31,n32,n33);
-	}
-
-	public Matrix4d add(
-			double n00, double n01, double n02, double n03,
-			double n10, double n11, double n12, double n13,
-			double n20, double n21, double n22, double n23,
-			double n30, double n31, double n32, double n33
-			) {
-		return addElements(n00,n01,n02,n03,n10,n11,n12,n13,n20,n21,n22,n23,n30,n31,n32,n33);
-	}
-	
-	public Matrix4d sub(
-			double n00, double n01, double n02, double n03,
-			double n10, double n11, double n12, double n13,
-			double n20, double n21, double n22, double n23,
-			double n30, double n31, double n32, double n33
-			) {
-		return addElements(-n00,-n01,-n02,-n03,-n10,-n11,-n12,-n13,-n20,-n21,-n22,-n23,-n30,-n31,-n32,-n33);
-	}
+//	public Matrix4d mul(
+//			double n00, double n01, double n02, double n03,
+//			double n10, double n11, double n12, double n13,
+//			double n20, double n21, double n22, double n23,
+//			double n30, double n31, double n32, double n33
+//			) {
+//		return mulElements(n00,n01,n02,n03,n10,n11,n12,n13,n20,n21,n22,n23,n30,n31,n32,n33);
+//	}
+//
+//	public Matrix4d add(
+//			double n00, double n01, double n02, double n03,
+//			double n10, double n11, double n12, double n13,
+//			double n20, double n21, double n22, double n23,
+//			double n30, double n31, double n32, double n33
+//			) {
+//		return addElements(n00,n01,n02,n03,n10,n11,n12,n13,n20,n21,n22,n23,n30,n31,n32,n33);
+//	}
+//	
+//	public Matrix4d sub(
+//			double n00, double n01, double n02, double n03,
+//			double n10, double n11, double n12, double n13,
+//			double n20, double n21, double n22, double n23,
+//			double n30, double n31, double n32, double n33
+//			) {
+//		return addElements(-n00,-n01,-n02,-n03,-n10,-n11,-n12,-n13,-n20,-n21,-n22,-n23,-n30,-n31,-n32,-n33);
+//	}
 
 //==[ Tuple<Matrix3d> ]=============================================================================
 	
@@ -595,6 +609,10 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 	
 	public Matrix4d rotate(AxisAngle aa) { return this.rotate(aa.r,aa.x,aa.y,aa.z); }
 	public Matrix4d rotate(double theta, Vector3d axis) { return rotate(theta, axis.x, axis.y, axis.z); }
+	
+	public Matrix4d rotateDegrees( double degrees, double x, double y, double z) {
+		return this.rotate(degrees*PI/180,x,y,z);
+	}
 	
 	public Matrix4d rotate(double theta, double ax, double ay, double az) {
 //		// compare '$ man glRotate' or 'javax.vecmath.Matrix4d.set(AxisAngle4d a1)'
