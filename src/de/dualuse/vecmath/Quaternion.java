@@ -2,11 +2,17 @@ package de.dualuse.vecmath;
 
 import static java.lang.Math.*;
 
-import java.awt.geom.AffineTransform;
 import java.io.Serializable;
 import java.util.regex.Matcher;
 
-public class Quaternion extends Tuple<Quaternion> implements Interpolatable<Quaternion>, Serializable {
+public class Quaternion		extends  	Tuple<Quaternion> 
+							implements	Serializable,
+										/*Interpolatable<Quaternion>,*/ 
+										Functionals.Quaternion.Function<Quaternion>,
+										Functionals.Quaternion.Consumer,
+										Functionals.Quaternion
+
+{
 	static final double FLT_EPSILON = 0.0000000001;
 	
 	private static final long serialVersionUID = 1L;	
@@ -21,36 +27,19 @@ public class Quaternion extends Tuple<Quaternion> implements Interpolatable<Quat
 		this.w = w;
 	}
 
-	static public Quaternion from(Object... objs) {
-		StringBuilder b = new StringBuilder(16*3);
-		for(Object o: objs)
-			b.append(o).append(' ');
-		
-		return fromString(b.toString());
-	}
-	
-	static public Quaternion fromString(String r) {
-		Matcher m = Scalar.DECIMAL.matcher(r);
-		m.find(); double x = Double.parseDouble(m.group());
-		m.find(); double y = Double.parseDouble(m.group());
-		m.find(); double z = Double.parseDouble(m.group());
-		m.find(); double w = Double.parseDouble(m.group());
-		
-		return new Quaternion().xyzw(x, y, z, w);
-	}
 
 	@Override 
 	public String toString() {
 		return x+" "+y+" "+z+" "+w;
 	}
 	
-	
+	@Override public Quaternion self() { return this; }
+
 	@Override
 	public Quaternion clone() {
 		return new Quaternion().xyzw(x,y,z,w);
 	}
 	
-
 	@Override
 	public int hashCode() {
 		return new Double(x*x+y*y+z*z+w*w).hashCode();
@@ -81,9 +70,15 @@ public class Quaternion extends Tuple<Quaternion> implements Interpolatable<Quat
 		return this;
 	}
 	
-
-	public<T> T get(Value4<T> v) { return v.set(this.x, this.y, this.z, this.w); }
-
+	@Override
+	public void accept(double x, double y, double z, double w) { this.xyzw(x, y, z, w); }
+	
+	@Override
+	public Quaternion apply(double x, double y, double z, double w) { return this.xyzw(x,y,z,w); }
+	
+	
+	public<T> T to(Quaternion.Function<T> v) { return v.apply(this.x, this.y, this.z, this.w); }
+	public AxisAngle to(AxisAngle a) { return a.set(this); }
 	
 	///////////////////////////////////////////////////////
 	
@@ -208,6 +203,10 @@ public class Quaternion extends Tuple<Quaternion> implements Interpolatable<Quat
 				x*qw + w*qx + y*qz - z*qy);
 	}
 	
+	public Quaternion rotateDegrees(double degrees, double x, double y, double z) {
+		return this.rotate(degrees*PI/180, x, y, z);
+	}
+	
 	
 	public Quaternion set(AxisAngle aa) {
 		final double s = sin(aa.r / 2.), c= cos(aa.r / 2.);
@@ -230,8 +229,6 @@ public class Quaternion extends Tuple<Quaternion> implements Interpolatable<Quat
 
 	// transform / rotates this vector by the quaternion
 	public Vector3d transformInverse(Vector3d v) {
-//		double invNorm = 1.0 / (this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w);
-//        double x = -this.x * invNorm, y = -this.y * invNorm, z = -this.z * invNorm, w = this.w * invNorm;
         double x = -this.x, y = -this.y, z = -this.z , w = this.w;
 
 		final double t2 =   w*x, t3 =   w*y, t4 =   w*z;
@@ -252,11 +249,6 @@ public class Quaternion extends Tuple<Quaternion> implements Interpolatable<Quat
 		return xyzw(a.x,a.y,a.z,a.w);
 	}
 
-	public Quaternion interpolate(Quaternion target, double alpha) {
-		return interpolate(target, alpha);
-	}
-	
-	
 	public Quaternion slerp(Quaternion target, double alpha) {
         double cos = x * target.x + y * target.y + z * target.z + w * target.w;
         double abscos = Math.abs(cos);
@@ -279,48 +271,5 @@ public class Quaternion extends Tuple<Quaternion> implements Interpolatable<Quat
         
 		return this;
 	}
-
-	
-	///XXX Untested
-	public Quaternion spline(Quaternion a, Quaternion da, Quaternion dd, Quaternion d, double r) {
-		this.set(a).slerp(d, r);
-		
-		
-		
-		return this;
-	}
-	
-	public Quaternion line(Quaternion from, Quaternion to, double t) {
-		double toSign = 1.;
-		double dot = from.x * to.x + from.y * to.y + from.z * to.z + from.w * to.w;
-		if (dot < 0.) {
-			dot = -dot;
-			toSign = -1.;
-		}
-
-		// fallback to linear interpolation, in case we run out of floating
-		// point precision
-		double scale0 = 1.0 - t;
-		double scale1 = t;
-
-		if ((1.0f - dot) > FLT_EPSILON) {
-			double angle = Math.acos(dot);
-			double sinangle = Math.sin(angle);
-			if (sinangle > FLT_EPSILON) {
-				// calculate spherical interpolation
-				scale0 = Math.sin((1.0 - t) * angle) / sinangle;
-				scale1 = Math.sin(t * angle) / sinangle;
-			}
-		}
-		
-		this.x = from.x*scale0+to.x*scale1*toSign;
-		this.y = from.y*scale0+to.y*scale1*toSign;
-		this.z = from.z*scale0+to.z*scale1*toSign;
-		this.w = from.w*scale0+to.w*scale1*toSign;
-
-		return this;
-	}
-	
-
 	
 }

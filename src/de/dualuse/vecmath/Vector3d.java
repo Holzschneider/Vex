@@ -1,16 +1,16 @@
 package de.dualuse.vecmath;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.pow;
+import static java.lang.Math.*;
 
-import java.util.Arrays;
-import java.util.regex.Matcher;
+import java.io.Serializable;
+
+
 
 public class Vector3d	extends Vector<Vector3d>
-						implements	Value3<Vector3d>,
-									VectorAlgebra<Vector3d>, 
-									Interpolatable<Vector3d>,
-									java.io.Serializable 
+						implements	Serializable,
+									Functionals.Vector3d.Function<Vector3d>,
+									Functionals.Vector3d.Consumer,
+									Functionals.Vector3d
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -18,50 +18,41 @@ public class Vector3d	extends Vector<Vector3d>
 
 //==[ Constructors ]================================================================================
 	public Vector3d() {}
-	
+
+	public Vector3d(Vector3d v) {
+		this.x=v.x; this.y=v.y; this.z=v.z;
+	}
+
 	public Vector3d(double x, double y, double z) {
 		this.x=x; this.y=y; this.z=z;
 	}
 
-	
 	public static Vector3d of(double x, double y, double z) {
 		return new Vector3d(x,y,z);
 	}
 	
-	public static Vector3d fromElements(double x, double y, double z) {
-		return new Vector3d(x,y,z);
-	}
-
+	
 //==[ Getter & Setter ]=============================================================================
 	
-	public Vector3d set(double x, double y, double z) { return this.xyz(x, y, z); } 
+	public void accept(double x, double y, double z) { this.xyz(x, y, z); }
+	public Vector3d apply(double x, double y, double z) { return this.xyz(x, y, z); } 
 	public Vector3d xyz(double x, double y, double z) { this.x=x; this.y=y; this.z=z; return this; }
 	public Vector3d xy(double x, double y) { this.x=x; this.y=y; return this; }
 	public Vector3d xz(double x, double z) { this.x=x; this.z=z; return this; }
 	public Vector3d yz(double y, double z) { this.y=y; this.z=z; return this; }
+
+	public Vector3d x(double x) { this.x=x; return this; }
+	public Vector3d y(double y) { this.y=y; return this; }
+	public Vector3d z(double z) { this.z=z; return this; }
 	
 //==[ Tuple<Vector3d> ]=============================================================================
 	
-	static public Vector3d from(Object... objs) {
-		StringBuilder b = new StringBuilder(16*3);
-		for(Object o: objs)
-			b.append(o).append(' ');
-		
-		return fromString(b.toString());
-	}
-	
-	static public Vector3d fromString(String r) {
-		Matcher m = Scalar.DECIMAL.matcher(r);
-		m.find(); double x = Double.parseDouble(m.group());
-		m.find(); double y = Double.parseDouble(m.group());
-		m.find(); double z = Double.parseDouble(m.group());
-		
-		return new Vector3d().xyz(x, y, z);
-	}
-
 	@Override public String toString() {
 		return x+" "+y+" "+z;
 	}
+	
+	
+	@Override public Vector3d self() { return this; }
 	
 	@Override public Vector3d clone() {
 		return new Vector3d(x,y,z);
@@ -80,17 +71,10 @@ public class Vector3d	extends Vector<Vector3d>
 	}
 	
 	
-	public interface ConsumerDouble3 {
-		void set(double x, double y, double z);
-	}
+	public Vector3d get(Vector3d.Consumer cd3) { cd3.accept(this.x, this.y, this.z); return this; }
 	
-
-	public Vector3d read(ConsumerDouble3 cd3) { cd3.set(this.x, this.y, this.z); return this; }
-
-	
-	public<T> T get(Value3<T> v) { return v.set(this.x, this.y, this.z); }
-
-	public double[] get(double[] v) { v[0]=x; v[1]=y; v[2]=z; return v; };
+	public<T> T to(Vector3d.Function<T> v) { return v.apply(this.x, this.y, this.z); }
+	public double[] to(double[] v) { v[0]=x; v[1]=y; v[2]=z; return v; };
 
 
 //==[ VectorAlgebra<Vector3d> ]=====================================================================
@@ -98,10 +82,8 @@ public class Vector3d	extends Vector<Vector3d>
 	public Vector3d addVector(Vector3d v) { return this.addElements(v.x, v.y, v.z); }
 	public Vector3d addElements(double x, double y, double z) { this.x+=x; this.y+=y; this.z+=z; return this; }
 	
-	
 	@Override public Vector3d sum(Vector3d a, Vector3d b) { return this.xyz(a.x+b.x,a.y+b.y,a.z+b.z); }
 	@Override public Vector3d difference(Vector3d a, Vector3d b) { return this.xyz(a.x-b.x, a.y-b.y, a.z-b.z); }
-
 	
 	@Override public Vector3d add(Vector3d v) { return this.addElements(v.x,v.y,v.z); }
 	public Vector3d add(double x, double y, double z) { return this.addElements(x,y,z); }
@@ -140,17 +122,6 @@ public class Vector3d	extends Vector<Vector3d>
 		return this.xyz(this.x*oma+b.x*alpha, this.y*oma+b.y*alpha, this.z*oma+b.z*alpha);
 	}
 
-//	@Override public Vector3d line(Vector3d a, Vector3d b, double r) {
-//		final double omr = 1.-r; 
-//		final double x = a.x*omr+b.x*r;
-//		final double y = a.y*omr+b.y*r;
-//		final double z = a.z*omr+b.z*r;
-//		
-//		this.x=x;
-//		this.y=y;
-//		this.z=z;
-//		return this;
-//	}
 	
 	@Override public Vector3d spline(Vector3d a, Vector3d da, Vector3d dd, Vector3d d, double t) {
 		final double omr = t, r = 1-omr;
@@ -200,7 +171,11 @@ public class Vector3d	extends Vector<Vector3d>
 		this.z = ax*by - ay*bx;
 		return this;
 	}
-	
+
+	public double angle(Vector3d v) {
+		throw new RuntimeException("Not implemented yet");
+	}
+
 }
 
 

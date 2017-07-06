@@ -3,9 +3,13 @@ package de.dualuse.vecmath;
 import static java.lang.Math.*;
 
 import java.io.Serializable;
-import java.util.regex.Matcher;
 
-public class Matrix3d extends Matrix<Matrix3d> implements ValueMatrix3<Matrix3d>, Serializable {
+public class Matrix3d 	extends   	Matrix<Matrix3d> 
+						implements	Serializable, 
+									Functionals.Matrix3d.Function<Matrix3d>,
+									Functionals.Matrix3d.Consumer,
+									Functionals.Matrix3d
+{
 	private static final long serialVersionUID = 1L;
 
 	public double m00,m01,m02;
@@ -41,52 +45,16 @@ public class Matrix3d extends Matrix<Matrix3d> implements ValueMatrix3<Matrix3d>
 		) {
 		return new Matrix3d().setElements(m00, m01, m02, m10, m11, m12, m20, m21, m22);
 	}
-
-	public static Matrix3d fromRows( double[][] rowArray ) {
-		return new Matrix3d().setRows(rowArray);
-	}
-	
-	public static Matrix3d fromRows(double[] m0, double[] m1, double[] m2) {
-		return new Matrix3d().setRows(m0,m1,m2);
-	}
-	
-	public static Matrix3d fromRows(Vector3d m0, Vector3d m1, Vector3d m2) {
-		return new Matrix3d().setRows(m0,m1,m2);
-	}
-
-	public static Matrix3d fromColumns( double[][] rowArray ) {
-		return new Matrix3d().setColumns(rowArray);
-	}
-	
-	public static Matrix3d fromColumns(double[] m0, double[] m1, double[] m2) {
-		return new Matrix3d().setColumns(m0,m1,m2);
-	}
-	
-	public static Matrix3d fromColumns(Vector3d m0, Vector3d m1, Vector3d m2) {
-		return new Matrix3d().setColumns(m0,m1,m2);
-	}
-	
-	
-	public static Matrix3d fromElements(
-			double m00,double m01,double m02,
-			double m10,double m11,double m12,
-			double m20,double m21,double m22
-		) {
-		return new Matrix3d().setElements(m00, m01, m02, m10, m11, m12, m20, m21, m22);
-	}
-	
-	public static Matrix3d fromProjection(Matrix4d m, double zPlane) {
-		return new Matrix3d().setElements(
-			m.m00, m.m01, zPlane*m.m02+m.m03, 
-			m.m10, m.m11, zPlane*m.m12+m.m13,
-			m.m30, m.m31, zPlane*m.m32+m.m33 
-		);
-	}
-
 	
 //==[ Element-wise Operations ]=====================================================================
-
-	public Matrix3d set(double m00, double m01, double m02, 
+	
+	public void accept(double m00, double m01, double m02, 
+			double m10, double m11, double m12, 
+			double m20, double m21, double m22) 
+	{ this.setElements(m00, m01, m02, m10, m11, m12, m20, m21, m22); }
+	
+	
+	public Matrix3d apply(double m00, double m01, double m02, 
 			double m10, double m11, double m12, 
 			double m20, double m21, double m22) 
 	{ return this.setElements(m00, m01, m02, m10, m11, m12, m20, m21, m22); }
@@ -105,6 +73,22 @@ public class Matrix3d extends Matrix<Matrix3d> implements ValueMatrix3<Matrix3d>
 		return this;
 	}
 
+	public Matrix3d setRows(double[] m) {
+		return setElements(
+				m[ 0], m[ 1], m[ 2],
+				m[ 3], m[ 4], m[ 5],
+				m[ 6], m[ 7], m[ 8]
+		);
+	}
+	
+	public Matrix3d setColumns(double[] m) {
+		return setElements(
+				m[ 0], m[ 3], m[ 6],
+				m[ 1], m[ 4], m[ 7],
+				m[ 2], m[ 5], m[ 8]
+		);
+	}
+	
 	public Matrix3d setRows( Vector3d m0, Vector3d m1, Vector3d m2 ) {
 		return this.setElements(m0.x, m0.y, m0.z, m1.x, m1.y, m1.z, m2.x, m2.y, m2.z);
 	}
@@ -130,97 +114,14 @@ public class Matrix3d extends Matrix<Matrix3d> implements ValueMatrix3<Matrix3d>
 	}
 	
 	/////////////////////////
-	
-	public Matrix3d addElements(
-			double n00, double n01, double n02,
-			double n10, double n11, double n12,
-			double n20, double n21, double n22
-			) {
-		return this.setElements(
-			m00+n00, m01+n01, m02+n02,
-			m10+n10, m11+n11, m12+n12, 
-			m20+n20, m21+n21, m22+n22
-		);
-	}
 
-	public Matrix3d mulElements(
-			double n00, double n01, double n02,
-			double n10, double n11, double n12,
-			double n20, double n21, double n22
-			) {
-		return this.setElements(
-			m00*n00, m01*n01, m02*n02,
-			m10*n10, m11*n11, m12*n12, 
-			m20*n20, m21*n21, m22*n22
-		);
-	}
 	
-	/////
 	
-	public Matrix3d add(
-			double n00, double n01, double n02,
-			double n10, double n11, double n12,
-			double n20, double n21, double n22
-			) {
-		return addElements(n00,n01,n02,n10,n11,n12,n20,n21,n22);
-	}
-	
-	public Matrix3d sub(
-			double n00, double n01, double n02,
-			double n10, double n11, double n12,
-			double n20, double n21, double n22
-			) {
-		return addElements(-n00,-n01,-n02,-n10,-n11,-n12,-n20,-n21,-n22);
-	}
-
-	public Matrix3d mul(
-			double n00, double n01, double n02,
-			double n10, double n11, double n12,
-			double n20, double n21, double n22
-			) {
-		return mulElements(n00,n01,n02,n10,n11,n12,n20,n21,n22);
-	}
-
 //==[ Tuple<Matrix3d> ]=============================================================================
-	public static Matrix3d from( Object... elements ) {
-		StringBuilder sb = new StringBuilder(elements.length*16);
-		for (Object o: elements)
-			sb.append(o.toString()).append(' ');
-		
-		return Matrix3d.fromString( sb.toString() );
-	}
-	
-	static public Matrix3d fromString(String r) {
-		
-		String[] groups = r.trim().split("[ \t]+");
-		if (groups.length!=9) throw new IllegalArgumentException("Expected string with 9 decimals");
-		
-		double m00 = Double.parseDouble(groups[0]);
-		double m01 = Double.parseDouble(groups[1]);
-		double m02 = Double.parseDouble(groups[2]);
-		double m10 = Double.parseDouble(groups[3]);
-		double m11 = Double.parseDouble(groups[4]);
-		double m12 = Double.parseDouble(groups[5]);
-		double m20 = Double.parseDouble(groups[6]);
-		double m21 = Double.parseDouble(groups[7]);
-		double m22 = Double.parseDouble(groups[8]);
-		
-//		Matcher m = Scalar.DECIMAL.matcher(r);
-//		m.find(); double m00 = Double.parseDouble(m.group());
-//		m.find(); double m01 = Double.parseDouble(m.group());
-//		m.find(); double m02 = Double.parseDouble(m.group());
-//		m.find(); double m10 = Double.parseDouble(m.group());
-//		m.find(); double m11 = Double.parseDouble(m.group());
-//		m.find(); double m12 = Double.parseDouble(m.group());
-//		m.find(); double m20 = Double.parseDouble(m.group());
-//		m.find(); double m21 = Double.parseDouble(m.group());
-//		m.find(); double m22 = Double.parseDouble(m.group());
-		
-		return Matrix3d.fromElements(m00, m01, m02, m10, m11, m12, m20, m21, m22);
-	}
-	
-	static void printGroup(Matcher m) {
-		System.out.println("(" + m.start() + "-" + m.end() + "): " + m.group());
+	public String toFormattedString() {
+		return	m00+" "+m01+" "+m02+"\n"+
+				m10+" "+m11+" "+m12+"\n"+
+				m20+" "+m21+" "+m22;
 	}
 	
 	@Override public String toString() {
@@ -244,6 +145,9 @@ public class Matrix3d extends Matrix<Matrix3d> implements ValueMatrix3<Matrix3d>
 			m.m20 == m20 && m.m21 == m21 && m.m22 == m22;
 	}
 	
+	
+	@Override public Matrix3d self() { return this; }
+	
 	@Override public Matrix3d clone() {
 		return new Matrix3d().setElements(
 			this.m00, this.m01, this.m02, 
@@ -260,7 +164,7 @@ public class Matrix3d extends Matrix<Matrix3d> implements ValueMatrix3<Matrix3d>
 		return this;
 	}
 	
-	public double[][] getRows( double[][] rowArray ) {
+	public double[][] toRows( double[][] rowArray ) {
 		double m[][] = rowArray;
 		
 		m[0][0] = m00; m[0][1] = m01; m[0][2] = m02;
@@ -270,7 +174,7 @@ public class Matrix3d extends Matrix<Matrix3d> implements ValueMatrix3<Matrix3d>
 		return rowArray;
 	}
 	
-	public double[][] getColumns( double[][] rowArray ) {
+	public double[][] toColumns( double[][] rowArray ) {
 		double m[][] = rowArray;
 		
 		m[0][0] = m00; m[0][1] = m10; m[0][2] = m20;
@@ -281,16 +185,8 @@ public class Matrix3d extends Matrix<Matrix3d> implements ValueMatrix3<Matrix3d>
 	}
 	
 	
-	public static interface Values<T> {
-		public T set(
-				double m00, double m01, double m02,
-				double m10, double m11, double m12,
-				double m20, double m21, double m22
-			);
-	}
-	
-	public<T> T get(Values<T> v) {
-		return v.set(m00, m01, m02, m10, m11, m12, m20, m21, m22);
+	public<T> T to(Matrix3d.Function<T> v) {
+		return v.apply(m00, m01, m02, m10, m11, m12, m20, m21, m22);
 	}
 	
 	
@@ -370,20 +266,6 @@ public class Matrix3d extends Matrix<Matrix3d> implements ValueMatrix3<Matrix3d>
 		return m00 * (m11 * m22 - m12 * m21) - m01 * (m22 * m10 - m12 * m20) + m02 * (m10 * m21 - m11 * m20);
 	}
 
-//==[ Matrix<Matrix3d> ]============================================================================
-	
-	@Override public Matrix3d add(Matrix3d a) {
-		return addElements(a.m00,a.m01,a.m02,a.m10,a.m11,a.m12,a.m20,a.m21,a.m22);
-	}
-
-	@Override public Matrix3d sub(Matrix3d a) {
-		return addElements(-a.m00,-a.m01,-a.m02,-a.m10,-a.m11,-a.m12,-a.m20,-a.m21,-a.m22);
-	}
-
-	@Override public Matrix3d mul(Matrix3d a) {
-		return mulElements(a.m00,a.m01,a.m02,a.m10,a.m11,a.m12,a.m20,a.m21,a.m22);
-	}
-	
 //==[ Matrix3d Specific ]===========================================================================
 	public Matrix3d setRotation(Quaternion q) {
 		final double x = q.x, y = q.y, z = q.z, w = q.w;
@@ -454,43 +336,62 @@ public class Matrix3d extends Matrix<Matrix3d> implements ValueMatrix3<Matrix3d>
 	
 	
 	//////////
-//	XXX Specify a Plane in this-Matrix Projective Space? maybe need three points for proper coordinate system 
-//	public Matrix3d projection(Matrix4d m, Vector3d plane) {
-//	return this;
-//}
-//	public Matrix3d projection(Matrix4d m, double nx, double ny, double nz) {
-//		return this;
-//	}
-
-	public Matrix3d projection(Matrix4d m) {
-		return this.projection(m,0);
-	}
 	
-	public Matrix3d projection(Matrix4d m, double zPlane) {
+	public Matrix3d setProjection(Matrix4d m) {
 		return this.setElements(
-			m.m00, m.m01, zPlane*m.m02+m.m03, 
-			m.m10, m.m11, zPlane*m.m12+m.m13,
-			m.m30, m.m31, zPlane*m.m32+m.m33 
-		);
+				m.m00, m.m01, m.m03, 
+				m.m10, m.m11, m.m13,
+				m.m30, m.m31, m.m33 
+			);
 	}
 	
 	//////////
 
-	public Vector3d[] transform(Vector3d[] vs) {
+
+	public Vector2d[] transformAffine(Vector2d... vs) {
+		for (Vector2d v: vs)
+			transformAffine(v);
+		
+		return vs;
+	}
+	
+	public Vector2d transformAffine(Vector2d v) {
+		return transformAffine(v,v);
+	}
+	
+	public<T> T transformAffine(Vector2d v, Vector2d.Function<T> w) {
+		return transformAffine(v.x,v.y, w);	
+	}
+	
+	public<T> T transformAffine(double vx, double vy, Vector2d.Function<T> v) {
+		final double x = vx * m00 + vy * m01 + m02; 
+		final double y = vx * m10 + vy * m11 + m12; 
+		
+		return v.apply( x, y );		
+	}
+	
+	public double[] transformAffine(double... v) {
+		for (int i=0;i<v.length;i+=2) {
+			final int x = i, y = i+1;
+			final double vx = v[x], vy = v[y];
+			
+			v[x] = (vx*m00+vy*m01+m02);
+			v[y] = (vx*m10+vy*m11+m12);
+		}
+		return v;
+	}
+	
+	public Vector3d[] transform(Vector3d... vs) {
 		for (Vector3d v: vs)
 			transform(v);
 		return vs;
 	}
 	
 	public Vector3d transform(Vector3d v) {
-		return v.xyz(
-			v.x*m00+v.y*m01+v.z*m02, 
-			v.x*m10+v.y*m11+v.z*m12, 
-			v.x*m20+v.y*m21+v.z*m22 
-		);
+		return transform(v,v);
 	}
 	
-	public double[] transform(double[] v) {
+	public double[] transform(double... v) {
 		for (int i=0;i<v.length;i+=3) {
 			final int x = i, y = i+1, z = y+1;
 			final double vx = v[x], vy = v[y], vz = v[z];
@@ -502,23 +403,59 @@ public class Matrix3d extends Matrix<Matrix3d> implements ValueMatrix3<Matrix3d>
 		return v;
 	}
 
-	public <E> E transform(double px, double py, double pz, Value3<E> f) {
+	public <E> E transform(Vector3d v, Vector3d.Function<E> f) {
+		return transform(v.x,v.y,v.z, f);
+	}
+	
+	public <E> E transform(double px, double py, double pz, Vector3d.Function<E> f) {
 		final double x = px*m00+py*m01+pz*m02; 
 		final double y = px*m10+py*m11+pz*m12;
 		final double z = px*m20+py*m21+pz*m22;
-		return f.set(x,y,z);
+		return f.apply(x,y,z);
+	}
+
+	public Matrix3d applyTransform(Vector3d v) {
+		return this.applyTransform(v, v);
+	}
+
+	public Matrix3d applyTransform(Vector3d v, Vector3d.Consumer f) {
+		return this.applyTransform(v.x, v.y, v.z, f);
+	}
+	
+	public Matrix3d applyTransform(double px, double py, double pz, Vector3d.Consumer f) {
+		final double x = px*m00+py*m01+pz*m02; 
+		final double y = px*m10+py*m11+pz*m12;
+		final double z = px*m20+py*m21+pz*m22;
+		f.accept(x,y,z);
+		return this;
 	}
 	
 	///////
+
 	
-	public Vector2d project(Vector2d v) {
-		final double x = v.x*m00+v.y*m01+m02; 
-		final double y = v.x*m10+v.y*m11+m12;
-		final double w = v.x*m20+v.y*m21+m22;
-		return v.xy( x/w, y/w );
+	public Vector2d[] project(Vector2d... vs) {
+		for (Vector2d v: vs)
+			project(v);
+		return vs;
 	}
 	
-	public double[] project(double[] v) {
+	public Vector2d project(Vector2d v) {
+		return project(v, v);
+	}
+	
+	public <E> E project(Vector2d v, Vector2d.Function<E> f) {
+		return project(v.x,v.y, f);
+	}
+
+	public <E> E project(double px, double py, Vector2d.Function<E> f) {
+		final double x = px*m00+py*m01+m02; 
+		final double y = px*m10+py*m11+m12;
+		final double w = px*m20+py*m21+m22;
+		return f.apply(x/w,y/w);
+	}
+
+	
+	public double[] project(double... v) {
 		for (int i=0;i<v.length;i+=2) {
 			final int x = i, y = i+1;
 			final double vx = v[x], vy = v[y];
@@ -529,33 +466,37 @@ public class Matrix3d extends Matrix<Matrix3d> implements ValueMatrix3<Matrix3d>
 		}
 		return v;
 	}
+
 	
-	public <E> E project(double px, double py, Value2<E> f) {
+	public Matrix3d applyProjection(Vector2d v) {
+		applyProjection(v,v);
+		return this;
+	}
+	
+	public Matrix3d applyProjection(Vector2d v, Vector2d.Consumer c) {
+		applyProjection(v.x, v.y, c);
+		return this;
+	}
+
+	public Matrix3d applyProjection(double px, double py, Vector2d.Consumer c) {
 		final double x = px*m00+py*m01+m02; 
 		final double y = px*m10+py*m11+m12;
 		final double w = px*m20+py*m21+m22;
-		return f.set(x/w,y/w);
+		c.accept(x/w,y/w);
+		return this;
 	}
 	
 	/////////
 	
-	
 	public Vector2d intersect(Vector2d v) {
-		final double A = (m11*m22-m12*m21), D =-(m01*m22-m02*m21), G = (m01*m12-m02*m11);
-		final double B =-(m10*m22-m12*m20), E = (m00*m22-m02*m20), H =-(m00*m12-m02*m10);
-		final double C = (m10*m21-m11*m20), F =-(m00*m21-m01*m20), I = (m00*m11-m01*m10);
-	
-		final double detA = (m00*A-m01*B+m02*C);
-		
-		double x= (v.x*A+v.y*D+G)/detA;
-		double y= (v.x*B+v.y*E+H)/detA;
-		double w= (v.x*C+v.y*F+I)/detA;
-		
-		return v.xy(x/w, y/w);
+		return intersect(v,v);
 	}
-	
 
-	public <E> E intersect(double vx, double vy, Value2<E> f) {
+	public <E> E intersect(Vector2d v, Vector2d.Function<E> f) {
+		return intersect(v.x,v.y,f);
+	}
+
+	public <E> E intersect(double vx, double vy, Vector2d.Function<E> f) {
 		final double A = (m11*m22-m12*m21), D =-(m01*m22-m02*m21), G = (m01*m12-m02*m11);
 		final double B =-(m10*m22-m12*m20), E = (m00*m22-m02*m20), H =-(m00*m12-m02*m10);
 		final double C = (m10*m21-m11*m20), F =-(m00*m21-m01*m20), I = (m00*m11-m01*m10);
@@ -566,10 +507,10 @@ public class Matrix3d extends Matrix<Matrix3d> implements ValueMatrix3<Matrix3d>
 		double y= (vx*B+vy*E+H)/detA;
 		double w= (vx*C+vy*F+I)/detA;
 		
-		return f.set(x/w, y/w);
+		return f.apply(x/w, y/w);
 	}
 	
-	public double[] intersect(double[] v) {
+	public double[] intersect(double... v) {
 		final double A = (m11*m22-m12*m21), D =-(m01*m22-m02*m21), G = (m01*m12-m02*m11);
 		final double B =-(m10*m22-m12*m20), E = (m00*m22-m02*m20), H =-(m00*m12-m02*m10);
 		final double C = (m10*m21-m11*m20), F =-(m00*m21-m01*m20), I = (m00*m11-m01*m10);
@@ -586,6 +527,36 @@ public class Matrix3d extends Matrix<Matrix3d> implements ValueMatrix3<Matrix3d>
 		
 		return v;
 	}
+	
+
+	public Matrix3d applyIntersection(Vector2d v) {
+		return applyIntersection(v,v);
+	}
+
+	public Matrix3d applyIntersection(Vector2d v, Vector2d.Consumer w) {
+		return applyIntersection(v.x,v.y,w);
+	}
+
+	public Matrix3d applyIntersection(double vx, double vy, Vector2d.Consumer c) {
+		final double A = (m11*m22-m12*m21), D =-(m01*m22-m02*m21), G = (m01*m12-m02*m11);
+		final double B =-(m10*m22-m12*m20), E = (m00*m22-m02*m20), H =-(m00*m12-m02*m10);
+		final double C = (m10*m21-m11*m20), F =-(m00*m21-m01*m20), I = (m00*m11-m01*m10);
+	
+		final double detA = (m00*A-m01*B+m02*C);
+		
+		double x= (vx*A+vy*D+G)/detA;
+		double y= (vx*B+vy*E+H)/detA;
+		double w= (vx*C+vy*F+I)/detA;
+		
+		c.accept(x/w, y/w);
+		return this;
+	}
+	
+	public Matrix3d applyIntersection(double[] v) {
+		intersect(v);
+		return this;
+	}
+	
 }
 
 

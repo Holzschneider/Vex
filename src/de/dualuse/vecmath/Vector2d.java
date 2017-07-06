@@ -2,35 +2,33 @@ package de.dualuse.vecmath;
 
 import static java.lang.Math.*;
 
-import java.util.regex.Matcher;
+import java.io.Serializable;
 
-public class Vector2d extends Vector<Vector2d> implements Value2<Vector2d>, java.io.Serializable 
+public class Vector2d 	extends Vector<Vector2d> 
+						implements	Serializable,
+									Functionals.Vector2d.Function<Vector2d>,
+									Functionals.Vector2d.Consumer,
+									Functionals.Vector2d
 {
 	private static final long serialVersionUID = 1L;
 	public double x, y;
 	
 	public Vector2d() {};
+
+	public Vector2d(Vector2d v) {
+		this.x=v.x; this.y=v.y;
+	}
+
 	public Vector2d(double x, double y) { this.x=x; this.y=y; };
-	public static Vector2d from(double x, double y) { return new Vector2d(x,y); }
 	
-	static public Vector2d from(Object... objs) {
-		StringBuilder b = new StringBuilder(16*3);
-		for(Object o: objs)
-			b.append(o).append(' ');
-		
-		return fromString(b.toString());
-	}
-	
-	static public Vector2d fromString(String r) {
-		Matcher m = Scalar.DECIMAL.matcher(r);
-		m.find(); double x = Double.parseDouble(m.group());
-		m.find(); double y = Double.parseDouble(m.group());
-		
-		return new Vector2d().xy(x, y);
-	}
-	
+	public static Vector2d of(double x, double y) { return new Vector2d(x,y); }
+
 	public String toString() { return x+" "+y; };
 	
+	
+	@Override
+	public Vector2d self() { return this; }
+
 	@Override
 	public Vector2d clone() { return new Vector2d(x,y); }
 
@@ -45,23 +43,24 @@ public class Vector2d extends Vector<Vector2d> implements Value2<Vector2d>, java
 	
 	@Override
 	public Vector2d set(Vector2d t) { return this.xy(t.x,t.y); }
-	
+
+	public void accept(double x, double y) { this.xy(x, y); }
+
 	@Override
-	public Vector2d set(double x, double y) {
+	public Vector2d apply(double x, double y) {
 		return this.xy(x, y);
 	}
-
-
-	public Vector2d setElements(double x, double y) { return this.xy(x, y); } 
+	
 	public Vector2d xy(double x, double y) { this.x=x; this.y=y; return this; }
 	
-	//method and field names collide in javascript
-//	public Vector2d x(double x) { this.x=x; return this; }
-//	public Vector2d y(double y) { this.y=y; return this; }
+	public Vector2d x(double x) { this.x=x; return this; }
+	public Vector2d y(double y) { this.y=y; return this; }
 	
-	public<T> T get(Value2<T> v) { return v.set(this.x, this.y); }
-	
-	public double[] get(double[] v) { v[0]=x; v[1]=y; return v; };
+	public<T> T to(Vector2d.Function<T> v) { return v.apply(this.x, this.y); }
+	public double[] to(double[] v) { v[0]=x; v[1]=y; return v; };
+
+	public Vector2d get(Vector2d.Consumer v) { v.accept(this.x, this.y); return this; }
+	public Vector2d get(double[] v) { v[0]=x; v[1]=y; return this; };
 
 	//////////////////////////////////////////////////////////////////////////////
 
@@ -101,13 +100,13 @@ public class Vector2d extends Vector<Vector2d> implements Value2<Vector2d>, java
 
 	//////////
 
-	public Vector2d interpolate(Vector2d b, double alpha) {
+	public Vector2d lerp(Vector2d b, double alpha) {
 		final double oma = 1-alpha;
 		return this.xy(this.x*oma+b.x*alpha, this.y*oma+b.y*alpha);
 	}
 	
-	public Vector2d line(Vector2d a, Vector2d b, final double r) {
-		return this.xy(a.x*(1-r)+b.x*r, a.y*(1-r)+b.y*r);
+	public Vector2d line(Vector2d a, Vector2d b, double t) {
+		return this.set(a).lerp(b,t);
 	}
 	
 	@Override
@@ -137,6 +136,10 @@ public class Vector2d extends Vector<Vector2d> implements Value2<Vector2d>, java
 	
 	//////////
 	
+	public double angle(Vector2d v) {
+		throw new RuntimeException("Not implemented yet");
+	}
+	
 	public double theta() {
 		final double dx = x;
 		final double dy = y;
@@ -162,7 +165,6 @@ public class Vector2d extends Vector<Vector2d> implements Value2<Vector2d>, java
 			return tan + (2.0 * Math.PI);
 		return tan;
 	}
-
-	
 	
 }
+
