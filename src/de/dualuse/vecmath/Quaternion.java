@@ -86,27 +86,30 @@ public class Quaternion		extends  	Tuple<Quaternion>
 		return this.xyzw(0, 0, 0, 1);
 	}
 	
-	
-	
-	/**
-	 * Transforms this quaternion by the given quaternion
-	 */
+
+    /**
+     * Transforms this quaternion by the given quaternion
+     */
 	public Quaternion concatenate(Quaternion q) {
-		return xyzw(
-				x*q.x - y*q.y - z*q.z - w*q.w,
-				x*q.y + y*q.x + z*q.w - w*q.z,
-				x*q.z + z*q.x + w*q.y - y*q.w,
-				x*q.w + w*q.x + y*q.z - z*q.y);
+		return setConcatenation(this, q);
 	}
-	
+
 	public Quaternion setConcatenation(Quaternion a, Quaternion q) {
 		return xyzw(
-				a.x*q.x - a.y*q.y - a.z*q.z - a.w*q.w,
-				a.x*q.y + a.y*q.x + a.z*q.w - a.w*q.z,
-				a.x*q.z + a.z*q.x + a.w*q.y - a.y*q.w,
-				a.x*q.w + a.w*q.x + a.y*q.z - a.z*q.y);
+				a.w * q.x + a.x * q.w + a.y * q.z - a.z * q.y,
+				a.w * q.y + a.y * q.w + a.z * q.x - a.x * q.z,
+				a.w * q.z + a.z * q.w + a.x * q.y - a.y * q.x,
+				a.w * q.w - a.x * q.x - a.y * q.y - a.z * q.z);
 	}
-	
+
+	public Quaternion normalize() {
+		double nomalizationFactor = sqrt(this.w * this.w + this.x * this.x + this.y * this.y + this.z * this.z);
+		this.w /= nomalizationFactor;
+		this.x /= nomalizationFactor;
+		this.y /= nomalizationFactor;
+		this.z /= nomalizationFactor;
+		return this;
+	}
 	
 	public Quaternion setRotation(Matrix4d m) {
 		return setRotationFromTransposeMatrix(m.m00,m.m10,m.m20,m.m01,m.m11,m.m21,m.m02,m.m12,m.m22);
