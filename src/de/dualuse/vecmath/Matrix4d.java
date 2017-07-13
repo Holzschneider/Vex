@@ -3,9 +3,13 @@ package de.dualuse.vecmath;
 import static java.lang.Math.*;
 
 import java.io.Serializable;
-import java.util.regex.Matcher;
 
-public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>, Serializable {
+public class Matrix4d 	extends   	Matrix<Matrix4d> 
+						implements	Serializable, 
+									Functionals.Matrix4d.Function<Matrix4d>,
+									Functionals.Matrix4d.Consumer,
+									Functionals.Matrix4d 
+{
 	private static final double EPSILON = 1.0E-10;
 	private static final long serialVersionUID = 1L;
 	
@@ -38,47 +42,6 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 		return new Matrix4d().setElements(m00,m01,m02,m03,m10,m11,m12,m13,m20,m21,m22,m23,m30,m31,m32,m33);
 	}
 
-	public static Matrix4d fromElements(
-			double m00, double m01, double m02, double m03,
-			double m10, double m11, double m12, double m13,
-			double m20, double m21, double m22, double m23,
-			double m30, double m31, double m32, double m33
-			) {
-		return new Matrix4d().setElements(m00,m01,m02,m03,m10,m11,m12,m13,m20,m21,m22,m23,m30,m31,m32,m33);
-	}
-	
-	public static Matrix4d fromRows( double[][] rowArray ) {
-		return new Matrix4d().setRows(rowArray);
-	}
-	
-	public static Matrix4d fromRows(double[] m0, double[] m1, double[] m2, double[] m3) {
-		return new Matrix4d().setRows(m0,m1,m2,m3);
-	}
-	
-	public static Matrix4d fromRows(Vector4d m0, Vector4d m1, Vector4d m2, Vector4d m3) {
-		return new Matrix4d().setRows(m0,m1,m2,m3);
-	}
-
-	public static Matrix4d fromColumns( double[][] rowArray ) {
-		return new Matrix4d().setColumns(rowArray);
-	}
-	
-	public static Matrix4d fromColumns(double[] m0, double[] m1, double[] m2, double[] m3) {
-		return new Matrix4d().setColumns(m0,m1,m2,m3);
-	}
-	
-	public static Matrix4d fromColumns(Vector4d m0, Vector4d m1, Vector4d m2, Vector4d m3) {
-		return new Matrix4d().setColumns(m0,m1,m2, m3);
-	}
-
-	
-//	public static Matrix4d fromViewport(double x, double y, double width, double height) {
-//		return new Matrix4d().viewport(x, y, width, height);
-//	}
-	
-	public static Matrix4d fromFrustum(double left, double right, double bottom, double top, double near, double far) {
-		return new Matrix4d().frustum(left, right, bottom, top, near, far);		
-	}
 
 //==[ Element-wise Operations ]=====================================================================
 	public double get(int row, int col) { return getElement(row, col); }
@@ -105,7 +68,7 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 	}
 	
 
-	public Matrix4d set(double m00, double m01, double m02, double m03, 
+	public Matrix4d apply(double m00, double m01, double m02, double m03, 
 			double m10, double m11, double m12, double m13, 
 			double m20, double m21, double m22, double m23, 
 			double m30, double m31, double m32, double m33 ) {
@@ -115,6 +78,18 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 		this.m20 = m20; this.m21 = m21; this.m22 = m22; this.m23 = m23;
 		this.m30 = m30; this.m31 = m31; this.m32 = m32; this.m33 = m33;
 		return this;
+	}
+	
+
+	public void accept(double m00, double m01, double m02, double m03, 
+			double m10, double m11, double m12, double m13, 
+			double m20, double m21, double m22, double m23, 
+			double m30, double m31, double m32, double m33 ) {
+		
+		this.m00 = m00; this.m01 = m01; this.m02 = m02; this.m03 = m03;
+		this.m10 = m10; this.m11 = m11; this.m12 = m12; this.m13 = m13;
+		this.m20 = m20; this.m21 = m21; this.m22 = m22; this.m23 = m23;
+		this.m30 = m30; this.m31 = m31; this.m32 = m32; this.m33 = m33;
 	}
 
 	
@@ -132,89 +107,8 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 		return this;
 	}
 
-	public Matrix4d addElements(
-			double n00, double n01, double n02, double n03,
-			double n10, double n11, double n12, double n13,
-			double n20, double n21, double n22, double n23,
-			double n30, double n31, double n32, double n33
-			) {
-		return this.setElements(
-			m00+n00, m01+n01, m02+n02, m03+n03,
-			m10+n10, m11+n11, m12+n12, m13+n13,
-			m20+n20, m21+n21, m22+n22, m23+n23,
-			m30+n30, m31+n31, m32+n32, m33+n33
-		);
-	}
-
-	public Matrix4d mulElements(
-			double n00, double n01, double n02, double n03,
-			double n10, double n11, double n12, double n13,
-			double n20, double n21, double n22, double n23,
-			double n30, double n31, double n32, double n33
-			) {
-		return this.setElements(
-			m00*n00, m01*n01, m02*n02, m03*n03,
-			m10*n10, m11*n11, m12*n12, m13*n13,
-			m20*n20, m21*n21, m22*n22, m23*n23,
-			m30*n30, m31*n31, m32*n32, m33*n33
-		);
-	}
-
-	/////
-
-	public Matrix4d mul(
-			double n00, double n01, double n02, double n03,
-			double n10, double n11, double n12, double n13,
-			double n20, double n21, double n22, double n23,
-			double n30, double n31, double n32, double n33
-			) {
-		return mulElements(n00,n01,n02,n03,n10,n11,n12,n13,n20,n21,n22,n23,n30,n31,n32,n33);
-	}
-
-	public Matrix4d add(
-			double n00, double n01, double n02, double n03,
-			double n10, double n11, double n12, double n13,
-			double n20, double n21, double n22, double n23,
-			double n30, double n31, double n32, double n33
-			) {
-		return addElements(n00,n01,n02,n03,n10,n11,n12,n13,n20,n21,n22,n23,n30,n31,n32,n33);
-	}
-	
-	public Matrix4d sub(
-			double n00, double n01, double n02, double n03,
-			double n10, double n11, double n12, double n13,
-			double n20, double n21, double n22, double n23,
-			double n30, double n31, double n32, double n33
-			) {
-		return addElements(-n00,-n01,-n02,-n03,-n10,-n11,-n12,-n13,-n20,-n21,-n22,-n23,-n30,-n31,-n32,-n33);
-	}
-
 //==[ Tuple<Matrix3d> ]=============================================================================
 	
-	static public Matrix4d fromString(String r) {
-		Matcher m = Scalar.DECIMAL.matcher(r);
-		m.find(); double m00 = Double.parseDouble(m.group());
-		m.find(); double m01 = Double.parseDouble(m.group());
-		m.find(); double m02 = Double.parseDouble(m.group());
-		m.find(); double m03 = Double.parseDouble(m.group());
-		
-		m.find(); double m10 = Double.parseDouble(m.group());
-		m.find(); double m11 = Double.parseDouble(m.group());
-		m.find(); double m12 = Double.parseDouble(m.group());
-		m.find(); double m13 = Double.parseDouble(m.group());
-
-		m.find(); double m20 = Double.parseDouble(m.group());
-		m.find(); double m21 = Double.parseDouble(m.group());
-		m.find(); double m22 = Double.parseDouble(m.group());
-		m.find(); double m23 = Double.parseDouble(m.group());
-
-		m.find(); double m30 = Double.parseDouble(m.group());
-		m.find(); double m31 = Double.parseDouble(m.group());
-		m.find(); double m32 = Double.parseDouble(m.group());
-		m.find(); double m33 = Double.parseDouble(m.group());
-		
-		return Matrix4d.fromElements(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33);
-	}
 	
 	public String toFormattedString() {
 		return	m00+" "+m01+" "+m02+" "+m03+"\n"+
@@ -248,6 +142,8 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 			m.m30 == m30 && m.m31 == m31 && m.m32 == m32 && m.m33 == m33;
 	}
 	
+	@Override public Matrix4d self() { return this; }
+
 	@Override public Matrix4d clone() {
 		return new Matrix4d().setElements(
 			this.m00, this.m01, this.m02, this.m03, 
@@ -266,7 +162,7 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 		);
 	}
 
-	public double[][] getRows( double[][] rowArray ) {
+	public double[][] toRows( double[][] rowArray ) {
 		double m[][] = rowArray;
 		
 		m[0][0] = m00; m[0][1] = m01; m[0][2] = m02; m[0][3] = m03;
@@ -277,7 +173,7 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 		return rowArray;
 	}
 	
-	public double[][] getColumns( double[][] rowArray ) {
+	public double[][] toColumns( double[][] rowArray ) {
 		double m[][] = rowArray;
 		
 		m[0][0] = m00; m[0][1] = m10; m[0][2] = m20; m[0][3] = m30;
@@ -288,18 +184,8 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 		return rowArray;
 	}
 	
-	
-	public static interface Values<T> {
-		public T set(
-				double m00, double m01, double m02, double m03,
-				double m10, double m11, double m12, double m13,
-				double m20, double m21, double m22, double m23,
-				double m30, double m31, double m32, double m33
-			);
-	}
-	
-	public<T> T get(Values<T> v) {
-		return v.set(	m00, m01, m02, m03, 
+	public<T> T to(Matrix4d.Function<T> v) {
+		return v.apply(	m00, m01, m02, m03, 
 						m10, m11, m12, m13,
 						m20, m21, m22, m23,
 						m30, m31, m32, m33 );
@@ -437,37 +323,26 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 		return fA0 * fB5 - fA1 * fB4 + fA2 * fB3 + fA3 * fB2 - fA4 * fB1 + fA5 * fB0;
 	}
 	
-//==[ Matrix<Matrix4d> ]============================================================================
 	
-	@Override public Matrix4d add(Matrix4d a) {
-		return addElements(
-			a.m00,a.m01,a.m02,a.m03,
-			a.m10,a.m11,a.m12,a.m13,
-			a.m20,a.m21,a.m22,a.m23,
-			a.m30,a.m31,a.m32,a.m33
-		);	
-	}
-
-	@Override public Matrix4d sub(Matrix4d a) {
-		return addElements(
-			-a.m00,-a.m01,-a.m02,-a.m03,
-			-a.m10,-a.m11,-a.m12,-a.m13,
-			-a.m20,-a.m21,-a.m22,-a.m23,
-			-a.m30,-a.m31,-a.m32,-a.m33
+//==[ Matrix4d Specific ]===========================================================================
+	public Matrix4d setRows(double[] m) {
+		return setElements(
+				m[ 0], m[ 1], m[ 2], m[ 3],
+				m[ 4], m[ 5], m[ 6], m[ 7],
+				m[ 8], m[ 9], m[10], m[11],
+				m[12], m[13], m[14], m[15]
 		);
 	}
 	
-	@Override public Matrix4d mul(Matrix4d a) {
-		return mulElements(
-			a.m00,a.m01,a.m02,a.m03,
-			a.m10,a.m11,a.m12,a.m13,
-			a.m20,a.m21,a.m22,a.m23,
-			a.m30,a.m31,a.m32,a.m33
-		);	
+	public Matrix4d setColumns(double[] m) {
+		return setElements(
+				m[ 0], m[ 4], m[ 8], m[12],
+				m[ 1], m[ 5], m[ 9], m[13],
+				m[ 2], m[ 6], m[10], m[14],
+				m[ 3], m[ 7], m[11], m[15]
+		);
 	}
 	
-//==[ Matrix4d Specific ]===========================================================================
-
 	public Matrix4d setColumns(Vector4d x, Vector4d y, Vector4d z, Vector4d w) {
 		return setElements(
 			x.x, y.x, z.x, w.x,
@@ -579,7 +454,11 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 	public Matrix4d rotate(AxisAngle aa) { return this.rotate(aa.r,aa.x,aa.y,aa.z); }
 	public Matrix4d rotate(double theta, Vector3d axis) { return rotate(theta, axis.x, axis.y, axis.z); }
 	
-	private Matrix4d rotate(double theta, double ax, double ay, double az) {
+	public Matrix4d rotateDegrees( double degrees, double x, double y, double z) {
+		return this.rotate(degrees*PI/180,x,y,z);
+	}
+	
+	public Matrix4d rotate(double theta, double ax, double ay, double az) {
 //		// compare '$ man glRotate' or 'javax.vecmath.Matrix4d.set(AxisAngle4d a1)'
 		
 		final double s = sin(theta), c = cos(theta), t = 1-c, l = sqrt(ax*ax+ay*ay+az*az);
@@ -601,7 +480,6 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 	public Matrix4d translate(Vector3d v, double times) {
 		return translate(v.x*times,v.y*times,v.z*times);
 	}
-
 	
 	public Matrix4d translate(double tx, double ty, double tz) {
 		return this.concatenate(
@@ -632,8 +510,7 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 	
 	
 	/////////
-	public static Matrix4d fromTransformation( Matrix3d m ) { return new Matrix4d().setTransformation( m ); }
-	public Matrix4d setTransformation(Matrix3d m) {
+	public Matrix4d augment(Matrix3d m) {
 		return this.setElements(
 			m.m00, m.m01, m.m02,   0, 
 			m.m10, m.m11, m.m12,   0,
@@ -641,16 +518,6 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 			0,     0,         0,   1
 		);
 	}
-
-//	public static Matrix4d fromProjection( Matrix3d m ) { return new Matrix4d().setProjection( m ); }
-//	public Matrix4d setProjection(Matrix3d m) {
-//		return this.setElements(
-//			m.m00, m.m01,   0, m.m02, 
-//			m.m10, m.m11,   0, m.m12,
-//			    0,     0,   0,     0,
-//			m.m20, m.m21,   0, m.m22 
-//		);
-//	}
 
 	public Matrix4d setRotation(AxisAngle a) {
 		double theta = a.r, ax = a.x, ay = a.y, az = a.z;
@@ -666,12 +533,11 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 
 	}
 
-	public static Matrix4d fromRotation( Quaternion q ) { return new Matrix4d().setRotation(q); }
 	public Matrix4d setRotation(Quaternion q) {
 		final double x = q.x, y = q.y, z = q.z, w = q.w;
 
 		final double ww = w*w, xx = x*x, yy= y*y, zz = z*z;
-		final double xy = x*x, xz = x*z, xw = x*w;
+		final double xy = x*y, xz = x*z, xw = x*w;
 		final double yz = y*z, yw = y*w, zw = z*w; 
 		
 		return this.setElements(
@@ -682,7 +548,6 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 		);
 	}
 
-	public static Matrix4d fromTranslation( Vector3d v ) { return new Matrix4d().setTranslation( v ); }
 	public Matrix4d setTranslation(Vector3d translation) {
 		final double tx = translation.x, ty = translation.y, tz = translation.z;
 		return setElements(	
@@ -693,7 +558,6 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 		);		
 	}
 	
-	public static Matrix4d fromScale( Vector3d v ) { return new Matrix4d().setScale( v ); }
 	public Matrix4d setScale(Vector3d scaling) {
 		final double scx = scaling.x, scy = scaling.y, scz = scaling.y; 
 		return setElements(	
@@ -743,56 +607,126 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 	
 	//////////
 
-//	public Vector2d project(Vector2d v, double z);
-//	public Vector2d intersect(Vector2d v, double z);
 
-	public Vector3d transform(Vector3d v) {
-		final double x = v.x * m00 + v.y * m01 + v.z * m02 + m03; 
-		final double y = v.x * m10 + v.y * m11 + v.z * m12 + m13; 
-		final double z = v.x * m20 + v.y * m21 + v.z * m22 + m23;
-		
-		return v.xyz( x, y, z );
+	public Vector3d[] transformAffine(Vector3d... vs) {
+		for (Vector3d v: vs)
+			transformAffine(v);
+		return vs;
 	}
 	
-	public<T> T transform(double vx, double vy, double vz, Value3<T> v) {
+	public Vector3d transformAffine(Vector3d v) {
+		return transformAffine(v,v);
+	}
+	
+	public<T> T transformAffine(Vector3d v, Vector3d.Function<T> w) {
+		return transformAffine(v.x,v.y,v.z, w);	
+	}
+	
+	public<T> T transformAffine(double vx, double vy, double vz, Vector3d.Function<T> v) {
 		final double x = vx * m00 + vy * m01 + vz * m02 + m03; 
 		final double y = vx * m10 + vy * m11 + vz * m12 + m13; 
 		final double z = vx * m20 + vy * m21 + vz * m22 + m23;
 		
-		return v.set( x, y, z );		
+		return v.apply( x, y, z );		
 	}
 	
+	public double[] transformAffine(double... v) {
+		for (int i=0;i<v.length;i+=3) {
+			final int x = i, y = i+1, z = y+1;
+			final double vx = v[x], vy = v[y], vz = v[z];
+			
+			v[x] = vx*m00+vy*m01+vz*m02+m03; 
+			v[y] = vx*m10+vy*m11+vz*m12+m13;
+			v[z] = vx*m20+vy*m21+vz*m22+m23;
+		}
+		return v;
+	}
+	
+	/////////////
+	
+	public Vector4d transform(Vector4d v) {
+		return transform(v,v);
+	}
+	
+	public<T> T transform(Vector4d v, Vector4d.Function<T> w) {
+		return transform(v.x,v.y,v.z,v.w, w);	
+	}
+	
+	public<T> T transform(double vx, double vy, double vz, double vw, Vector4d.Function<T> v) {
+		final double x = vx * m00 + vy * m01 + vz * m02 + vw * m03; 
+		final double y = vx * m10 + vy * m11 + vz * m12 + vw * m13; 
+		final double z = vx * m20 + vy * m21 + vz * m22 + vw * m23;
+		final double w = vx * m30 + vy * m31 + vz * m32 + vw * m33;
+		
+		return v.apply( x, y, z, w );		
+	}
+	
+	public double[] transform(double... v) {
+		for (int i=0,I=v.length;i<I;i+=4) {
+			final int x = i, y = i+1, z = i+2, w = i+3;
+			final double vx = v[x], vy = v[y], vz = v[z], vw = v[w];
+			
+			v[x] = vx * m00 + vy * m01 + vz * m02 + vw * m03; 
+			v[y] = vx * m10 + vy * m11 + vz * m12 + vw * m13; 
+			v[z] = vx * m20 + vy * m21 + vz * m22 + vw * m23;
+			v[w] = vx * m30 + vy * m31 + vz * m32 + vw * m33;
+		}
+		
+		return v;
+	}
 
-	public<T> T transform(Vector3d v, Value3<T> w) {
+
+	
+	public Matrix4d applyTransform(Vector4d v) {
+		return applyTransform(v,v);
+	}
+	
+	public Matrix4d applyTransform(Vector4d v, Vector4d.Consumer w) {
+		applyTransform(v.x,v.y,v.z,v.w, w);
+		return this;
+	}
+	
+	public Matrix4d applyTransform(double vx, double vy, double vz, double vw, Vector4d.Consumer v) {
+		final double x = vx * m00 + vy * m01 + vz * m02 + vw * m03; 
+		final double y = vx * m10 + vy * m11 + vz * m12 + vw * m13; 
+		final double z = vx * m20 + vy * m21 + vz * m22 + vw * m23;
+		final double w = vx * m30 + vy * m31 + vz * m32 + vw * m33;
+		
+		v.accept( x, y, z, w );
+		return this;
+	}
+	
+	public Matrix4d applyTransform(double[] v) {
+		applyTransform(v);
+		return this;
+	}
+
+	////
+
+	public Vector3d[] project(Vector3d... vs) {
+		for (Vector3d v: vs)
+			project(v);
+		return vs;
+	}
+	
+	public Vector3d project(Vector3d v) {
+		return project(v,v);
+	}
+	
+	public<T> T project(Vector3d v, Vector3d.Function<T> w) {
 		return project(v.x,v.y,v.z,w);
 	}
 	
-
-	
-	public Vector3d project(Vector3d v) {
-		final double x = v.x * m00 + v.y * m01 + v.z * m02 + m03; 
-		final double y = v.x * m10 + v.y * m11 + v.z * m12 + m13; 
-		final double z = v.x * m20 + v.y * m21 + v.z * m22 + m23;
-		final double w = v.x * m30 + v.y * m31 + v.z * m32 + m33;
-		
-		return v.xyz( x/w, y/w, z/w );
-	}
-	
-	public<T> T project(double vx, double vy, double vz, Value3<T> v) {
+	public<T> T project(double vx, double vy, double vz, Vector3d.Function<T> v) {
 		final double x = vx * m00 + vy * m01 + vz * m02 + m03; 
 		final double y = vx * m10 + vy * m11 + vz * m12 + m13; 
 		final double z = vx * m20 + vy * m21 + vz * m22 + m23;
 		final double w = vx * m30 + vy * m31 + vz * m32 + m33;
 		
-		return v.set( x/w, y/w, z/w );		
+		return v.apply( x/w, y/w, z/w );		
 	}
 	
-
-	public<T> T project(Vector3d v, Value3<T> w) {
-		return project(v.x,v.y,v.z,w);
-	}
-	
-	public double[] project(double[] v) {
+	public double[] project(double... v) {
 		for (int i=0,I=v.length;i<I;i+=3) {
 			final int x = i, y = i+1, z = i+2;
 			final double vx = v[x], vy = v[y], vz = v[z];
@@ -807,94 +741,30 @@ public class Matrix4d extends Matrix<Matrix4d> implements ValueMatrix4<Matrix4d>
 	}
 
 	
-	public Vector4d transform(Vector4d v) {
-		return v.xyzw(	
-			v.x * m00 + v.y * m01 + v.z * m02 + v.w * m03, 
-			v.x * m10 + v.y * m11 + v.z * m12 + v.w * m13, 
-			v.x * m20 + v.y * m21 + v.z * m22 + v.w * m23,
-			v.x * m30 + v.y * m31 + v.z * m32 + v.w * m33
-		);
+	public Matrix4d applyProjection(double[] v) {
+		project(v);
+		return this;
 	}
 	
-	public<T> T transform(double vx, double vy, double vz, double vw, Value4<T> v) {
-		final double x = vx * m00 + vy * m01 + vz * m02 + vw * m03; 
-		final double y = vx * m10 + vy * m11 + vz * m12 + vw * m13; 
-		final double z = vx * m20 + vy * m21 + vz * m22 + vw * m23;
-		final double w = vx * m30 + vy * m31 + vz * m32 + vw * m33;
+	public Matrix4d applyProjection(Vector3d v) {
+		return applyProjection(v,v);
+	}
+	
+	public Matrix4d applyProjection(Vector3d v, Vector3d.Consumer w) {
+		return applyProjection(v.x,v.y,v.z,w);
+	}
+	
+	public Matrix4d applyProjection(double vx, double vy, double vz, Vector3d.Consumer v) {
+		final double x = vx * m00 + vy * m01 + vz * m02 + m03; 
+		final double y = vx * m10 + vy * m11 + vz * m12 + m13; 
+		final double z = vx * m20 + vy * m21 + vz * m22 + m23;
+		final double w = vx * m30 + vy * m31 + vz * m32 + m33;
 		
-		return v.set( x, y, z, w );		
+		v.accept( x/w, y/w, z/w );
+		return this;
 	}
 	
-	public double[] transform(double[] v) {
-		for (int i=0,I=v.length;i<I;i+=4) {
-			final int x = i, y = i+1, z = i+2, w = i+3;
-			final double vx = v[x], vy = v[y], vz = v[z], vw = v[w];
-			
-			v[x] = vx * m00 + vy * m01 + vz * m02 + vw * m03; 
-			v[y] = vx * m10 + vy * m11 + vz * m12 + vw * m13; 
-			v[z] = vx * m20 + vy * m21 + vz * m22 + vw * m23;
-			v[w] = vx * m30 + vy * m31 + vz * m32 + vw * m33;
-		}
-		
-		return v;
-	}
-
-	
-//	public Matrix4 decompose(Vec3 translation, Quaternion rotation, Vec3 scaling) {
-//		//TODO throw runtimeException if Matrix4 describes a non decomposable transform 
-//		//this decomposition works only if the 3x3 core of M is a product of a diagonal scaling Matrix4 and a rotation
-//		
-//		translation.set(m03, m13, m23);
-//		
-//		final double lx = Math.sqrt(m00*m00+m10*m10+m20*m20);
-//		final double ly = Math.sqrt(m01*m01+m11*m11+m21*m21);
-//		final double lz = Math.sqrt(m02*m02+m12*m12+m22*m22);
-//
-//		scaling.set(lx,ly,lz);
-//		
-//		rotation.setToTransformation(
-//				m00/lx,m10/lx,m20/lx, 
-//				m01/ly,m11/ly,m21/ly,
-//				m02/lz,m12/lz,m22/lz
-//		);
-//		
-//		return this;			
-//	}
-//	//TODO Verify this
-//	public Quaternion setToTransform(Matrix3d t) {
-//		double  T = t.m00 + t.m11 + t.m22 + 1.;
-//
-//		// If the trace of the t.matrix is greater than zero, then the result is:
-//		if (T>0.) {
-//		      double S = 0.5 / Math.sqrt(T);
-//		      
-//		      return this.set(( t.m21 - t.m12 ) * S,( t.m02 - t.m20 ) * S,( t.m10 - t.m01 ) * S,0.25 / S);
-//		} else { 
-//			//If the trace of the t.matrix is less than or equal to zero then identify which t.major diagonal elet.ment has the greatest value.
-//			if ((t.m00 > t.m11)&&(t.m00 > t.m22)) { 
-//			   final double S = Math.sqrt( 1.0 + t.m00 - t.m11 - t.m22 ) * 2; // S=4*qx 
-//			   final double qw = (t.m21 - t.m12) / S;
-//			   final double qx = 0.25 * S;
-//			   final double qy = (t.m01 + t.m10) / S; 
-//			   final double qz = (t.m02 + t.m20) / S;
-//			   return this.set(qx,qy,qz,qw);
-//			} else if (t.m11 > t.m22) { 
-//			   final double S = Math.sqrt( 1.0 + t.m11 - t.m00 - t.m22 ) * 2; // S=4*qy
-//			   final double qw = (t.m02 - t.m20) / S;
-//			   final double qx = (t.m01 + t.m10) / S; 
-//			   final double qy = 0.25 * S;
-//			   final double qz = (t.m12 + t.m21) / S;
-//			   return this.set(qx,qy,qz,qw);
-//			} else { 
-//			   final double S = Math.sqrt( 1.0 + t.m22 - t.m00 - t.m11 ) * 2; // S=4*qz
-//			   final double qw = (t.m10 - t.m01) / S;
-//			   final double qx = (t.m02 + t.m20) / S; 
-//			   final double qy = (t.m12 + t.m21) / S; 
-//			   final double qz = 0.25 * S;
-//			   return this.set(qx,qy,qz,qw);
-//			}
-//		}
-//	}	
+	///
 	
 	
 }

@@ -1,30 +1,27 @@
 package de.dualuse.vecmath;
 
-abstract class Tuple<T> implements Value<T,T> {
+abstract class Tuple<T extends Tuple<T>> {
 
 //	public abstract T fromString(String r);
 	public abstract T clone();
+	public abstract T self();
 	
 	public abstract T set(T a);
 	
-	@SuppressWarnings("unchecked")
-	final public <Q> Q to( Value<Q,T> v ) {
-		return v.set((T)this);
+	final public <Q> Q to( Function<Q,T> v ) {
+		return v.apply(clone());
 	}
-	
-	final public <Q> Q get( Value<Q,T> v ) {
-		return to(v);
-	}
-	
+
 	@Override
+	@SuppressWarnings("unchecked")
 	final public boolean equals(Object o) {
 		if (o == this)
 			return true;
 		else
-//		if (o.getClass()==this.getClass())
+		if (o.getClass()==this.getClass())
 			return elementsEqual((T)o);
-//		else
-//			return false;
+		else
+			return false;
 	}
 	
 	abstract boolean elementsEqual(T t);

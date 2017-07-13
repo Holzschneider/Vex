@@ -1,45 +1,34 @@
 package de.dualuse.vecmath;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.pow;
+import static java.lang.Math.*;
 
 import java.io.Serializable;
-import java.util.regex.Matcher;
 
 public class Vector4d	extends Vector<Vector4d>
-						implements	VectorAlgebra<Vector4d>, 
-									Interpolatable<Vector4d>, 
-									Serializable 
+						implements	Serializable,
+									Functionals.Vector4d.Function<Vector4d>,
+									Functionals.Vector4d.Consumer,
+									Functionals.Vector4d
 {
 	private static final long serialVersionUID = 1L;
 	public double x, y, z, w;
 
 	public Vector4d() {}
+	public Vector4d(Vector4d v) { this.set(v); }
+	
 	public Vector4d(double x, double y, double z, double w) { this.xyzw(x, y, z, w); };
 	public static Vector4d of(double x, double y, double z, double w) { return new Vector4d(x,y,z,w); }
 	
 	
-	static public Vector4d from(Object... objs) {
-		StringBuilder b = new StringBuilder(16*3);
-		for(Object o: objs)
-			b.append(o).append(' ');
-		
-		return fromString(b.toString());
-	}
 	
-	static public Vector4d fromString(String r) {
-		Matcher m = Scalar.DECIMAL.matcher(r);
-		m.find(); double x = Double.parseDouble(m.group());
-		m.find(); double y = Double.parseDouble(m.group());
-		m.find(); double z = Double.parseDouble(m.group());
-		m.find(); double w = Double.parseDouble(m.group());
-		
-		return new Vector4d().xyzw(x, y, z, w);
-	}
 
 	@Override
 	public String toString() { return x+" "+y+" "+z+" "+w; };
 
+
+	@Override
+	public Vector4d self() { return this; }
+	
 	@Override
 	public Vector4d clone() { return new Vector4d(x,y,z,w); };
 	
@@ -52,35 +41,33 @@ public class Vector4d	extends Vector<Vector4d>
 		return x==a.x && y==a.y && z==a.z && w==a.w;
 	}
 	
-	public Vector4d get(Vector4d q) { q.set(this); return this; }
+	public<T> T to(Vector4d.Function<T> v) { return v.apply(this.x, this.y, this.z, this.w); }
+	public double[] to(double[] v) { v[0]=x; v[1]=y; v[2]=z; v[3]=w; return v; };
 	
-	public<T> T get(Value4<T> v) { return v.set(this.x, this.y, this.z, this.w); }
-//	public<T> T get(Value3<T> v) { return v.set(this.x, this.y, this.z); }
+	public Vector4d get(Vector4d.Consumer v) { v.accept(x, y, z, w); return this; } 
 	
-	public double[] get(double[] v) { v[0]=x; v[1]=y; v[2]=z; v[3]=w; return v; };
-
-
 	@Override
 	public Vector4d set(Vector4d v) {
 		return xyzw(v.x,v.y,v.z,v.w);
 	}
 	
-	public Vector4d set(double x, double y, double z, double w) { return this.xyzw(x, y, z, w); }
+	public void accept(double x, double y, double z, double w) { this.xyzw(x,y,z,w); }
+	public Vector4d apply(double x, double y, double z, double w) { return this.xyzw(x, y, z, w); }
+	
 	public Vector4d xyzw(double x, double y, double z, double w) { this.x=x; this.y=y; this.z=z; this.w=w;return this;}
 	public Vector4d xyz(double x, double y, double z) { this.x=x; this.y=y; this.z=z; return this;}
 	public Vector4d xy(double x, double y) { this.x=x; this.y=y; return this;}
 	
-	//method and field names collide in javascript
-//	public Vector4d x(double x) { this.x=x; return this; }
-//	public Vector4d y(double y) { this.y=y; return this; }
-//	public Vector4d z(double z) { this.z=z; return this; }
-//	public Vector4d w(double w) { this.w=w; return this; }
-
+	public Vector4d x(double x) { this.x=x; return this; }
+	public Vector4d y(double y) { this.y=y; return this; }
+	public Vector4d z(double z) { this.z=z; return this; }
+	public Vector4d w(double w) { this.w=w; return this; }
+	
 	//////////////////////////////////////////////////////////////////////////////
 	
 	@Override public Vector4d sum(Vector4d a, Vector4d b) { return this.xyzw(a.x+b.x,a.y+b.y,a.z+b.z, a.w+b.w); }
 	@Override public Vector4d difference(Vector4d a, Vector4d b) { return this.xyzw(a.x-b.x,a.y-b.y,a.z-b.z,a.w-b.w); }
-
+	
 	public Vector4d add(double x, double y, double z, double w) { return xyzw(x+this.x,y+this.y,z+this.z,w+this.w); }
 	
 	public Vector4d add(Vector4d v) { return xyzw(x+v.x,y+v.y,z+v.z,w+v.w); }
@@ -121,17 +108,17 @@ public class Vector4d	extends Vector<Vector4d>
 		return this.xyzw(this.x*oma+b.x*alpha, this.y*oma+b.y*alpha, this.z*oma+b.z*alpha, this.w*oma+b.w*alpha);
 	}
 	
-//	@Override 
-//	public Vector4d line(Vector4d a, Vector4d b, double r) {
-//		final double omr = 1.-r; 
-//		return this.xyzw(
-//				a.x*omr+b.x*r, 
-//				a.y*omr+b.y*r, 
-//				a.z*omr+b.z*r, 
-//				a.w*omr+b.w*r); 
-//	}
+	public Vector4d line(Vector4d a, Vector4d b, double r) {
+		final double omr = 1.-r; 
+		return this.xyzw(
+				a.x*omr+b.x*r, 
+				a.y*omr+b.y*r, 
+				a.z*omr+b.z*r, 
+				a.w*omr+b.w*r); 
+	}
 	
 	
+	@Override 
 	public Vector4d spline(Vector4d a, Vector4d da, Vector4d dd, Vector4d d, double r) {
 		final double omr = 1-r; 
 				
