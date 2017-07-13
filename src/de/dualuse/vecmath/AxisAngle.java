@@ -132,12 +132,6 @@ public class AxisAngle extends Tuple<AxisAngle> implements Serializable {
         else if (v > +1.0) return 0.0;
         else return Math.acos(v);
     }
-    
-    
-    @Override
-    public String toString() {
-    	return r+" "+x+" "+y+" "+z;
-    }
 
 
     
