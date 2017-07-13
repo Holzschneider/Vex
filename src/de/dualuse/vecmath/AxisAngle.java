@@ -142,7 +142,6 @@ public class AxisAngle extends Tuple<AxisAngle> implements Serializable {
     }
 
 
-
     ///////
     
     private static double normalize(double theta) {
@@ -153,6 +152,12 @@ public class AxisAngle extends Tuple<AxisAngle> implements Serializable {
         if (v < -1.0) return Math.PI;
         else if (v > +1.0) return 0.0;
         else return Math.acos(v);
+    }
+    
+    
+    @Override
+    public String toString() {
+    	return r+" "+x+" "+y+" "+z;
     }
 
     
