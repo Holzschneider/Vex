@@ -1,6 +1,6 @@
 package de.dualuse.vecmath;
 
-import static java.lang.Math.PI;
+import static java.lang.Math.*;
 
 import java.io.Serializable;
 
@@ -79,6 +79,7 @@ public class AxisAngle extends Tuple<AxisAngle> implements Serializable {
 
     public Vector3d transform(Vector3d v, Vector3d dest) {
         double sin = Math.sin(r), cos = Math.cos(r);
+        double l = sqrt(x*x+y*y+z*z), x = this.x / l, y = this.y / l, z = this.z / l;
         double dot = x * v.x + y * v.y + z * v.z;
         dest.xyz(v.x * cos + sin * (y * v.z - z * v.y) + (1.0 - cos) * dot * x,
                  v.y * cos + sin * (z * v.x - x * v.z) + (1.0 - cos) * dot * y,
@@ -92,6 +93,7 @@ public class AxisAngle extends Tuple<AxisAngle> implements Serializable {
     
     public Vector4d transform(Vector4d v, Vector4d dest) {
         double sin = Math.sin(r), cos = Math.cos(r);
+        double l = sqrt(x*x+y*y+z*z), x = this.x / l, y = this.y / l, z = this.z / l;
         double dot = x * v.x + y * v.y + z * v.z;
         dest.xyzw(v.x * cos + sin * (y * v.z - z * v.y) + (1.0 - cos) * dot * x,
                  v.y * cos + sin * (z * v.x - x * v.z) + (1.0 - cos) * dot * y,
