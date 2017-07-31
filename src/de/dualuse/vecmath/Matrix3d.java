@@ -271,7 +271,7 @@ public class Matrix3d 	extends   	Matrix<Matrix3d>
 		final double x = q.x, y = q.y, z = q.z, w = q.w;
 
 		final double ww = w*w, xx = x*x, yy= y*y, zz = z*z;
-		final double xy = x*x, xz = x*z, xw = x*w;
+		final double xy = x*y, xz = x*z, xw = x*w;
 		final double yz = y*z, yw = y*w, zw = z*w; 
 		final double n = 1/(ww+xx+yy+zz);
 		return this.setElements(
