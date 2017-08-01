@@ -75,6 +75,12 @@ public class Vector2d 	extends Vector<Vector2d>
 	public Vector2d sub(double x, double y) { return this.add(-x, -y); }
 	public Vector2d scale(double s) { this.x*=s; this.y*=s; return this; }
 	
+	@Override public Vector2d mul(Vector2d v) { return this.xy(x*v.x,y*v.y); }
+	@Override public Vector2d div(Vector2d v) { return this.xy(x/v.x,y/v.y); }
+	
+	
+	public Vector2d projection(Vector3d v) { return this.xy(v.x/v.z, v.y/v.z); }
+	
 	public Vector2d normalize() { return scale(1./length()); }
 	public double dot(Vector2d v) { return this.x*v.x+this.y*v.y; }
 
@@ -164,6 +170,36 @@ public class Vector2d 	extends Vector<Vector2d>
 		if (dy < 0.0)
 			return tan + (2.0 * Math.PI);
 		return tan;
+	}
+	
+	//////////////////
+	
+	
+
+	public static Vector2d add(Vector2d a, Vector2d b) {
+		return new Vector2d().set(a).add(b);
+	}
+
+	public static Vector2d sub(Vector2d a, Vector2d b) {
+		return new Vector2d().set(a).sub(b);
+	}
+	
+	public static Vector2d mul(Vector2d a, Vector2d b) {
+		return new Vector2d().set(a).mul(b);
+	}
+
+	public static Vector2d div(Vector2d a, Vector2d b) {
+		return new Vector2d().set(a).div(b);
+	}
+
+
+	public static double dot(Vector2d a, Vector2d b) {
+		return a.dot(b);
+	}
+	
+	
+	public static Vector2d project( Vector3d a ) {
+		return new Vector2d().projection(a);
 	}
 	
 }

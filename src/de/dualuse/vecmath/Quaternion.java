@@ -275,4 +275,19 @@ public class Quaternion		extends  	Tuple<Quaternion>
 		return this;
 	}
 	
+	
+	//////////////////////////////////////////////////////////////////////////
+	
+	public static Vector3d mul(Quaternion a, Vector3d b) {
+		return a.transform(new Vector3d(b));
+	}
+	
+	public static Quaternion mul(Quaternion a, Quaternion b) {
+		return new Quaternion().setConcatenation(a, b);
+	}
+	
+	
 }
+
+
+

@@ -764,7 +764,81 @@ public class Matrix4d 	extends   	Matrix<Matrix4d>
 		return this;
 	}
 	
-	///
+	////////////////
+	
+	
+	
+	public static Matrix4d outer(Vector4d a, Vector4d b) {
+		return Matrix4d.of( 
+				a.x*b.x, a.x*b.y, a.x*b.z, a.x*b.w,
+				a.y*b.x, a.y*b.y, a.y*b.z, a.y*b.w,
+				a.z*b.x, a.z*b.y, a.z*b.z, a.z*b.w,
+				a.w*b.x, a.w*b.y, a.w*b.z, a.w*b.w
+			);
+	}
+	
+	public static Vector4d mul(Matrix4d a, Vector4d b) {
+		return a.transform(new Vector4d(b));
+	}
+	
+	public static Matrix4d mul(Matrix4d a, Matrix4d b) {
+		return new Matrix4d().setConcatenation(a,b);
+	}
+	
+	
+	public static Vector3d project(Matrix4d a, Vector3d b) {
+		return a.project(new Vector3d(b));
+	}
+	
+	public static Matrix3d minor(Matrix4d a, int row, int col) {
+		return new Matrix3d().setMinor(a,row,col);
+	}
+
+	public static Matrix4d invert( Matrix4d a ) {
+		return new Matrix4d().setInverse(a);
+	}
+	
+	public static Matrix4d transpose( Matrix4d a ) {
+		return new Matrix4d().setTransposed(a);
+	}
+	
+	/////////////
+	
+
+	public static Matrix4d rotate(Matrix4d a, Quaternion b) {
+		return new Matrix4d().set(a).rotate(b);
+	}
+
+	public static Matrix4d rotate(Quaternion a, Matrix4d b) {
+		return new Matrix4d().setRotation(a).concatenate(b);
+	}
+
+	public static Matrix4d rotate(Matrix4d a, AxisAngle b) {
+		return new Matrix4d().set(a).rotate(b);
+	}
+
+	public static Matrix4d rotate(AxisAngle a, Matrix4d b) {
+		return new Matrix4d().setRotation(a).concatenate(b);
+	}
+	
+	public static Matrix4d translate(Matrix4d a, Vector3d b) {
+		return new Matrix4d().set(a).translate(b);
+	}
+
+	public static Matrix4d translate(Vector3d a, Matrix4d b) {
+		return new Matrix4d().setTranslation(a).concatenate(b);
+	}
 	
 	
 }
+
+
+
+
+
+
+
+
+
+
+

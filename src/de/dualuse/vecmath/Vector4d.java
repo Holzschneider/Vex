@@ -73,9 +73,13 @@ public class Vector4d	extends Vector<Vector4d>
 	public Vector4d add(Vector4d v) { return xyzw(x+v.x,y+v.y,z+v.z,w+v.w); }
 	public Vector4d adds(Vector4d v, double scale) { return xyzw(x+v.x*scale,y+v.y*scale,z+v.z*scale, w+v.w*scale); }
 	
-	public Vector4d sub(Vector4d v) { xyzw(x-v.x,y-v.y,z-v.z, w-v.w); return this; }
+	public Vector4d sub(Vector4d v) { return  xyzw(x-v.x,y-v.y,z-v.z, w-v.w); }
 	
 	public Vector4d scale(double s) { xyzw(x*s,y*s,z*s,w*s); return this; }
+	
+	@Override public Vector4d mul(Vector4d v) { return xyzw(x*v.x,y*v.y,z*v.z,w*v.w); }
+	@Override public Vector4d div(Vector4d v) { return xyzw(x/v.x,y/v.y,z/v.z,w/v.w); }
+	
 	public Vector4d normalize() { return scale(1./length()); }
 	public double dot(Vector4d v) { return x*v.x+y*v.y+z*v.z+w*v.w; }
 	public double length() { return Math.sqrt(dot(this)); }
@@ -97,7 +101,7 @@ public class Vector4d	extends Vector<Vector4d>
 
 	////////// Convenience Methods
 	
-	public Vector4d augment(Vector3d v) { return this.xyzw(v.x, v.y, v.z, 1); }
+	public Vector4d augmentation(Vector3d v) { return this.xyzw(v.x, v.y, v.z, 1); }
 	public Vector4d transformation(Matrix4d m) { return m.transform(this); }
 	
 	////////// Interpolatable
@@ -141,6 +145,34 @@ public class Vector4d	extends Vector<Vector4d>
 		this.xyzw( r0x*r+r1x*omr, r0y*r+r1y*omr, r0z*r+r1z*omr, r0w*r+r1w*omr );
 		
 		return this;
+	}
+	
+	
+	/////////////////////////////////////////////
+	
+	
+	public static Vector4d add(Vector4d a, Vector4d b) {
+		return new Vector4d().set(a).add(b);
+	}
+
+	public static Vector4d sub(Vector4d a, Vector4d b) {
+		return new Vector4d().set(a).sub(b);
+	}
+	
+	public static Vector4d mul(Vector4d a, Vector4d b) {
+		return new Vector4d().set(a).mul(b);
+	}
+
+	public static Vector4d div(Vector4d a, Vector4d b) {
+		return new Vector4d().set(a).div(b);
+	}
+
+	public static double dot(Vector4d a, Vector4d b) {
+		return a.dot(b);
+	}
+
+	public static Vector4d augment( Vector3d a ) {
+		return new Vector4d().augmentation(a); 
 	}
 	
 }

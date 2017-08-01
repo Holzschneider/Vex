@@ -7,6 +7,9 @@ interface VectorAlgebra<Q> {
 	public VectorAlgebra<Q> sub(Q v);
 	public VectorAlgebra<Q> scale(double s);
 	
+	public VectorAlgebra<Q> mul(Q v); 
+	public VectorAlgebra<Q> div(Q v); 
+	
 	public VectorAlgebra<Q> sum(Q a, Q b);
 	public VectorAlgebra<Q> difference(Q a, Q b);
 	

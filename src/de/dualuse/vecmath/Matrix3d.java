@@ -267,19 +267,44 @@ public class Matrix3d 	extends   	Matrix<Matrix3d>
 	}
 
 //==[ Matrix3d Specific ]===========================================================================
-	public Matrix3d setRotation(Quaternion q) {
+	
+	public Matrix3d rotate(double theta, double ax, double ay, double az) {
+//		// compare '$ man glRotate' or 'javax.vecmath.Matrix4d.set(AxisAngle4d a1)'
+		
+		final double s = sin(theta), c = cos(theta), t = 1-c, l = sqrt(ax*ax+ay*ay+az*az);
+		final double x = (ax/l), y = (ay/l), z= (az/l);
+		final double xz = x*z, xy = x*y, yz = y*z, xx=x*x, yy=y*y, zz=z*z;
+		
+		return this.concat(
+				t*xx+c  , t*xy-s*z, t*xz+s*y,
+				t*xy+s*z, t*yy+c  , t*yz-s*x,
+				t*xz-s*y, t*yz+s*x, t*zz+c  );
+	}
+	
+	public Matrix3d rotate(AxisAngle q) {
+		return rotate(q.r,q.x,q.y,q.z);
+	}
+	
+	public Matrix3d setRotation(AxisAngle q) {
+		return this.setIdentity().rotate(q);
+	}
+	
+	public Matrix3d rotate(Quaternion q) {
 		final double x = q.x, y = q.y, z = q.z, w = q.w;
 
 		final double ww = w*w, xx = x*x, yy= y*y, zz = z*z;
 		final double xy = x*y, xz = x*z, xw = x*w;
 		final double yz = y*z, yw = y*w, zw = z*w; 
 		final double n = 1/(ww+xx+yy+zz);
-		return this.setElements(
+		return this.concat(
 			(ww+xx-yy-zz)*n, (2*xy-2*zw)*n, (2*xz+2*yw)*n,
 			(2*xy+2*zw)*n, (ww-xx+yy-zz)*n, (2*yz-2*xw)*n,						
 			(2*xz-2*yw)*n, (2*yz+2*xw)*n, (ww-xx-yy+zz)*n
 		);
-
+	}
+	
+	public Matrix3d setRotation(Quaternion q) {
+		return this.setIdentity().rotate(q);
 	}
 	
 	private Matrix3d concat( 
@@ -294,6 +319,16 @@ public class Matrix3d 	extends   	Matrix<Matrix3d>
 			m20*n00+m21*n10+m22*n20, m20*n01+m21*n11+m22*n21, m20*n02+m21*n12+m22*n22
 		);
 	}
+
+	
+	public Matrix3d setTranslation(Vector2d v) {
+		return this.setIdentity().translate(v.x,v.y);
+	}
+
+	public Matrix3d translate(Vector2d v) {
+		return this.translate(v.x,v.y);
+	}
+
 	
 	public Matrix3d translate(double tx, double ty) {
 		return this.concat(
@@ -336,6 +371,67 @@ public class Matrix3d 	extends   	Matrix<Matrix3d>
 	
 	
 	//////////
+	
+	//XXX untested!
+	public Matrix3d setMinor(Matrix4d m, int row, int col) {
+		switch (row<<2|col) {
+		case 0: return this.setElements( m.m11, m.m12, m.m13,
+										m.m21, m.m22, m.m23,
+										m.m31, m.m32, m.m33 );
+		case 1: return this.setElements(	m.m10, m.m12, m.m13,
+										m.m20, m.m22, m.m23,
+										m.m30, m.m32, m.m33 );
+		case 2: return this.setElements( m.m10, m.m11, m.m13,
+										m.m20, m.m21, m.m23,
+										m.m30, m.m31, m.m33 );
+		case 3: return this.setElements(	m.m10, m.m11, m.m12,
+										m.m20, m.m21, m.m22,
+										m.m30, m.m31, m.m32 );
+		
+		case 4: return this.setElements( m.m01, m.m02, m.m03,
+										m.m21, m.m22, m.m23,
+										m.m31, m.m32, m.m33 );
+		case 5: return this.setElements(	m.m00, m.m02, m.m03,
+										m.m20, m.m22, m.m23,
+										m.m30, m.m32, m.m33 );
+		case 6: return this.setElements( m.m00, m.m01, m.m03,
+										m.m20, m.m21, m.m23,
+										m.m30, m.m31, m.m33 );
+		case 7: return this.setElements(	m.m00, m.m01, m.m02,
+										m.m20, m.m21, m.m22,
+										m.m30, m.m31, m.m32 );
+		
+		case 8: return this.setElements( m.m01, m.m02, m.m03,
+										m.m11, m.m12, m.m13,
+										m.m31, m.m32, m.m33 );
+		case 9: return this.setElements(	m.m00, m.m02, m.m03,
+										m.m10, m.m12, m.m13,
+										m.m30, m.m32, m.m33 );
+		case 10:return this.setElements( m.m00, m.m01, m.m03,
+										m.m10, m.m11, m.m13,
+										m.m30, m.m31, m.m33 );
+		case 11:return this.setElements(	m.m00, m.m01, m.m02,
+										m.m10, m.m11, m.m12,
+										m.m30, m.m31, m.m32 );
+		
+		case 12:return this.setElements( m.m01, m.m02, m.m03,
+										m.m11, m.m12, m.m13,
+										m.m21, m.m22, m.m23 );
+		case 13:return this.setElements(	m.m00, m.m02, m.m03,
+										m.m10, m.m12, m.m13,
+										m.m20, m.m22, m.m23 );
+		case 14:return this.setElements( m.m00, m.m01, m.m03,
+										m.m10, m.m11, m.m13,
+										m.m20, m.m21, m.m23 );
+		case 15:return this.setElements(	m.m00, m.m01, m.m02,
+										m.m10, m.m11, m.m12,
+										m.m20, m.m21, m.m22 );
+		}
+		
+		
+		return this;
+	}
+	
 	
 	public Matrix3d setProjection(Matrix4d m) {
 		return this.setElements(
@@ -557,7 +653,67 @@ public class Matrix3d 	extends   	Matrix<Matrix3d>
 		return this;
 	}
 	
+	
+	/////////////////////////////
+	
+	public static Matrix3d outer(Vector3d a, Vector3d b) {
+		return Matrix3d.of( 
+				a.x*b.x, a.x*b.y, a.x*b.z,
+				a.y*b.x, a.y*b.y, a.y*b.z,
+				a.z*b.x, a.z*b.y, a.z*b.z
+				);
+	}
+	
+	public static Vector3d mul(Matrix3d a, Vector3d b) {
+		return a.transform(new Vector3d(b));
+	}
+	
+	public static Matrix3d mul(Matrix3d a, Matrix3d b) {
+		return new Matrix3d(a).concatenate(b);
+	}
+	
+	public static Vector3d mul(Vector3d b, Matrix3d a) {
+		throw new UnsupportedOperationException("not yet implemented");
+	}
+
+	public static Matrix3d invert( Matrix3d a ) {
+		return new Matrix3d().setInverse(a);
+	}
+	
+	public static Matrix3d transpose( Matrix3d a ) {
+		return new Matrix3d().setTransposed(a);
+	}
+	
+	public static Matrix3d rotate(Matrix3d a, Quaternion b) {
+		return new Matrix3d().set(a).rotate(b);
+	}
+
+	public static Matrix3d rotate(Quaternion a, Matrix3d b) {
+		return new Matrix3d().setRotation(a).concatenate(b);
+	}
+
+	public static Matrix3d rotate(Matrix3d a, AxisAngle b) {
+		return new Matrix3d().set(a).rotate(b);
+	}
+
+	public static Matrix3d rotate(AxisAngle a, Matrix3d b) {
+		return new Matrix3d().setRotation(a).concatenate(b);
+	}
+	
+	public static Matrix3d translate(Matrix3d a, Vector2d b) {
+		return new Matrix3d().set(a).translate(b);
+	}
+
+	public static Matrix3d translate(Vector2d a, Matrix3d b) {
+		return new Matrix3d().setTranslation(a).concatenate(b);
+	}
+	
+	
+	
+	
 }
+
+
 
 
 

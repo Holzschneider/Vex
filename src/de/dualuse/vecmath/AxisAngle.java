@@ -126,7 +126,7 @@ public class AxisAngle extends Tuple<AxisAngle> implements Serializable {
     ///////
     
     private static double normalize(double theta) {
-    	return ((theta < 0.0 ? Math.PI + Math.PI + theta % (Math.PI + Math.PI) : theta) % (Math.PI + Math.PI));
+    		return ((theta < 0.0 ? Math.PI + Math.PI + theta % (Math.PI + Math.PI) : theta) % (Math.PI + Math.PI));
     }
     
     private static double acos(double v) {
@@ -136,24 +136,14 @@ public class AxisAngle extends Tuple<AxisAngle> implements Serializable {
     }
 
 
+    ///////////////////////////
     
-//	
-//	
-////	final public AxisAngle getAxisAngleTo(final Vec3 v, AxisAngle rotationAxisAngle) {
-////		final double bothLen = Math.sqrt(x*x + y*y + z*z) * Math.sqrt(v.x*v.x + v.y*v.y + v.z*v.z);
-////		if (bothLen == 0)
-////			return rotationAxisAngle.set(1, 0, 0, 0);
-////		
-////		rotationAxisAngle.x = (y*v.z - z*v.y) / bothLen;
-////		rotationAxisAngle.y = (z*v.x - x*v.z) / bothLen;
-////		rotationAxisAngle.z = (x*v.y - y*v.x) / bothLen;
-////		rotationAxisAngle.angle = Math.sqrt(rotationAxisAngle.x*rotationAxisAngle.x + rotationAxisAngle.y*rotationAxisAngle.y + rotationAxisAngle.z*rotationAxisAngle.z);
-////		
-////		rotationAxisAngle.x /= rotationAxisAngle.angle;
-////		rotationAxisAngle.y /= rotationAxisAngle.angle;
-////		rotationAxisAngle.z /= rotationAxisAngle.angle;
-////		return rotationAxisAngle;
-////	}
-
+    public static Vector3d mul(AxisAngle a, Vector3d b) {
+		return a.transform(new Vector3d(b));
+	}
+	
+	public static Quaternion mul(AxisAngle a, AxisAngle b) {
+		return new Quaternion().setConcatenation(new Quaternion().set(a), new Quaternion().set(b));
+	}
 	
 }
