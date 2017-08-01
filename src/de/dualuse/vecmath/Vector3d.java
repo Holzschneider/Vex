@@ -164,7 +164,7 @@ public class Vector3d	extends Vector<Vector3d>
 //==[ Vector3d Specific ]===========================================================================
 
 	public Vector3d cross(Vector3d that) {
-		return cross(this,that);
+		return this.setCross(this, that);
 	}
 
 	public Vector3d setCross(Vector3d a, Vector3d b) {
