@@ -115,7 +115,31 @@ public class Matrix3d 	extends   	Matrix<Matrix3d>
 	
 	/////////////////////////
 
+	public Vector3d getColumn(int col) {
+		return getColumn(col, new Vector3d());
+	}
 	
+	public Vector3d getColumn(int col, Vector3d colVector) {
+		switch(col) {
+			case 0: return colVector.xyz(m00, m10, m20);
+			case 1: return colVector.xyz(m01, m11, m21);
+			case 2: return colVector.xyz(m02, m12, m22);
+			default: throw new IllegalArgumentException("col must be between 0 and 2.");
+		}
+	}
+	
+	public Vector3d getRow(int row) {
+		return getRow(row, new Vector3d());
+	}
+	
+	public Vector3d getRow(int row, Vector3d rowVector) {
+		switch(row) {
+			case 0: return rowVector.xyz(m00, m01, m02);
+			case 1: return rowVector.xyz(m10, m11, m12);
+			case 2: return rowVector.xyz(m20, m21, m22);
+			default: throw new IllegalArgumentException("row must be between 0 and 2.");
+		}
+	}
 	
 //==[ Tuple<Matrix3d> ]=============================================================================
 	public String toFormattedString() {
