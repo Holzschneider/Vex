@@ -93,6 +93,11 @@ public class Vector3d	extends Vector<Vector3d>
 	
 	@Override public Vector3d sub(Vector3d v) { return this.addElements(-v.x, -v.y, -v.z); }
 	public Vector3d sub(double x, double y, double z) { return this.addElements(-x, -y, -z); }
+
+	@Override public Vector3d mul(Vector3d v) { return this.xyz(x*v.x, y*v.y, z*v.z); }
+	@Override public Vector3d div(Vector3d v) { return this.xyz(x/v.x, y/v.y, z/v.z); }
+	
+	
 	
 	@Override public Vector3d scale(double s) { this.x*=s; this.y*=s; this.z*=s; return this; }
 	@Override public Vector3d normalize() { return scale(1./length()); }
@@ -151,17 +156,18 @@ public class Vector3d	extends Vector<Vector3d>
 
 //==[ Convenience Methods ]=========================================================================
 	
-	public Vector3d augment(Vector2d v) { return this.xyz(v.x, v.y, 1); }
-	public Vector3d transformation(Matrix3d m) { return m.transform(this); }
+	public Vector3d augmentation(Vector2d v) { return this.xyz(v.x, v.y, 1); }
+	public Vector3d projection(Vector4d v) { return this.xyz(v.x/v.w, v.y/v.w, v.z/v.w); }
 	public Vector3d projection(Matrix4d m) { return m.project(this); }
+	public Vector3d transformation(Matrix3d m) { return m.transform(this); }
 	
 //==[ Vector3d Specific ]===========================================================================
 
 	public Vector3d cross(Vector3d that) {
-		return cross(this,that);
+		return this.setCross(this, that);
 	}
 
-	public Vector3d cross(Vector3d a, Vector3d b) {
+	public Vector3d setCross(Vector3d a, Vector3d b) {
 		double ax = a.x, bx = b.x;
 		double ay = a.y, by = b.y;
 		double az = a.z, bz = b.z;
@@ -175,7 +181,44 @@ public class Vector3d	extends Vector<Vector3d>
 	public double angle(Vector3d v) {
 		throw new RuntimeException("Not implemented yet");
 	}
+	
+	
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	
+	public static Vector3d add(Vector3d a, Vector3d b) {
+		return new Vector3d().set(a).add(b);
+	}
 
+	public static Vector3d sub(Vector3d a, Vector3d b) {
+		return new Vector3d().set(a).sub(b);
+	}
+	
+	public static Vector3d mul(Vector3d a, Vector3d b) {
+		return new Vector3d().set(a).mul(b);
+	}
+
+	public static Vector3d div(Vector3d a, Vector3d b) {
+		return new Vector3d().set(a).div(b);
+	}
+
+	public static Vector3d cross(Vector3d a, Vector3d b) {
+		return new Vector3d().set(a).cross(b);
+	}
+
+	public static double dot(Vector3d a, Vector3d b) {
+		return a.dot(b);
+	}
+	
+	public static Vector3d augment( Vector2d a ) {
+		return new Vector3d().augmentation(a); 
+	}
+	
+	public static Vector3d project( Vector4d a ) {
+		return new Vector3d().projection(a);
+	}
+	
 }
 
 
