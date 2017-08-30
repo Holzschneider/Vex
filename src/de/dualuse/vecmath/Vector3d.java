@@ -156,10 +156,29 @@ public class Vector3d	extends Vector<Vector3d>
 
 //==[ Convenience Methods ]=========================================================================
 	
-	public Vector3d augmentation(Vector2d v) { return this.xyz(v.x, v.y, 1); }
-	public Vector3d projection(Vector4d v) { return this.xyz(v.x/v.w, v.y/v.w, v.z/v.w); }
+	@Deprecated
+	public Vector3d augmentation(Vector2d v) { return this.setAugmentation(v); }
+	
+	@Deprecated
+	public Vector3d projection(Vector4d v) { return this.setProjection(v); }
+	
+	@Deprecated
 	public Vector3d projection(Matrix4d m) { return m.project(this); }
-	public Vector3d transformation(Matrix3d m) { return m.transform(this); }
+	
+	@Deprecated
+	public Vector3d transformation(Matrix3d m) { return this.transformation(m); } 
+	
+	
+	public Vector3d setProjection(Vector4d v) { return this.xyz(v.x/v.w, v.y/v.w, v.z/v.w); }
+	public Vector3d setAugmentation(Vector2d v) { return this.xyz(v.x, v.y, 1); }
+	
+//	public Vector3d transform(Matrix3d m) { return m.transform(this); }
+//	
+//	public Vector3d rotate(Quaternion a) { return a.transform(this); }
+	
+	
+	
+	
 	
 //==[ Vector3d Specific ]===========================================================================
 
