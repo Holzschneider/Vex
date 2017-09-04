@@ -178,12 +178,14 @@ public class Vector3d	extends Vector<Vector3d>
 		return this;
 	}
 
+	// The angle between both vectors in radians [0..PI]
 	public double angle(Vector3d v) {
-		throw new RuntimeException("Not implemented yet");
+		double l1 = this.length();
+		double l2 = v.length();
+		double dot = Vector3d.dot(this, v);
+		return Math.acos(dot/(l1*l2));
 	}
-	
-	
-	
+
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	
