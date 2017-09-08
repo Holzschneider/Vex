@@ -677,6 +677,12 @@ public class Matrix3d 	extends   	Matrix<Matrix3d>
 		return this;
 	}
 	
+	public Matrix3d mulElements(double s) {
+		m00 = s*m00; m01 = s*m01; m02 = s*m02;
+		m10 = s*m10; m11 = s*m11; m12 = s*m12;
+		m20 = s*m20; m21 = s*m21; m22 = s*m22;
+		return this;
+	}
 	
 	/////////////////////////////
 	
@@ -686,6 +692,22 @@ public class Matrix3d 	extends   	Matrix<Matrix3d>
 				a.y*b.x, a.y*b.y, a.y*b.z,
 				a.z*b.x, a.z*b.y, a.z*b.z
 				);
+	}
+	
+	public static Matrix3d add(Matrix3d a, Matrix3d b) {
+		return new Matrix3d(
+			a.m00 + b.m00, a.m01 + b.m01, a.m02 + b.m02,
+			a.m10 + b.m10, a.m11 + b.m11, a.m12 + b.m12,
+			a.m20 + b.m20, a.m21 + b.m21, a.m22 + b.m22
+		);
+	}
+	
+	public static Matrix3d sub(Matrix3d a, Matrix3d b) {
+		return new Matrix3d(
+			a.m00 - b.m00, a.m01 - b.m01, a.m02 - b.m02,
+			a.m10 - b.m10, a.m11 - b.m11, a.m12 - b.m12,
+			a.m20 - b.m20, a.m21 - b.m21, a.m22 - b.m22
+		);
 	}
 	
 	public static Vector3d mul(Matrix3d a, Vector3d b) {
@@ -731,8 +753,6 @@ public class Matrix3d 	extends   	Matrix<Matrix3d>
 	public static Matrix3d translate(Vector2d a, Matrix3d b) {
 		return new Matrix3d().setTranslation(a).concatenate(b);
 	}
-	
-	
 	
 	
 }
